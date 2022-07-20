@@ -1,0 +1,33 @@
+﻿<script language="javascript" type="text/javascript">
+    function openWindow(filename, winname, width, height) {
+        $(".box-login").hide();
+        var features, top, left;
+        left = (window.screen.width - width) / 2;
+        top = (window.screen.height - height) / 2;
+        features = "width=" + width + ",height=" + height + ",top=" + top + ",left=" + left;
+        void (window.open(filename, winname, features));
+    }
+
+    //Su dung cho facebook
+    var appID = "@System.Web.Configuration.WebConfigurationManager.AppSettings["FacebookClientId"]";//"453381758187688";
+    var redirectURL = "@System.Web.Configuration.WebConfigurationManager.AppSettings["FacebookRedirectURL"]";  //url se tra lai sau khi dang nhap thanh cong, luu y url nay phai trung khop khi cau hinh app tren facebook
+    var stateValue = "0";  //ko can thiet
+    var scope = "email,user_birthday"; //day la nhung thong tin mo rong, nhung thong tin basic van dc lay kem theo http://developers.facebook.com/docs/authentication/permissions/
+    var responseType = "token"; //token or code, default=code
+    var display = "popup";  //popup,page,touch
+    var linkFaceBook = "http://www.facebook.com/dialog/oauth/?client_id=" + appID + "&redirect_uri=" + redirectURL + "&state=" + stateValue + "&scope=" + scope + "&response_type=" + responseType + "&display=" + display;
+
+</script>
+
+<div class="externall-login">
+    <div class="item-ex">
+        <a onclick="openWindow(linkFaceBook, 'Login', 415, 305)" class="login-facebook">
+            <span class="fa fa-face">f</span><span class="ctn">@Html.Locale("login_with_facebook")</span>
+        </a>
+    </div>
+    <div class="item-ex">
+        <a onclick="openWindow('/Account/Google', 'Login', 880, 520)" class="login-google">
+            <span class="fa fa-face">g<b>+</b> </span><span class="ctn">@Html.Locale("login_with_google")</span>
+        </a>
+    </div>
+</div>

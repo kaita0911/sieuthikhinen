@@ -1,0 +1,26 @@
+﻿
+/*********************
+    Pager
+    ******************/
+.pager {
+    padding: 5px 5px 5px 0;
+    text-align: left;
+    margin: 10px 0;
+    border: 1px solid rgba(30, 31, 30, 0.07);
+    border-left: none;
+    border-right: none;
+}
+
+    .pager a {
+        padding: 2px 5px;
+        border: 1px solid #B6B2B2;
+        margin-right: 3px;
+        font-size: 12px;
+    }
+
+        .pager a.active {
+            font-weight: 700;
+            background: #1E1F1E;
+            border: 1px solid #1F201F;
+            color: white;
+        }

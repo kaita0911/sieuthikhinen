@@ -1,0 +1,15 @@
+﻿@{
+    ViewBag.Title = "Complete";
+    Layout = "_Layout.cshtml";
+    ViewBag.Breadcrumb = new BreadcrumbModel { Items = new List<BreadcrumbItem> { new BreadcrumbItem { Text = Html.Locale("cart").ToHtmlString(), Url = null, IsLast = true } } };
+}
+
+<section class=" success-contact font-Bold">
+    <div class="alert alert-success fade in">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+        <span class="fs13">
+            @Html.Locale("cart_complete")
+        </span>
+    </div>
+</section>
+

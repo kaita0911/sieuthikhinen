@@ -1,0 +1,123 @@
+﻿
+
+#vns-mainnav {
+    position: relative;
+    float: left;
+    width: 100%;
+    z-index: 99;
+
+    ul.nav > li {
+        text-align: center;
+        position: relative;
+        white-space: nowrap;
+        margin: 15px;
+
+        &.static {
+            position: static;
+
+            > .dropdown-menu {
+                left: 0;
+
+                &,
+                .dropdown-menu-inner {
+                    width: 100% !important;
+                }
+            }
+        }
+
+        &.active > a,
+        &:hover > a,
+        &:focus > a {
+            color: #fff;
+            border-bottom: 2px solid #fff;
+        }
+
+        > a {
+            font-size: 17px;
+            position: relative;
+            color: white;
+            text-transform: capitalize;
+            font-weight: 500;
+            padding: 0;
+
+            @media only screen and (min-width:@screen-md-min) and (max-width:@screen-md-max) {
+                & {
+                    font-size: @menu-font-size-md;
+                }
+            }
+        }
+
+        .vnsmainnav-li();
+    }
+}
+
+#vns-mainnav ul.nav > li.home a {
+    i.fa-home {
+        font-size: 20px;
+        height: 20px;
+    }
+}
+#vns-mainnav .dropdown {
+    .dropdown-menu {
+        display: block;
+        visibility: hidden;
+        top: 100%;
+        background: none;
+        .opacity(0);
+    }
+
+    > .dropdown-menu {
+        border: none;
+        text-align: left;
+        .border-radius(0);
+        .box-shadow(none);
+        .submenu();
+
+        .dropdown-menu {
+            left: 100%;
+            top: 0px;
+            margin-left: 0px;
+        }
+
+        .dropdown-menu-inner {
+            li {
+                .submenu-li();
+            }
+        }
+
+        li:hover > .dropdown-menu {
+            .transition(all 0.5s);
+        }
+    }
+
+    &:hover {
+        > .dropdown-menu {
+            visibility: visible;
+            .opacity(1);
+            .transition(all 0.5s);
+        }
+    }
+}
+
+@media only screen and (min-width:992px) and (max-width:1199px) {
+    #vns-mainnav {
+        font-size: @menu-font-size-md;
+
+        .navbar ul.nav {
+            > li {
+                > a {
+                    min-width: inherit;
+                }
+            }
+        }
+    }
+}
+
+@media only screen and (max-width:991px) {
+    #menu-main {
+    }
+
+    .navbar-toggle {
+        margin: 0px;
+    }
+}

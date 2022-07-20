@@ -1,0 +1,57 @@
+﻿@model Widget
+@{
+    var article = Article.GetByType((int)Model.ArticleTypeId, SiteConfig.SiteId, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection, Model.Includes);
+    if (article.List.Count > 0)
+    {
+        <div class="box-products-home">
+            <div class="container">
+                <div class="heading">
+                    <h2>@Model.Title</h2>
+                </div>
+                <div class="content">
+                    <div class="row">
+                        @foreach (var item in article.List)
+                        {
+                            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                                <div class="items box-product">
+                                    @if (!Model.HiddenImage)
+                                    {
+                                        <figure>
+                                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })">
+                                                @Html.Image(item.ImageUrl, new ImageOptions { Width = 272, Height = 272, Watermark = SiteConfig.Watermark, Mode = ImageMode.crop }, new { alt = item.ArticleName, @class = (Model.LazyOwl ? "owl" : "") })
+                                            </a>
+                                            @if (Model.ShowIconFly && item.ImageUrl != null)
+                                            {
+                                                @*<a class="zoom lightbox" href="@Url.Content(item.ImageUrl)" data-plugin-options="{type:image;}" title="@item.ArticleName">
+                                                        <i class="fa fa-search-plus"></i>
+                                                    </a>
+                                                    <a class="zoom" href="@Url.Action("Contact", "Home", new { id = item.Id })">
+                                                        @Html.Locale("contact")
+                                                    </a>*@
+                                                <a class="detail" href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })">
+                                                    @Html.Locale("view_detail")
+                                                </a>
+                                            }
+                                        </figure>
+                                    }
+                                    <div class="meta">
+                                        <h3>
+                                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.ArticleTypeDetail[SiteConfig.LanguageId].UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">@item.ArticleName</a>
+                                        </h3>
+                                        <div class="s-desc">
+                                            @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, 30))
+                                        </div>
+                                    </div>
+                                    @*<div class="view-detail">
+                                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })"><span>@Html.Locale("detail")</span></a>
+                                            <a href="@Url.Action("QuickContact", "Home", new { id = item.Id })" class="lightbox" data-toggle="tooltip" data-placement="top" data-plugin-options='{"type":"iframe"}'><span>@Html.Locale("contact")</span></a>
+                                        </div>*@
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}

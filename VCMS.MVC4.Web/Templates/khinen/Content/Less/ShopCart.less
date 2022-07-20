@@ -1,0 +1,134 @@
+﻿.cart-info table {
+    width: 100%;
+    margin-bottom: 15px;
+    border-collapse: collapse;
+    border-top: 1px solid @shop-cart-border;
+    border-left: 1px solid @shop-cart-border;
+    border-right: 1px solid @shop-cart-border;
+}
+
+.cart-info tbody td {
+    vertical-align: middle;
+    border-bottom: 1px solid @shop-cart-border;
+}
+
+
+.cart-info thead td {
+    color: @shop-cart-color-td;
+    font-weight: bold;
+    background-color: @shop-cart-background-color-td;
+    border-bottom: 1px solid @shop-cart-border;
+}
+
+.cart-info td {
+    padding: 7px;
+}
+
+.cart-info tbody .check {
+    text-align: left;
+}
+
+.cart-info tbody .name,
+.cart-info tbody .image,
+.cart-info tbody .model,
+.cart-info tbody .quantity {
+    text-align: left;
+}
+
+
+.cart-info tbody .price,
+.cart-info tbody .total {
+    text-align: right;
+}
+
+.cart-info thead .name,
+.cart-info thead .model,
+.cart-info thead .quantity {
+    text-align: left;
+}
+
+.cart-info tbody .image img {
+    max-height: 44px;
+}
+
+.cart-info thead .price, .cart-info thead .total {
+    text-align: right;
+}
+
+.cart-info tfoot {
+    border-bottom: 1px solid #ddd;
+
+    .total {
+        color: #4D4D4D;
+        font-weight: bold;
+        text-align: right;
+    }
+
+    .price-total {
+        text-align: right;
+        font-weight: 700;
+        font-size: 14px;
+    }
+}
+
+@media only screen and (max-width: 749px) {
+    table.history-list thead, table.order-info thead, .wishlist-info thead, table.pav-shop-cart thead {
+        display: none;
+    }
+
+    table.pav-shop-cart tfoot .total {
+        display: none !important;
+    }
+
+    .cart-info tbody .image {
+        text-align: center !important;
+    }
+}
+
+@media only screen and (max-width: 749px) {
+    .wishlist-info tr td, table.order-info tr td, table.history-list tr td, table.pav-shop-cart tr td {
+        text-align: right;
+        display: block;
+        min-height: 20px;
+        border-left: none;
+        background: none;
+    }
+}
+
+@media only screen and (max-width: 749px) {
+    .wishlist-info td, .wishlist-info th, table.history-list td, table.history-list th, table.order-info td, table.order-info th, table.compare-info td, table.compare-info th, table.pav-checkout-product td, table.pav-checkout-product th, table.pav-shop-cart td, table.pav-shop-cart th {
+        border-right: 0 none;
+        display: block !important;
+        float: left !important;
+        text-align: left !important;
+        width: 100% !important;
+    }
+}
+
+
+@media only screen and (max-width: 749px) {
+    .wishlist-info tr td:before, table.history-list tr td:before, table.order-info tr td:before, table.pav-shop-cart tr td:before {
+        content: attr(data-label);
+        float: left;
+        font-weight: bold;
+        text-align: left;
+        white-space: nowrap;
+        width: 50%;
+    }
+}
+
+.bt-carts .bt-cart {
+    margin: 0;
+    display: block;
+    float: left;
+    margin-right: 10px;
+    width: 80px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    border: none;
+}
+
+.bt-carts .bt-cart:hover {
+    color: white;
+}

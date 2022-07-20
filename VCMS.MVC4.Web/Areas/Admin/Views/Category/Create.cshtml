@@ -1,0 +1,184 @@
+﻿@using VCMS.MVC4.Web
+@using VCMS.MVC4.Data
+@model VCMS.MVC4.Data.Category
+@{
+    DataContext db = new DataContext();
+    var articleType = (ArticleType)ViewBag.ArticleType;
+    ViewBag.Title = "Thêm Nhóm " + articleType.Name;
+    ViewBag.Breadcrumb = new BreadcrumbModel()
+    {
+        Items = new List<BreadcrumbItem>()
+        {
+            new BreadcrumbItem(){Url = Url.Action("Index","Home"), Text="Home", IsFirst=true},
+            new BreadcrumbItem(){Url = Url.Action("List","Category",new{id=articleType.Id}), Text="Nhóm " + articleType.Name},
+            new BreadcrumbItem(){Url = null, Text = "Thêm mới", IsLast = true},
+        }
+    };
+    var discounts = db.Discounts.ToList();
+    var currencies = db.Currencies.ToList();
+}
+
+<div class="form">
+    @using (Html.BeginForm("Create", "Category", new { id = articleType.Id }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div>
+            <label>Nhóm cha</label>
+            @Html.Partial("_OptionList", (List<Category>)ViewBag.Categories)
+        </div>
+        <div id="tabs" class="margin-top-20">
+            @*@if (SiteConfig.Languages.Count > 1)
+                {
+                    <ul class="nav nav-tabs" role="tablist" id="myTab">
+                        @foreach (var l in SiteConfig.Languages)
+                        {
+                            <li><a href="#tabs-@l.Id" role="tab" data-toggle="tab">@l.DisplayName</a></li>
+                        }
+                    </ul>
+                }*@
+            <ul class="nav nav-tabs" role="tablist" id="myTab">
+                @foreach (var l in SiteConfig.Languages)
+                {
+                    <li><a href="#tabs-@l.Id" role="tab" data-toggle="tab">@l.DisplayName</a></li>
+                }
+            </ul>
+
+            <div class="tab-content">
+                @Html.EditorFor(model => model.CategoryDetail)
+            </div>
+            <script>
+                $(".nav-tabs li:first").addClass("active");
+                $(".tab-content .tab-pane:first").addClass("active");
+            </script>
+
+        </div>
+
+        @*<div class="editor-label">
+                @Html.Label("Link ngoài")
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.Font)
+            </div>*@
+
+
+        if (articleType.IsNewCate || articleType.IsHotCate || articleType.IsMostViewCate)
+        {
+            <div class="editor-label">
+                @Html.Label("thuộc tính")
+            </div>
+            <div class="editor-field">
+                <ul>
+                    @if (articleType.IsNewCate)
+                    {
+                        <li><label class="checkbox">@Html.CheckBoxFor(model => model.IsNew)<i></i> @((articleType.StrIsNewCate != null && articleType.StrIsNewCate != "") ? articleType.StrIsNewCate : "Mới")</label></li>
+                    }
+                    @if (articleType.IsHotCate)
+                    {
+                        <li><label class="checkbox">@Html.CheckBoxFor(model => model.IsHot)<i></i> @((articleType.StrIsHotCate != null && articleType.StrIsHotCate != "") ? articleType.StrIsHotCate : "Nổi bật")</label></li>
+                    }
+                    @if (articleType.IsMostViewCate)
+                    {
+                        <li><label class="checkbox">@Html.CheckBoxFor(model => model.IsMostView)<i></i> @((articleType.StrIsMostViewCate != null && articleType.StrIsMostViewCate != "") ? articleType.StrIsMostViewCate : "Xem nhiều")</label></li>
+                    }
+                </ul>
+            </div>
+        }
+        if (articleType.HasPrice && SiteConfig.SiteInfo.HasDiscount)
+        {
+            <div class="editor-label">
+                <label>Sử dụng tỷ lệ phần trăm</label>
+                <div class="editor-field">
+                    @Html.CheckBoxFor(model => model.UsePercent, new { @class = "use-percentage", onchange = "usePercentage()" })
+                </div>
+            </div>
+            <div class="dis-percentage" style="display:none">
+                <div class="editor-label">
+                    <label>Phần trăm giảm</label>
+                </div>
+                <div class="editor-field w-300">
+                    @Html.TextBoxFor(model => model.DiscountPercent, new { @size = "3", @type = "number", @min = "1" })
+                    @Html.ValidationMessageFor(model => model.DiscountPercent)
+                </div>
+            </div>
+            <div class="dis-amount">
+                <div class="editor-label">
+                    <label>Số tiền giảm</label>
+                </div>
+                <div class="editor-field  pri-and-curr  w-300">
+                    @Html.TextBox("DiscountPrice", null, new { @class = "price" })
+                    @*@Html.TextBoxFor(model => model.DiscountPrice, new { @class = "price" })*@
+                    @Html.DropDownList("Currency", new SelectList(currencies, "Id", "CurrencySymbol", currencies.FirstOrDefault(c => c.IsDefault).Id), new { @class = "currency" })
+                </div>
+            </div>
+            if (discounts.Count > 0)
+            {
+                <div class="editor-label">
+                    @Html.Label("Giảm giá")
+                </div>
+                <div class="editor-field">
+                    @Html.Partial("~/Areas/Admin/Views/Discount/_SearchListForCate.cshtml", discounts)
+                </div>
+            }
+        }
+        <div class="file">
+            <label>Mã màu</label>
+            @Html.TextBoxFor(model => model.Font)
+        </div>
+        <div class="file">
+            <label>Image</label>
+            <input type="file" name="ImageUrl" /><i data-label="Chọn file"></i>
+        </div>
+        <div class="toolbar">
+            <span class="button">
+                <button type="submit" class="btn save"><i class="fa fa-save"></i> Lưu</button>
+            </span>
+            <span class="btn back">
+                <a href="@Url.Action("List", "Category", new { id = articleType.Id })">
+                    <i class="fa fa-mail-reply"></i> <span>Trở về</span>
+                </a>
+            </span>
+        </div>
+    }
+</div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryui")
+    @*@Scripts.Render("~/bundles/ckeditor")*@
+    @*@Scripts.Render("~/bundles/editor")*@
+    <script>
+        function usePercentage() {
+            if ($('.use-percentage').is(":checked")) {
+                $(".dis-amount").hide();
+                $(".dis-percentage").show();
+            }
+            else {
+                $(".dis-amount").show();
+                $(".dis-percentage").hide();
+            }
+        }
+        $(function () {
+            $("input[data-auto-copy=true]").autoCopy();
+            $(".url-source").each(function () {
+                $(this).latinize({ destination: $(".url-dest", $(this).parent().parent()) });
+            });
+            $("#tabs").validtabs();
+            $(".keyword").keyword();
+        })
+
+        function RemoveRougeChar(e) {
+            if (e.substring(0, 1) == ",") {
+                return e.substring(1, e.length)
+            } return e
+        }
+        $(".price").keyup(function (e) {
+            if (e.which >= 37 && e.which <= 40) {
+                e.preventDefault()
+            }
+            var t = $(this);
+            var n = t.val().replace(/,/gi, "").split("").reverse().join("");
+            var r = RemoveRougeChar(n.replace(/(.{3})/g, "$1,").split("").reverse().join(""));
+            t.val(r);
+        })
+
+    </script>
+}

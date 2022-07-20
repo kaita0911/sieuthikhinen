@@ -1,0 +1,111 @@
+﻿@model IEnumerable<VCMS.MVC4.Data.Article>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.DateCreated)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DateUpdated)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Status)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SortOrder)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Author.UserName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UserLastUpdated)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ImageUrl)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Website.DefaultDomain)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ArticleName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LanguageId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ShortDesc)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SEOKeywords)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SEODescription)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.DateCreated)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DateUpdated)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Status)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SortOrder)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Author.UserName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.UserLastUpdated)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ImageUrl)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Website.DefaultDomain)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ArticleName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LanguageId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ShortDesc)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SEOKeywords)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SEODescription)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
+            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+        </td>
+    </tr>
+}
+
+</table>

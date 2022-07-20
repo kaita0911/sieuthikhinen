@@ -1,0 +1,11 @@
+﻿.checkbox{padding-left:0!important;}
+.checkbox input {
+    position:static!important;
+    margin-left:0!important;
+    margin-right:10px!important;
+    padding:4px 0;
+}
+.checkbox input + i{display:none!important;}
+
+.list .header DIV{padding:0!important;margin-right:10px;}
+.file INPUT[type=file]{text-indent:inherit}

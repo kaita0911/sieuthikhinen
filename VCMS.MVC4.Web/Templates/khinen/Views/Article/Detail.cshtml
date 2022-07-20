@@ -1,0 +1,87 @@
+﻿@model VCMS.MVC4.Data.Article
+@using System.Data.Entity;
+@{
+    //if(Model.ArticleTypeId == 2)
+    //{
+    //    Layout = "~/Templates/Thepkimhang/Views/Shared/_Layout2Column.cshtml";
+    //}
+    ViewBag.Title = Model.ArticleName;
+    ViewBag.Keywords = Model.SEOKeywords;
+    ViewBag.Description = Model.SEODescription;
+    ViewBag.DateCreate = Model.DateCreated;
+    ViewBag.DateUpdate = Model.DateUpdated;
+
+    var articleType = Model.ArticleType;
+    articleType.LanguageId = SiteConfig.LanguageId;
+    if (Model.ImageUrl != null)
+    {
+        ViewBag.Image = "//" + Request.Url.Host.ToString().ToLower() + Model.ImageUrl.ToLower() + "?width=600&height=315&mode=pad";
+    }
+    ViewBag.Short = Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(VNS.Web.Helpers.HTMLHelper.GetInnerText(!string.IsNullOrWhiteSpace(Model.ShortDescription) ? Model.ShortDescription : Model.Description), 50));
+    var otherCount = 6;
+    var breadcrumb = new BreadcrumbModel
+    {
+        Items = new List<BreadcrumbItem>{
+        new BreadcrumbItem{Text = articleType.Name, Url = Url.Action("Index", "ArticleType", new{ code = articleType.UrlFriendly }) },
+        }
+    };
+    if (Model.CurrentCategory != null)
+    {
+		var cat = Model.Categories.FirstOrDefault(c => c.ArticleTypeId == 2);
+		if (cat !=null)
+		{
+			foreach (var item in Category.BuildTreeReverse(cat.Id))
+			{
+				breadcrumb.Items.Add(new BreadcrumbItem { Text = item.CategoryName, Url = Url.Action("Detail", "Category", new { id = item.Id, code = Model.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.UrlFriendly) }) });
+			}
+		}
+    }
+    breadcrumb.Items.Add(new BreadcrumbItem { Text = Model.ArticleName, IsLast = true });
+    ViewBag.Breadcrumb = breadcrumb;
+    //if (Model.CurrentCategory != null && Model.Categories.Count>0)
+    //{
+    //    var cat = Model.Categories.FirstOrDefault(c => c.ArticleTypeId == 2);
+    //    if(cat !=null)
+    //    {
+    //        ViewBag.CategoryId = cat.Id;
+    //        if(cat.Parent !=null)
+    //        {
+    //            var pname = cat.Parent.CategoryDetail[SiteConfig.LanguageId].CategoryName;
+    //            breadcrumb.Items.Add(new BreadcrumbItem { Text = pname, Url = Url.Action("Detail", "Category", new { id = item.Id, code = Model.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.UrlFriendly) }) });
+
+    //        }
+    //        var name= cat.CategoryDetail[SiteConfig.LanguageId].CategoryName;
+    //        breadcrumb.Items.Add(new BreadcrumbItem { Text = name, Url = Url.Action("Detail", "Category", new { id = item.Id, code = Model.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.UrlFriendly) }) });
+
+    //    }
+    //    foreach (var item in Category.BuildTreeReverse(Model.CurrentCategory.Id))
+    //    {
+    //        breadcrumb.Items.Add(new BreadcrumbItem { Text = item.CategoryName, Url = Url.Action("Detail", "Category", new { id = item.Id, code = Model.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.UrlFriendly) }) });
+    //    }
+    //}
+    //breadcrumb.Items.Add(new BreadcrumbItem { Text = Model.ArticleName, IsLast = true });
+    //ViewBag.Breadcrumb = breadcrumb;
+    string viewName = null;
+    if (articleType != null)
+    {
+        if (ViewEngines.Engines.FindView(ViewContext.Controller.ControllerContext, articleType.Code + "/Detail", null).View != null)
+        {
+            viewName = articleType.Code + "/Detail";
+            if (Model.FullWidth && ViewEngines.Engines.FindView(ViewContext.Controller.ControllerContext, articleType.Code + "/DetailFullWidth", null).View != null)
+            {
+                Layout = "~/Templates/"+ SiteConfig.SiteCode +"/Views/Shared/_LayoutFull.cshtml";
+                viewName = articleType.Code + "/DetailFullWidth";
+            }
+        }
+    }
+
+	if (viewName != null)
+	{
+		@Html.Partial(viewName, Model)
+	}
+	else
+	{
+	   @Html.Partial("CommonDetail",Model)
+	}
+
+}

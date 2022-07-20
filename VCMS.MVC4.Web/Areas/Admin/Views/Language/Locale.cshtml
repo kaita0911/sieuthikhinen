@@ -1,0 +1,105 @@
+﻿@model ICollection<Locale>
+@{
+
+    ViewBag.Title = "Danh sách chuỗi";
+    ViewBag.Breadcrumb = new BreadcrumbModel()
+    {
+        Items = new List<BreadcrumbItem>()
+        {
+            new BreadcrumbItem(){Url = Url.Action("Index","Home"), Text="Home", IsFirst=true},
+            new BreadcrumbItem(){Url = Url.Action("Index","Locale"), Text="Danh sách chuỗi", IsLast = true},
+
+        }
+    };
+    int langid = ViewBag.Language;
+}
+@Styles.Render("~/Content/themes/base/css")
+<div class="toolbar clear-fix">
+    <span class="button"><a href="@Url.Action("Index", "Locale")" class="icon add">Locale</a></span>
+    <span class="button"><a href="javascript:void(0)" class="icon delete" id="delete">Xóa</a></span>
+    <span class="button">@Html.ActionLink("Trở về", "Index", null, new { @class = "icon undo" })</span>
+
+    <div class="float-right">
+
+    </div>
+</div>
+<table class="list">
+    <tr class="header">
+        <th class="check">
+            <input type="checkbox" id="check-all" />
+        </th>
+        <th class="codes">Mã</th>
+        <th class="titles-1">Giá trị mặc định</th>
+        <th class="titles">Value</th>
+        <th class="action">Thao tác</th>
+    </tr>
+    <tbody class="items">
+        @foreach (var item in Model)
+        {
+            <tr class="item">
+                <td class="check">
+                    <input type="checkbox" value="@item.Id" />
+                </td>
+                <td class="codes">
+                    @item.LocaleKey
+                </td>
+                <td class="titles-1" title="@Html.Raw(item.DefaultValue)">
+                    @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.DefaultValue, 10))
+                </td>
+                @if (item.LocaleDetail.FirstOrDefault(a => a.LocaleId == item.Id && a.LanguageId == langid) != null)
+                {
+                    <td class="titles-1" title="@Html.Raw(item.LocaleDetail.FirstOrDefault(a => a.LocaleId == item.Id && a.LanguageId == langid).Value)">
+                        @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.LocaleDetail.FirstOrDefault(a => a.LocaleId == item.Id && a.LanguageId == langid).Value, 10))
+                    </td>
+                }
+                else
+                {
+                    <td class="titles-1" title=""></td>
+                }
+
+                <td class="action">
+                    <a href="javascript:void(0)" data-language="@langid" name="@item.Id" class="edit-link" title="Sửa"></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div id="locale" style="display: none">
+    @*@{Html.RenderAction("Edit", "Language");}*@
+</div>
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+        $(function () {
+            $("#check-all").checkAll(".item .check input[type='checkbox']");
+        });
+        $("#delete").sdelete({
+            url: '@Url.Action("DeleteLocale")',
+            selector: ".item .check input[type='checkbox']",
+        });
+
+        $(".edit-link").click(function (event) {
+            event.preventDefault();
+            $.ajax({
+                url: "@Url.Action("EditLocale")",
+                data: "id=" + $(this).attr("name") + "&language=" + $(this).attr("data-language"),
+                type: "get",
+                success: function (data) {
+                    $("#locale").html(data);
+                    $("#locale").dialog({
+                        height: 400,
+                        width: 650,
+                        modal: true,
+                        title: "Edit"
+                    });
+                }
+            });
+        });
+        function Success(data) {
+            $(".form form")[0].reset();
+            $("#locale").dialog("close");
+            location.reload();
+        }
+    </script>
+}

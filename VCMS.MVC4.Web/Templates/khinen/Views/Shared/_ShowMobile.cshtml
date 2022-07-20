@@ -1,0 +1,60 @@
+﻿<div id="show-mobile" class="visible-sm visible-xs">
+    @*<span class="btn btn-sidebar pull-left hidden">
+            <i class="fa fa-align-left"></i>
+            <span class="overlay"></span>
+        </span>*@
+    <div class="show-mobile pull-right">
+        <div class="box-mobile pull-right">
+            <div class="icon">
+                <i class="fa fa-shopping-cart"></i>
+            </div>
+            <div class="inner">
+                <div class="search mobile">
+                    @Html.Partial("_ShopCart")
+                </div>
+            </div>
+        </div>
+        <div class="box-mobile pull-right">
+            <div class="icon">
+                <i class="fa fa-search"></i>
+            </div>
+            <div class="inner">
+                <div class="search mobile">
+                    @Html.Partial("_SearchBox")
+                </div>
+            </div>
+        </div>
+        @*<div class="box-mobile language-mobile pull-right">
+                <div class="icon">
+                    <i class="fa fa-language"></i>
+                </div>
+                <div class="inner">
+                    <div class="language">
+                        @Html.Partial("_boxLanguage")
+                    </div>
+                </div>
+            </div>*@
+        <div class="box-mobile email pull-right">
+            <div class="icon">
+                <i class="fa fa-envelope fs18"></i>
+            </div>
+            <div class="inner">
+                <div class="e-mail">
+                    <label>Email:</label>
+                    <span>@Html.Email(SiteConfig.SiteInfo.Email)</span>
+                </div>
+            </div>
+        </div>
+        <div class="box-mobile hotline pull-right">
+            <div class="icon">
+                <i class="fa fa-phone fs18"></i>
+            </div>
+            <div class="inner">
+                <div class="hot-line">
+                    <label>Hotline:</label>
+                    <span>@Html.Phone(SiteConfig.SiteInfo.Hotline)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

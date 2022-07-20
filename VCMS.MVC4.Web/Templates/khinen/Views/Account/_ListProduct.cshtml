@@ -1,0 +1,108 @@
+﻿@model ArticleResult
+@{
+    var db = new DataContext();
+    if (Model.List.Count > 0)
+    {
+        var category = ViewBag.Category as Category;
+        var type = ViewBag.Type != null ? ViewBag.Type as ArticleType : ArticleType.GetById(Model.List.FirstOrDefault().ArticleType.Id, SiteConfig.SiteId, SiteConfig.LanguageId);
+        var parentCategory = ViewBag.ParentCategory as Category;
+        var active = "active";
+        var flag = ViewContext.RouteData.Values["attr"] != null ? ViewContext.RouteData.Values["attr"].ToString().ToUpper() : "all";
+        var sortOrder = ArticleSortOrder.SORT_ORDER.ToString();
+        var sortdirection = VCMS.MVC4.Data.SortDirection.DESCENDING.ToString();
+
+        bool isMember = false;
+        if (Request.IsAuthenticated && Roles.IsUserInRole("Users"))
+        {
+            isMember = true;
+        }
+        if (Request["flag"] != null)
+        {
+            flag = Request["flag"].ToString();
+        }
+        if (Request["sortorder"] != null)
+        {
+            sortOrder = Request["sortorder"].ToString();
+        }
+        if (Request["sortdirection"] != null)
+        {
+            sortdirection = Request["sortdirection"].ToString();
+        }
+        <h1 class="title hidden">
+            @(ViewBag.Title != null ? ViewBag.Title : type.Name)
+        </h1>
+        @Html.Partial("_Filter")
+        <div class="row">
+            @foreach (var item in Model.List)
+            {
+                string c_name = "";
+                var temp = item.Categories.Where(c => c.CategoryTypeId == 5).FirstOrDefault();
+                if (temp != null)
+                {
+                    c_name = temp.CategoryName;
+                }
+                var cartItem = SiteConfig.ShoppingCart.Items.FirstOrDefault(a => a.ArticleId == item.Id);
+                var unit = item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("UNIT", StringComparison.OrdinalIgnoreCase) && a.LanguageId == SiteConfig.LanguageId);
+                <div class="col-md-3">
+                    <article class="box-block box-product" data-toggle="tooltip" data-placement="top" title="@item.ArticleName">
+                        <figure>
+                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName" target="_blank">
+                                @if (item.ImageUrl != null)
+                                {
+                                    @Html.Image(item.ImageUrl, new ImageOptions { Width = 210, Height = 250, Mode = ImageMode.pad, Lazy = false }, new { @class = "width-fulll", alt = item.ArticleName })
+                                }
+                                else
+                                {
+                                    @Html.Image(SiteConfig.Image("no-images.jpg"), new ImageOptions { Width = 210, Height = 250 }, new { @class = "width-fulll", alt = item.ArticleName })
+                                }
+                            </a>
+                        </figure>
+                        <div class="meta">
+                            <span class="box-label @(item.DiscountPercent <= 0 ? "no-background" : "")">Giảm @item.DiscountPercent%</span>
+                            <div class="info">
+                                <h3>
+                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName" target="_blank">
+                                        @item.ArticleName
+                                    </a>
+                                </h3>
+                                <div class="short-desc">
+                                    @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, 35))
+                                </div>
+                            </div>
+                            <div class="price-all">
+                                @if (item.DiscountPrice > 0)
+                                {
+                                    <span class="price">@Html.DiscountPrice(item.ItemPrice)</span>
+                                    <span class="price-old">@Html.Price(item.ItemPrice)</span>
+                                }
+                                else
+                                {
+                                    <span class="price">@Html.Price(item.ItemPrice)</span>
+                                }
+                                @if (unit != null)
+                                {
+                                    if (!string.IsNullOrEmpty(unit.Value))
+                                    {
+                                        <span>/ @unit.Value</span>
+                                    }
+                                }
+                            </div>
+                            <div class="rating">
+                                <img alt="1969s" src="/Templates/@SiteConfig.SiteCode/Content/Images/rating.png">
+                            </div>
+                            <div class="c-name">
+                                <span>@c_name</span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            }
+        </div>
+        @Html.Pager(new PagerOptions { VisibleItemCount = 5, ItemCount = Model.TotalItemCount, PageSize = Model.PageSize }, null)
+    }
+    else
+    {
+        <span>@Html.Locale("article_null")</span>
+    }
+}
+

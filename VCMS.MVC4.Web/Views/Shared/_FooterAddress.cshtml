@@ -1,0 +1,29 @@
+﻿@using (DataContext db = new DataContext())
+{
+    var office = db.Articles.Include("ArticleDetail").Include("PropertyValues.Property.PropertyDetail")
+        .OrderBy(a => a.SortOrder).FirstOrDefault(a => a.ArticleType.Code == "BRANCH");
+   <div class="footer-address"> 
+    @*@if (office != null)
+    {
+        var address = office.PropertyValues.FirstOrDefault(pv => pv.Property.Code.Equals("ADDRESS", StringComparison.OrdinalIgnoreCase) && pv.LanguageId == SiteConfig.LanguageId);
+        var phone = office.PropertyValues.FirstOrDefault(pv => pv.Property.Code.Equals("PHONE", StringComparison.OrdinalIgnoreCase));
+        var cell = office.PropertyValues.FirstOrDefault(pv => pv.Property.Code == "CELLPHONE");
+        var email = office.PropertyValues.FirstOrDefault(pv => pv.Property.Code.Equals("EMAIL", StringComparison.OrdinalIgnoreCase));
+        var website = office.PropertyValues.FirstOrDefault(pv => pv.Property.Code.Equals("WEBSITE", StringComparison.OrdinalIgnoreCase));
+        var fax = office.PropertyValues.FirstOrDefault(pv => pv.Property.Code.Equals("FAX", StringComparison.OrdinalIgnoreCase));
+    
+        <div class="company">@office.ArticleName</div>
+        <div class="address">@address.Property.PropertyDetail[SiteConfig.LanguageId].Name : @address.Value</div>
+        <div>
+            <span>@cell.Property.PropertyDetail[SiteConfig.LanguageId].Name : @cell.Value</span>
+            - <span>@phone.Property.PropertyDetail[SiteConfig.LanguageId].Name : @phone.Value</span>
+            - <span>@fax.Property.PropertyDetail[SiteConfig.LanguageId].Name : @fax.Value</span>
+        </div>
+        <div>
+            <span>@email.Property.PropertyDetail[SiteConfig.LanguageId].Name : @email.Value</span>
+            - <span>@website.Property.PropertyDetail[SiteConfig.LanguageId].Name : <a href="@website.Value">@website.Value</a></span>
+        </div>
+    
+    }*@
+       </div> 
+}

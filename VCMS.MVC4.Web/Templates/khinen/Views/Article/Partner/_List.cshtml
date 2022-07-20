@@ -1,0 +1,48 @@
+﻿
+
+
+@model ArticleResult
+@if (Model.List.Count > 0)
+{
+    var type = ViewBag.Type != null ? ViewBag.Type as ArticleType : Model.List.FirstOrDefault().ArticleType;
+    if (type.DescriptionCategory)
+    {
+        <div id="description-type">
+            @Html.Raw(type.ArticleTypeDetail[SiteConfig.LanguageId].Description)
+        </div>
+    }
+    <div class="article article-list library-list">
+        <h1 class="title">
+            <a>@(ViewBag.Title != null ? ViewBag.Title : type.Name)</a>
+        </h1>
+        <div class="content">
+            <div class="row">
+                @foreach (var item in Model.List)
+                {
+                    var link = item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("URL", StringComparison.OrdinalIgnoreCase));
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                        <div class="item">
+                            @if (!string.IsNullOrEmpty(item.ImageUrl))
+                            {
+                                <figure>
+                                    <a href="@link.Value" target="_blank" title="@item.ArticleName">
+                                        @Html.Image(item.ImageUrl, new ImageOptions { Width = 337, Height = 200, Mode = ImageMode.pad }, new { alt = item.ArticleName })
+                                    </a>
+                                </figure>
+                            }
+                            <div class="meta">
+                                <h3><a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">@item.ArticleName</a></h3>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+    </div>
+    @Html.Pager(new PagerOptions { VisibleItemCount = 5, ItemCount = Model.TotalItemCount, PageSize = Model.PageSize, FirstText = Html.Locale("text_first").ToHtmlString(), LastText = Html.Locale("text_last").ToHtmlString() }, null)
+}
+else
+{
+    <span>@Html.Locale("article_null")</span>
+}

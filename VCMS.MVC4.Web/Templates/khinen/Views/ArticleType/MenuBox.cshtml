@@ -1,0 +1,28 @@
+﻿@model ArticleType
+@{
+    Layout = null;
+    if (Model != null)
+    {
+        Model.LanguageId = SiteConfig.LanguageId;
+        var level0 = Model.Categories.Where(c => c.Level == 0).OrderBy(c => c.SortOrder).ToList();
+
+
+        <div class="box">
+            <div class="box-header"><span>@Resources.VCMS.category</span></div>
+            <div id="nav">
+                <ul class="top-level">
+                    @foreach (var item in level0)
+                    {
+                        <li>
+                            @Html.ActionLink(item.CategoryName, "Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.CategoryName) }, null)
+                            @if (item.ChildrenCount > 0)
+                            {
+                                @Html.Partial("_Submenu", item)
+                            }
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+}

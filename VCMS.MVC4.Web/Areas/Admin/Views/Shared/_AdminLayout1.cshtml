@@ -1,0 +1,102 @@
+﻿@using VCMS.MVC4.Web.Areas.Admin.Models
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title - VCMS Administrator</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    @RenderSection("styles", required: false)
+    @Styles.Render("~/Content/admincss")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    
+    <!--[if lt IE 9]>
+    @Scripts.Render("~/bundles/Fixie")
+         <![endif]-->
+
+</head>
+<body class="menu-ontop">
+    <header id="header">
+        <div id="logo">
+            <p class="site-title">@Html.ActionLink("vcms administrator", "Index", "Home")</p>
+        </div>
+        <div id="login" class="pull-right">
+            @Html.Partial("_LoginPartial")
+        </div>
+    </header>
+    <aside id="left-panel">
+        @{Html.RenderPartial("_Menu");}
+    </aside>
+    <div id="main" role="main">
+        <div id="ribbon">
+            <div id="hide-menu" class="btn-header pull-left hidden-lg hidden-md">
+                <span> <a href="javascript:void(0);" data-action="toggleMenu" title="Collapse Menu"><i class="fa fa-cog"></i></a> </span>
+            </div>
+            @{Html.RenderPartial("_Breadcrumb");}
+        </div>
+        <div id="content">
+            @RenderBody()
+        </div>
+    </div>
+    <footer>
+        @*<div class="content-wrapper">
+            <div class="float-left">
+                <p>&copy; @DateTime.Now.Year - vcms administrator</p>
+            </div>
+        </div>*@
+        @Html.Partial("_Footer")
+    </footer>
+    <section id="sys-notification" style="display:none;">
+        <div class="alert alert-success"><i class="fa fa-exclamation-circle"></i> Post Thành công!.<button type="button" class="close" data-dismiss="alert" aria-label="Close">×</button></div>
+    </section>
+    <div class="modal fade" id="auopost-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    </div>
+    @*@Scripts.Render("~/bundles/ckeditor")*@
+    
+    @*@Scripts.Render("~/Scripts/admin.min.js")*@
+    @Scripts.Render("~/bundles/admin")
+    @Scripts.Render("~/bundles/dcaccordion")
+    @Scripts.Render("~/bundles/vcms")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/Scripts/ckeditor/ckeditor.js")
+    <script type="text/javascript">
+        CKEDITOR_BASEPATH = "@Url.Content("~/Scripts/ckeditor/")";
+    </script>
+
+    @RenderSection("scripts", required: false)
+    <script>
+        //$(window).load(function () {
+        //    var h = $("#left-panel").height() + 250;
+        //    if (h > $("#main").height()) {
+        //        $("#main").height(h);
+        //        $("#left-panel").height($("#main").height());
+        //    }
+        //});
+        //$(window).resize(function () {
+        //    $("#main,#left-panel").removeAttr("style");
+        //    if ($(window).width() < 767) {
+        //        var h = $("#left-panel").height() + 250;
+        //        if (h > $("#main").height()) {
+        //            $("#main").height(h);
+        //            $("#left-panel").height($("#main").height());
+        //        }
+        //    }
+        //    else {
+        //        var h = $("#left-panel").height();
+        //        if (h < $("#main").height()) {
+        //            $("#left-panel").height($("#main").height());
+        //        }
+        //        else {
+        //            $("#main").height(h);
+        //        }
+        //    }
+
+        //})
+        //$('.action a').tooltip()
+    </script>
+    <!--[if lt IE 9]>
+    @Scripts.Render("~/Scripts/Froala/froala_editor_ie8.min.js")
+         <![endif]-->
+</body>
+</html>

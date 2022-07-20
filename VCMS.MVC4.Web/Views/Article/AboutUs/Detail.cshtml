@@ -1,0 +1,21 @@
+﻿@model VCMS.MVC4.Data.Article
+
+
+<div class="news-detail" itemscope itemtype="http://schema.org/Article">
+    <h1 class="name" itemprop="name">@Model.ArticleName</h1>
+    <div class="date">
+        @Model.DateCreated
+    </div>
+    <div class="headline" itemprop="headline">
+        @Html.Raw(VNS.Web.Helpers.HTMLHelper.GetInnerText(Model.ShortDescription).Trim())
+    </div>
+    <div class="image">
+        
+            <img itemprop="image" src="@Url.Content("~/UserUpload/Article/")@Model.ImageUrl" alt="@Model.ArticleName" />
+        
+    </div>
+    <div class="description" itemprop="text">
+        @Html.Raw(Model.Description)
+    </div>
+    
+</div>

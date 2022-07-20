@@ -1,0 +1,53 @@
+﻿@model ArticleResult
+@if (Model.List.Count > 0)
+{
+    var type = ViewBag.Type != null ? ViewBag.Type as ArticleType : Model.List.FirstOrDefault().ArticleType;
+    if (type.DescriptionCategory)
+    {
+        <div id="description-type">
+            @Html.Raw(type.ArticleTypeDetail[SiteConfig.LanguageId].Description)
+        </div>
+    }
+    <h1 class="title">@(ViewBag.Title != null ? ViewBag.Title : type.Name)</h1>
+    <div class="article content-background article-list">
+        
+        @foreach (var item in Model.List)
+        {
+            <div class="item">
+                <div class="row">
+                    @*<div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                        @if (type.ShowImageInList)
+                        {
+                            <figure>
+                                <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                    @Html.Image(item.ImageUrl, new ImageOptions { Width = 337, Height = 250, Mode = ImageMode.pad }, new { alt = item.ArticleName, @class = "width-full" })
+                                </a>
+                            </figure>
+                        }
+                    </div>*@
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="meta">
+                            <h3><a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName"><i class="fa fa-check-circle"></i> @item.ArticleName</a></h3>
+                            @if (type.ShowDateTime)
+                            {
+                                <span class="date">@item.Day</span>
+                            }
+                            @if (type.ShowDescription)
+                            {
+                                <div class="description">
+                                    @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, 25))
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    @Html.Pager(new PagerOptions { VisibleItemCount = 5, ItemCount = Model.TotalItemCount, PageSize = Model.PageSize, FirstText = Html.Locale("text_first").ToHtmlString(), LastText = Html.Locale("text_last").ToHtmlString() }, null)
+}
+else
+{
+    <span>@Html.Locale("article_null")</span>
+
+}

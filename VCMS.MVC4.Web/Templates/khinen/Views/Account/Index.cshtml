@@ -1,0 +1,37 @@
+﻿@{
+    ViewBag.Title = Html.Locale("account_my_account").ToHtmlString();
+    ViewBag.Breadcrumb = new BreadcrumbModel { Items = new List<BreadcrumbItem> { new BreadcrumbItem { Text = Html.Locale("Tài khoản").ToHtmlString(), Url = null, IsLast = true } } };
+    var db = new DataContext();
+    var user = db.Users.Where(u => u.UserId == SiteConfig.CurrentUser.UserId).SingleOrDefault();
+}
+
+<h1 class="title hidden">@Html.Locale("account_my_account")</h1>
+<div class="row index-row">
+    @*<div class="col-sm-3 col-xs-12 account-index">
+            <span class="point">@user.Accumulated.ToString()</span>
+            <h2 class="heading account-heading point-heaing">Điểm tích lũy</h2>
+        </div>*@
+    <div class="col-sm-3 col-xs-12 account-index">
+        <h2 class="heading account-heading">@Html.Locale("account_my_account")</h2>
+        <a href="@Url.Action("Update", "Account")" title="@Html.Locale("account_update")"><i class="icon-user"></i>@Html.Locale("account_update").</a>
+        <a href="@Url.Action("ChangePassword", "Account")" title="@Html.Locale("account_update_password")"><i class="fa fa-keyboard-o"></i>@Html.Locale("account_update_password").</a>
+    </div>
+    @*<div class="col-sm-3 col-xs-12 account-index">
+        <h2 class="heading account-heading">@Html.Locale("account_my_booth")</h2>
+        <a href="@Url.Action("BoothInfo", "Account")" title="@Html.Locale("account_update")"><i class="fa fa-info-circle"></i>@Html.Locale("account_update").</a>
+        <a href="@Url.Action("ListProduct", "Account")" title="@Html.Locale("account_my_product")"><i class="fa fa-list-alt"></i>@Html.Locale("account_my_product").</a>
+    </div>
+    <div class="col-sm-3 col-xs-12 account-index">
+        <h2 class="heading account-heading">@Html.Locale("order_history")</h2>
+        <a href="@Url.Action("History","ShoppingCart")" title="@Html.Locale("order_history")"><i class="icon-truck"></i>@Html.Locale("order_history").</a>
+        <a href="@Url.Action("Index","ShoppingCart")" title="@Html.Locale("view_cart")"><i class="fa fa-shopping-cart"></i>@Html.Locale("view_cart").</a>
+    </div>*@
+    <div class="col-sm-3 col-xs-12 account-index">
+        <h2 class="heading account-heading">@Html.Locale("account_logout")</h2>
+        @using (Html.BeginForm("LogOff", "Account", new { returnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { id = "logoutForm" }))
+        {
+            @Html.AntiForgeryToken()
+            <a href="javascript:document.getElementById('logoutForm').submit()"><i class="fa fa-sign-out"></i> @Html.Locale("account_logout")</a>
+        }
+    </div>
+</div>

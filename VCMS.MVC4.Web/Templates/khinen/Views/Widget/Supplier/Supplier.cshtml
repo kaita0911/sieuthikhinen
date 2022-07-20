@@ -1,0 +1,44 @@
+﻿@model Widget
+@{
+    var article = Article.GetByType((int)Model.ArticleTypeId, SiteConfig.SiteId, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection, Model.Includes);
+    if (article.List.Count > 0)
+    {
+        string path = "";
+        <div class="box-supplier">
+            @*<h2 class="heading">
+                    <span class="color-1">Đối tác</span> <span class="color-2">khách hàng</span>
+                </h2>*@
+            <div class="content">
+                <div class="owl-carousel" data-plugin-options='{"items": 7, "singleItem": false, "autoPlay": true, "navigation": true, "pagination": false,"slideSpeed":400,"addClassActive":true,"itemsDesktop": [1199, 4],"itemsDesktopSmall": [991, 4],"itemsTablet": [768, 3],"itemsMobile": [479, 2]}' data-snap-ignore="true">
+
+                    @foreach (var item in article.List)
+                    {
+                        var link = "#";
+                        if (Model.IncludeProperty)
+                        {
+                            if (item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("URL", StringComparison.OrdinalIgnoreCase)) != null)
+                            {
+                                link = item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("URL", StringComparison.OrdinalIgnoreCase)).Value;
+                            }       
+                        }
+                        if(!string.IsNullOrEmpty(item.ImageUrl))
+                        {
+                            var str = item.ImageUrl.Split('/');
+                            if (str.Length <= 1)
+                            {
+                                path = "/UserUpload/Article/";
+                            }
+                            else
+                            {
+                                path = "";
+                            }
+                        }
+                        <a href="@link" target="_blank">
+                            @Html.Image(path + item.ImageUrl, new ImageOptions { Width = 128, Height = 80, Mode = ImageMode.pad }, new { alt = item.ArticleName, @class = "owl" })
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+}

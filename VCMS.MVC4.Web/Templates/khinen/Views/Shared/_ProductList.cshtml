@@ -1,0 +1,67 @@
+﻿@model ArticleResult
+@{
+    var type = ViewBag.Type as ArticleType;
+    foreach (var item in Model.List)
+    {
+        <article class="box-block box-product-list">
+            <figure>
+                <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName" class="">
+                    @Html.Image(item.ImageUrl, new ImageOptions { Width = 322, Height = 324, Watermark = SiteConfig.Watermark }, new { alt = item.ArticleName })
+                </a>
+                @if (type.ShowAttribute)
+                {
+                    if (item.IsNew)
+                    {
+                        <span class="box-label label-new hidden-xs">@Html.Locale("label_new")</span>
+                    }
+                    if (item.IsHot)
+                    {
+                        <span class="box-label @(item.IsNew ? "label-hot" : "label-new") hidden-xs">Hot</span>
+                    }
+                }
+            </figure>
+            <div class="meta">
+                <h3>
+                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">@item.ArticleName</a>
+                </h3>
+                @if (type.HasRating && type.ShowRating)
+                {
+                    <div class="rating">
+                        @Html.Image(SiteConfig.Image(string.Format("stars-{0}.png", item.Rating)), new ImageOptions { Width = 68, Height = 11 }, new { alt = item.ArticleName })
+                    </div>
+                }
+                <div class="price-all">
+                    @if (item.DiscountPrice > 0)
+                    {
+                        <span class="price">@Html.DiscountPrice(item.ItemPrice)</span>
+                        <span class="price-old">@Html.Price(item.ItemPrice)</span>
+                    }
+                    else
+                    {
+                        <span class="price">@Html.Price(item.ItemPrice)</span>
+                    }
+                </div>
+                <div class="description @(!type.ShowDescription?"visible-xs":"")">@Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, 20))</div>
+                @if (type.ShowActionLink)
+                {
+                    <div class="action">
+                        <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" class="view-detail" title="@Html.Locale("view_detail")"><i class="fa fa-ioxhost"></i> @Html.Locale("view_detail")</a>
+
+                        <a href="@Url.Action("QuickView", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" class="hidden-xs lightbox" data-plugin-options='{"type":"iframe"}'><i class="fa fa-eye"></i> Xem nhanh</a>
+
+                        @if (item.CheckCart)
+                        {
+                            <a href="#" class="cart addToCart" data-submit="@Url.Action("AddToCart", "ShoppingCart", new { id=item.Id})" data-id="@item.Id" data-load="@Url.Action("CartList","ShoppingCart")">@Html.Locale("cart_add")</a>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("Contact", "Home", new { id=item.Id})" class="">@Html.Locale("contact")</a>
+                        }
+                    </div>
+                }
+            </div>
+        </article>
+    }
+}
+
+

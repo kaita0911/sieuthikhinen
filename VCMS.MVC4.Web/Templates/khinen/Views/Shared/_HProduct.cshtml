@@ -1,0 +1,65 @@
+﻿@using (DataContext db = new DataContext())
+{
+    var type = db.ArticleTypes.FirstOrDefault(a => a.Code == "PRODUCT");
+    if (type != null)
+    {
+        var articleCount = Article.CountByType(type.Id, SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.NEW);
+        int pageSize = 3;
+        //int totalPage = (int)(Math.Floor((double)articleCount / pageSize)) + (articleCount % pageSize > 0 ? 1 : 0);
+        var product = Article.GetByType(type.Id, SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.HOT, 1, pageSize, ArticleSortOrder.ARTICLE_NAME, VCMS.MVC4.Data.SortDirection.ASCENDING);
+        if (articleCount > 0)
+        {
+            <div class="h-product">
+                <h2 class="heading">
+                    Sản phẩm mới
+                </h2>
+                <div class="content">
+                    <div id="pro_h_slider">
+                        @*<a class="h-prev" title="Trở về"></a>*@
+                        <div class="h-slider">
+                            @*@for (int i = 1; i <= totalPage; i++)
+                                {*@
+                            <div class="items">
+                                <div class="row">
+                                    @foreach (var item in product.List)
+                                        {
+                                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                            <div class="box-block item">
+                                                <figure>
+                                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="">
+                                                        @Html.Image(item.ImageUrl, new ImageOptions { Width = 172, Height = 172, Watermark = SiteConfig.Watermark, Mode = ImageMode.pad }, new { alt = item.ArticleName })
+                                                    </a>
+                                                </figure>
+                                                <div class="meta">
+                                                    <h3>
+                                                        <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.ArticleTypeDetail[SiteConfig.LanguageId].UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">@item.ArticleName</a>
+                                                    </h3>
+                                                    <div class="s-desc">
+                                                        @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, 20))
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        }
+                                </div>
+                            </div>
+                            @*}*@
+                        </div>
+                        @*<a class="h-next" title="Tiếp theo"></a>*@
+                    </div>
+                </div>
+            </div>
+        }
+    }
+}
+<script type="text/javascript">
+    //$("#pro_h_slider").ready(function () {
+    //$(".h-slider").cycle({
+    //    fx: 'fade',
+    //    timeout: 480000000,
+    //    prev: '#pro_h_slider .h-prev',
+    //    next: '#pro_h_slider .h-next'
+    //});
+    //})
+</script>
+

@@ -1,0 +1,119 @@
+﻿@model UpdateModel
+@{
+    ViewBag.Title = Html.Locale("account_update").ToHtmlString();
+    ViewBag.Breadcrumb = new BreadcrumbModel { Items = new List<BreadcrumbItem> { new BreadcrumbItem { Text = Html.Locale("account_update").ToHtmlString(), Url = null, IsLast = true } } };
+    //var category = (ICollection<Category>)ViewBag.Category;
+    //var lever0 = category.Where(a => a.Level == 0).ToList();
+    //var lever1 = category.Where(a => a.Level == 1).Where(a => a.ParentId == Model.City).ToList();
+}
+
+<h1 class="title">@Html.Locale("account_update")</h1>
+@using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "register-form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("returnUrl", new { returnUrl = ViewBag.ReturnUrl })
+    <div class="row">
+        <div class="col-sm-6 col-xs-12">
+            <fieldset class="account">
+                @*<legend class="title">
+                    @Html.Locale("account_customer_info")
+                </legend>*@
+                <div class="form-group required">
+                    <label>@Html.Locale("account_fullname"):</label>
+                    @Html.TextBoxFor(model => model.FullName, new { @class = "form-control", placeholder = Html.Locale("account_fullname").ToHtmlString() })
+                    @Html.ValidationMessageFor(model => model.FullName, Html.Locale("account_error_fullname").ToHtmlString())
+                </div>
+                <div class="form-group required">
+                    <label>Email:</label>
+                    @Html.TextBoxFor(model => model.Email, new { @class = (ViewBag.emailError != null && ViewBag.emailError == 1 ? "form-control input-validation-error" : "form-control"), placeholder = "Email", type = "email" })
+                    @Html.ValidationMessageFor(model => model.Email)
+                    <span class="field-validation-error @(ViewBag.emailError != null && ViewBag.emailError == 1 ? "" : "hidden")">@Html.Locale("account_email_is_exit")</span>
+                </div>
+                <div class="form-group required">
+                    <label>@Html.Locale("account_phone"):</label>
+                    @Html.TextBoxFor(model => model.Phone, new { @class = "form-control", placeholder = Html.Locale("account_phone").ToHtmlString() })
+                    @Html.ValidationMessageFor(model => model.Phone, Html.Locale("account_error_phone").ToHtmlString())
+                </div>
+            </fieldset>
+        </div>
+        @*<div class="col-sm-6 col-xs-12">
+            <fieldset class="account">
+                <legend class="title">
+                    @Html.Locale("account_address")
+                </legend>
+                <div class="form-group required">
+                    <label>@Html.Locale("account_address"):</label>
+                    @Html.TextBoxFor(model => model.Address, new { @class = "form-control", placeholder = Html.Locale("account_address").ToHtmlString() })
+                    @Html.ValidationMessageFor(model => model.Address, Html.Locale("account_error_address").ToHtmlString())
+                </div>
+                <div class="form-group">
+                    <label>@Html.Locale("account_company"):</label>
+                    @Html.TextBoxFor(model => model.Company, new { @class = "form-control", placeholder = Html.Locale("account_company").ToHtmlString() })
+                </div>
+                <div class="form-group">
+                    <label>Fax:</label>
+                    @Html.TextBoxFor(model => model.Fax, new { @class = "form-control", placeholder = "Fax" })
+                </div>
+                <div class="form-group">
+                    <label>@Html.Locale("account_postalcode"):</label>
+                    @Html.TextBoxFor(model => model.PostalCode, new { @class = "form-control", placeholder = Html.Locale("account_postalcode").ToHtmlString() })
+                </div>
+                @if (category.Count > 0)
+                {
+                    <div class="form-group required">
+                        <label>@Html.Locale("account_city"):</label>
+                        @Html.DropDownListFor(model => model.City, new SelectList(lever0, "ID", "CategoryName"), new { @class = "form-control" })
+                    </div>
+                    <div class="form-group required">
+                        <label>@Html.Locale("account_state"):</label>
+                        <div id="state-dropdown">
+                            @Html.DropDownListFor(model => model.State, new SelectList(lever1, "ID", "CategoryName"), new { @class = "form-control" })
+                        </div>
+                    </div>
+                }
+            </fieldset>
+            <fieldset class="account">
+                <legend class="title">@Html.Locale("account_captcha"):</legend>
+                <div class="form-group required">
+                    <label>@Html.Locale("account_captcha"):</label>
+                    <div class="clearfix"></div>
+                    @Html.TextBoxFor(model => model.CaptCha, new { @class = (ViewBag.captchaError != null && ViewBag.captchaError == 1 ? "form-control input-validation-error" : "form-control"), id = "CaptCha", placeholder = Html.Locale("account_captcha").ToHtmlString() })
+                    <img src="@Url.Action("ShowCaptchaImage", "Home")" alt="CaptCha" />
+                    @Html.ValidationMessageFor(model => model.CaptCha, Html.Locale("account_error_captcha").ToHtmlString())
+                    <span class="field-validation-error @(ViewBag.captchaError != null && ViewBag.captchaError == 1 ? "" : "hidden")">@Html.Locale("account_captcha_error")</span>
+                </div>
+            </fieldset>
+            <fieldset class="account">
+                <div class="form-group">
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.Newsletter)<i></i> @Html.Locale("account_newsletter")
+                    </label>
+                </div>
+            </fieldset>
+        </div>*@
+        <div class="col-xs-12">        
+            @*<a href="@Request.UrlReferrer" class="btn btn-continue btn-next"><i class="fa fa-angle-left"></i> @Html.Locale("acount_back")</a>*@
+            <button class="btn btn-continue btn-next" type="submit">@Html.Locale("Cập nhật") <i class="fa fa-angle-right"></i></button>
+        </div>
+    </div>
+
+}
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+}
+<script>
+    $("#State").val('@Model.State');
+     $("#City").on("change", function () {
+        var _this = $(this);
+        $.ajax({
+            url: '@Url.Action("SelectList","Category")',
+            data: { parentid: _this.val() },
+            dataType: 'html',
+            success: function (html) {
+                $("#state-dropdown").html(html);
+                $("#State").val('@Model.State');
+            }
+        });
+    });
+</script>

@@ -1,0 +1,70 @@
+﻿@model Widget
+@{
+    var cates = Category.GetByType((int)Model.ArticleTypeId, SiteConfig.LanguageId, Model.Number, CategoryFlags.ACTIVE, 0);
+    var cate_lst = Category.GetTree(cates).Where(a => a.Level == 0).ToList();
+    var i = 1;
+    <div class="cate-list">
+        <div class="container">
+            <div class="box-title">
+                <h2 class="heading">
+                    <span>@Model.Title</span>
+                </h2>
+                <p>
+                    Chúng tôi tự hào đã không ngừng cung cấp cho khách hàng những dịch vụ và giải pháp xây dựng tối ưu.
+                </p>
+            </div>
+            <div class="box-content">
+                @foreach (var item in cate_lst)
+                {
+                    <div class="item">
+                        @if (i <= 2)
+                        {
+                            <figure class="i-left">
+                                <a class="banner-cubic-7" href="@Url.Action("Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.CategoryName">
+                                    @Html.Image(item.ImageUrl, new ImageOptions { Width = 300, Height = 230, Watermark = SiteConfig.Watermark, Mode = ImageMode.crop, Lazy = false }, new { alt = item.CategoryName, @class = "owl" })
+                                    @*<img alt="@item.CategoryName" class="owl" src="/UserUpload/Category/@item.Font?width=270&amp;height=260&amp;mode=crop">*@
+                                </a>
+                            </figure>
+                            <div class="meta">
+                                <h3 class="name">
+                                    <a href="@Url.Action("Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.CategoryName">@item.CategoryName</a>
+                                </h3>
+                                <div class="s-desc">
+                                    @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.Description, 30))
+                                </div>
+                                <div class="view-more">
+                                    <a href="@Url.Action("Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.CategoryName">
+                                        Xem thêm
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="meta">
+                                <h3 class="name">
+                                    <a href="@Url.Action("Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.CategoryName">@item.CategoryName</a>
+                                </h3>
+                                <div class="s-desc">
+                                    @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.Description, 30))
+                                </div>
+                                <div class="view-more">
+                                    <a href="@Url.Action("Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.CategoryName">
+                                        Xem thêm
+                                    </a>
+                                </div>
+                            </div>
+                            <figure class="i-right">
+                                <a class="banner-cubic-7" href="@Url.Action("Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.CategoryName">
+                                    @Html.Image(item.ImageUrl, new ImageOptions { Width = 300, Height = 230, Watermark = SiteConfig.Watermark, Mode = ImageMode.crop, Lazy = false }, new { alt = item.CategoryName, @class = "owl" })
+                                    @*<img alt="@item.CategoryName" class="owl" src="/UserUpload/Category/@item.Font?width=270&amp;height=260&amp;mode=crop">*@
+                                </a>
+                            </figure>
+                        }
+                    </div>
+                    i++;
+                }
+            </div>
+        </div>
+    </div>
+}

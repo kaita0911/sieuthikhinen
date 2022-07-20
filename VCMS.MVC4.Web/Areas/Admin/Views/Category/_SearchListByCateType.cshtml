@@ -1,0 +1,26 @@
+﻿@using System.Data.Entity;
+@model ICollection<VCMS.MVC4.Data.Category>
+@{
+    var art = (Article)ViewBag.ArticleCateType;
+}
+<div class="list search-list">
+    <div class="header">
+       
+    </div>
+    <div class="items">
+        @foreach (var item in Model)
+        {
+            <div class="item" data-level="@item.Level">
+                <label class="checkbox list-category">
+                    <input name="cate_bycatetype" type="radio" value="@item.Id" class="check" @(art != null ? (art.Categories.Contains(item) ? "checked" : "") : "")/><i></i>
+                    <span class="name">
+                        <span data-level="@item.Level" class="level level_@item.Level">
+                            <a href="javascript:void(0)" class="@(item.ChildrenCount > 0 ? "collapse" : "hidden")"></a>
+                            <span>@item.CategoryName</span>
+                        </span>
+                    </span>
+                </label>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,208 @@
+﻿@model  VCMS.MVC4.Data.Website
+@{
+    ViewBag.Title = "Cấu hình website";
+    var languages = (ICollection<Language>)ViewBag.Languages;
+    ViewBag.Breadcrumb = new BreadcrumbModel()
+    {
+        Items = new List<BreadcrumbItem>()
+        {
+            new BreadcrumbItem(){Url = Url.Action("Index","Home"), Text="Home", IsFirst=true},
+            new BreadcrumbItem(){Url = Url.Action("Idex","Website"), Text="Cấu hình website", IsLast = true},
+        }
+    };
+    IEnumerable<SelectListItem> watermark =
+        from WatermarkPostion w in Enum.GetValues(typeof(WatermarkPostion))
+        select new SelectListItem
+        {
+            Text = string.Format("watermark_{0}", w.ToString()),
+            Value = w.ToString()
+        };
+    var template = new SelectList(SiteConfig.Templates);
+}
+<div class="form">
+
+    @using (Html.BeginForm(null, null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="toolbar">
+            <span class="button">
+                <button type="submit" class="btn save"><i class="fa fa-save"></i> Save</button>
+            </span>
+        </div>
+        <div class="clear-fix">
+            <div class="left width-70">
+                <div id="tabs">
+                    <ul class="nav nav-tabs" role="tablist" id="myTab">
+                        @foreach (var l in SiteConfig.Languages)
+                        {
+                            <li><a href="#tabs-@l.Id" role="tab" data-toggle="tab">@l.DisplayName</a></li>
+                        }
+                    </ul>
+                    <div class="tab-content">
+                        @Html.EditorFor(model => model.WebsiteDetail)
+                    </div>
+                    <script>
+                        $(".nav-tabs li:first").addClass("active");
+                        $(".tab-content .tab-pane:first").addClass("active");
+                    </script>
+                </div>
+            </div>
+
+            <div class="right width-29">
+                @if (Roles.IsUserInRole("Super Administrators"))
+                {
+                    <div class="editor-label">
+                        @Html.Label("Số lượng ngôn ngữ")
+                    </div>
+                    <div class="checkboxs">
+                        @foreach (var l in languages)
+                        {
+                            <label class="checkbox">@Html.CheckBox("languages", Model.Languages.Contains(l), new { value = l.Id })<i></i> @l.DisplayName</label>
+                        }
+                    </div>
+                    <div class="editor-label">
+                        @Html.Label("Ngôn ngữ mặc định")
+                    </div>
+                    <div class="radios">
+                        @foreach (var l in languages)
+                        {
+                            <label class="radio">
+                                <input type="radio" name="DefaultLanguage" value="@l.Id" @(Model.DefaultLanguage == l.Id ? "checked" : "")><i></i> @l.DisplayName
+                            </label>
+                        }
+                    </div>
+                    <div class="editor-label">
+                        @Html.Label("Thuộc tính khác")
+                    </div>
+                    <div class="editor-field">
+                        <label class="checkbox">@Html.CheckBoxFor(model => model.HasResponsive)<i></i>Không chạy đa thiết bị</label>
+                    </div>
+                    <div class="editor-field">
+                        <label class="checkbox">@Html.CheckBoxFor(model => model.HasShoppingCart)<i></i>Có giỏ hàng</label>
+                    </div>
+                    <div class="editor-field">
+                        <label class="checkbox">@Html.CheckBoxFor(model => model.HasOrder)<i></i>Có quản lý đơn hàng</label>
+                    </div>
+                    <div class="editor-field">
+                        <label class="checkbox">@Html.CheckBoxFor(model => model.HasDiscount)<i></i>Có quản lý giảm giá</label>
+                    </div>
+                    <div class="editor-field">
+                        <label class="checkbox">@Html.CheckBoxFor(model => model.HasUser)<i></i>Có quản lý người dùng</label>
+                    </div>
+                    <div class="editor-field">
+                        <label class="checkbox">@Html.CheckBoxFor(model => model.HasNewsletter)<i></i>Có đăng ký nhận email</label>
+                    </div>
+                    <div class="editor-field">
+                        <label class="checkbox">@Html.CheckBoxFor(model => model.HasWatermark)<i></i>Watermark</label>
+                    </div>
+                    <div class="editor-field watermark" style="display:@(SiteConfig.SiteInfo.HasWatermark ? "" : "none")">
+                        <label class="checkbox">@Html.CheckBoxFor(model => model.HasWatermarkImg)<i></i>Watermark Image</label>
+                    </div>
+                    <div class="editor-label watermark" style="display:@(SiteConfig.SiteInfo.HasWatermark ? "" : "none")">
+                        @Html.Label("Watermark")
+                    </div>
+                    <div class="editor-label watermark radios" style="display:@(SiteConfig.SiteInfo.HasWatermark ? "" : "none")">
+                        @Html.TextBoxFor(model => model.Watermark)
+                    </div>
+                    <div class="editor-label watermark" style="display:@(SiteConfig.SiteInfo.HasWatermark ? "" : "none")">
+                        @Html.Label("Vị trí Watermark")
+                    </div>
+                    <div class="editor-label watermark radios" style="display:@(SiteConfig.SiteInfo.HasWatermark ? "" : "none")">
+                        @Html.DropDownListFor(model => model.WatermarkPosition, watermark, new { @class = "form-control" })
+                    </div>
+                }
+                <div class="editor-label">
+                    @Html.Label("hotline")
+                </div>
+                <div class="editor-field">
+                    @Html.TextBoxFor(model => model.Hotline)
+                </div>
+                <div class="editor-label">
+                    @Html.Label("email")
+                </div>
+                <div class="editor-field">
+                    @Html.TextBoxFor(model => model.Email)
+                </div>
+               
+                @if (Roles.IsUserInRole("Super Administrators"))
+                {
+                    <div class="editor-label">
+                        @Html.Label("FaceBook App")
+                    </div>
+                    <div class="editor-field">
+                        @Html.TextBoxFor(model => model.FaceBookApp)
+                    </div>
+                    <div class="editor-label">
+                        @Html.Label("FaceBook Admin")
+                    </div>
+                    <div class="editor-field">
+                        @Html.TextBoxFor(model => model.FaceBookAdmin)
+                    </div>
+                    <div class="editor-label">
+                        @Html.Label("default domain")
+                    </div>
+                    <div class="editor-field">
+                        @Html.TextBoxFor(model => model.DefaultDomain)
+                    </div>
+                    <div class="editor-label">
+                        @Html.Label("template")
+                    </div>
+                    <div class="radios template">
+                        @Html.DropDownListFor(model => model.Code, (SelectList)template, new { @class = "form-control" })
+                    </div>
+                    if (!string.IsNullOrWhiteSpace(Model.Code))
+                    {
+                        <div class="editor-label">
+                            @Html.Label("Skin")
+                        </div>
+                        <div class="editor-field skins">
+                            @foreach (var item in SiteConfig.Skins.Where(a => a.Contains("skin")).ToList())
+                            {
+                                <label class="radio">
+                                    <input type="radio" name="Skin" value="@item" @(Model.Skin == item ? "checked" : "") /><i></i> <span class="skin @item">@item</span>
+                                </label>
+                            }
+                        </div>
+                        <div class="clearfix"></div>
+                    }
+                    <span class="btn preview margin-top-20">
+                        <a href="@Url.Action("Index", "Home", new { area = "", template = Model.Code})" target="_blank"><i class="fa fa-eye"></i> Preview</a>
+                    </span>
+                }
+            </div>
+        </div>
+        <div class="toolbar">
+            <span class="button">
+                <button type="submit" class="btn save"><i class="fa fa-save"></i> Lưu</button>
+            </span>
+        </div>
+        <div>
+            @Html.ValidationSummary()
+        </div>
+    }
+</div>
+@section styles{
+    @Styles.Render("~/Templates/" + SiteConfig.SiteInfo.Code + "/Content/ModunCustom.less")
+}
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script>
+        $(function () {
+            $("#tabs").validtabs();
+            $(".keyword").keyword();
+            $("input[name='Code']").change(function () {
+                var href = "@Url.Action("Index", "Home", new { area = ""})" + "?template=" + $(this).val();
+                $(".btn.preview a").attr("href", href);
+            });
+
+            $("#HasShoppingCart").on("change", function () {
+                $('#HasShoppingCart').is(":checked") ? $(".shippingAmount").show() : $(".shippingAmount").hide();
+            });
+
+            $("#HasWatermark").on("change", function () {
+                $('#HasWatermark').is(":checked") ? $(".watermark").show() : $(".watermark").hide();
+
+            });
+        })
+    </script>
+}

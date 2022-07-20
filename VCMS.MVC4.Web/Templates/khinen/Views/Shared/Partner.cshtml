@@ -1,0 +1,28 @@
+﻿@model List<Article>
+@{
+    if (Model.Count > 0)
+    {
+        <div class="box-partner">
+
+            <div class="container">
+                <div class="row">
+                    <div class="owl-carousel" data-plugin-options='{"items": 6, "singleItem": false, "autoPlay": true, "navigation": false, "pagination": false,"slideSpeed":400,"addClassActive":true,"itemsDesktop": [1199, 6],"itemsDesktopSmall": [991, 6],"itemsTablet": [768, 3],"itemsMobile": [479, 3]}' data-snap-ignore="true">
+                        @foreach (var item in Model)
+                        {
+                            var link = "#";
+
+                                //link = item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("URL", StringComparison.OrdinalIgnoreCase)).Value;
+                               link = item["URL"];
+                            
+                            <div class="items">
+                                <a href="@link" target="_blank" title="@item.ArticleName">
+                                    @Html.Image(item.ImageUrl.ToLower(), new ImageOptions { Width = 150, Height = 60, Mode = ImageMode.pad, Lazy = false }, new { alt = item.ArticleName, @class = "owl" })
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}

@@ -1,0 +1,100 @@
+﻿@model ICollection<VCMS.MVC4.Data.Category>
+    @{
+    var article = (Article)ViewBag.Article;
+    }
+    <div class="list search-list2">
+      
+        <div class="items">
+            @foreach (var item in Model)
+            {
+
+            <div class="item" data-level="@item.Level">
+                <label class="checkbox list-category">
+                    @if (article != null)
+                    {
+                    <input name="categories2" type="checkbox" value="@item.Id" class="check" @(article.Categories.Contains(item) ? "checked" : "" ) onclick="Check2(@item.Id)" data-parent="@(item.ParentId != null ? item.ParentId : 0)" /><i></i>
+                    }
+                    else
+                    {
+                    <input name="categories2" type="checkbox" value="@item.Id" class="check" onclick="Check2(@item.Id)" data-parent="@(item.ParentId != null ? item.ParentId : 0)" /><i></i>
+                    }
+                    <span class="name">
+                        <span data-level="@item.Level" class="level level_@item.Level">
+                            <a href="javascript:void(0)" class="@(item.ChildrenCount > 0 ? " collapse" : "hidden" )"></a>
+                            <span>@item.CategoryName</span>
+                        </span>
+                    </span>
+                </label>
+            </div>
+            }
+        </div>
+    </div>
+    <script>
+        var i = 0;
+        function Check2(id) {
+            var _t = $(".search-list2 .item input[value=" + id + "]");
+            $(".search-list2 .item input[value!=" + id + "]").prop('checked', false);
+
+            _t.prop('checked') ? _t.prop('checked', true) : _t.prop('checked', false);
+
+            while (parseInt(_t.attr("data-parent")) != 0) {
+                var _p = $(".search-list2").find(".item input[value=" + _t.attr("data-parent") + "]");
+                _p.prop('checked', true);
+                _t = _p;
+            }
+        }
+        function checkAll2(val) {
+            $(".search-list2 .item input[type=checkbox]").prop('checked', val);
+        }
+        function filter(keyword) {
+            if (keyword != '') {
+                $(".search-list2 .item").each(function () {
+                    var name = $("div.name span", $(this)).text().toLowerCase();
+
+                    if (name.indexOf(keyword.toLowerCase()) >= 0) {
+                        $(this).show();
+                        var level = $(this).attr('data-level');
+                        var prev = $(this);
+                        while (level > 0) {
+                            prev = prev.prev();
+                            if (prev.attr('data-level') < level) {
+                                prev.show();
+                                level = level - 1;
+                            }
+
+                        }
+                    }
+                    else
+                        $(this).hide();
+                })
+            }
+            else
+                $(".search-list2 .item").show();
+        }
+        $(function () {
+            var width = $(".search-list2").width();
+            $(".search-list2 div.name").css({ width: width - 10 - 20 - $(".search-list2 div.check").width() });
+            $("input[type=search]").keydown(function (evt) {
+                var code = evt.keyCode ? evt.keyCode : evt.which;
+
+                if (code == 13) {
+                    evt.preventDefault();
+                    evt.stopPropagation();
+                    filter($(this).val());
+
+                }
+            }).change(function () {
+                filter($(this).val());
+            }).click(function () { $(this).change(); });
+            $("form#article-form").submit(function (evt) {
+                var code = evt.keyCode ? evt.keyCode : evt.which;
+
+                if (code == 13) {
+                    evt.preventDefault();
+                    evt.stopPropagation();
+                    return false;
+
+                }
+            })
+        })
+    </script>

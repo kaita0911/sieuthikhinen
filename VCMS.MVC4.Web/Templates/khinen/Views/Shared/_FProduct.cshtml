@@ -1,0 +1,33 @@
+﻿@using System.Data.Entity;
+@using (DataContext db = new DataContext())
+{
+    var category = Category.GetTree(Category.GetByType(2, SiteConfig.SiteId, SiteConfig.LanguageId)).Where(a => a.Level == 0).ToList();
+    <div class="box-footer f-product">
+        <h2 class="heading">Sản phẩm thuận phong</h2>
+        <div class="content">
+            <ul class="category">
+                @foreach (var item in category)
+                {
+                    <li class="level-1">
+                        <a href="@Url.Action("Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.CategoryName) })" title="">
+                            @item.CategoryName
+                        </a>
+                        @if (item.ChildrenCount > 0)
+                        {
+                            <ul class="sub-category">
+                                @foreach (var sub in item.Children.Where(sc => !sc.IsNew).Take(2))
+                                {
+                                    <li class="level-2">
+                                        <a href="@Url.Action("Detail", "Category", new { id = sub.Id, code = sub.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(sub.CategoryName) })" title="">
+                                            @sub.CategoryName
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+}

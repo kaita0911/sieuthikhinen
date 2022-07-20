@@ -1,0 +1,20 @@
+﻿@using VCMS.MVC4.Web
+@if (Request.IsAuthenticated && Roles.IsUserInRole("Users"))
+{
+    <text>
+
+        Hello, @Html.ActionLink(SiteConfig.CurrentUser.DisplayName, "Update", "Account", routeValues: null, htmlAttributes: new { @class = "username", title = "Manage" })!
+        @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+        {
+            @Html.AntiForgeryToken()
+            <a href="javascript:document.getElementById('logoutForm').submit()">Thoát</a>
+        }
+@Html.ActionLink("Đổi mật khẩu", "ChangePassword", "Account", routeValues: null, htmlAttributes: null)
+    </text>
+}
+else
+{
+
+    @Html.ActionLink("Đăng nhập", "Login", "Account", new { returnUrl = ViewContext.HttpContext.Request.Url.PathAndQuery }, null) <span>|</span> @Html.ActionLink("Đăng ký", "Register", "Account", null, null) <span>|</span>
+    @Html.ActionLink("Quên mật khẩu", "ForgotPassword", "Account", null, null)
+}

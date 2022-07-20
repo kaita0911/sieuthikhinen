@@ -1,0 +1,80 @@
+﻿@model VCMS.MVC4.Data.Article
+@{
+    ViewBag.Title = "Bản đồ";
+    ViewBag.Breadcrumb = new BreadcrumbModel { Items = new List<BreadcrumbItem> { new BreadcrumbItem { Text = ViewBag.Title.ToString(), Url = null, IsLast = true } } };
+    Layout = "_LayoutContact.cshtml";
+
+    var address = Model.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("ADDRESS", StringComparison.OrdinalIgnoreCase) && a.LanguageId == SiteConfig.LanguageId);
+    var email = Model.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("EMAIL", StringComparison.OrdinalIgnoreCase));
+    var phone = Model.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("PHONE", StringComparison.OrdinalIgnoreCase));
+    var fax = Model.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("FAX", StringComparison.OrdinalIgnoreCase));
+    var map = Model.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("MAP", StringComparison.OrdinalIgnoreCase));
+}
+<article class="article" itemscope itemtype="http://schema.org/Article">
+    <div class="contacts content-background">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="maps">
+                    @if (!string.IsNullOrEmpty(map.Value))
+                    {
+                        @Html.Raw(map.Value)
+                    }
+                    else
+                    {
+                        <span>Bản đồ đang được cập nhật...</span>
+                    }
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="contact-item">
+                    <div class="box-companny">
+                        <h1 class="title">
+                            <span class="ctn">
+                                @Model.ArticleName
+                            </span>
+                        </h1>
+                        <div class="content">
+                            @if (!string.IsNullOrEmpty(address.Value))
+                            {
+                                <span class="label">
+                                    @*<i class="fa fa-map-marker"></i>*@
+                                    <strong>@Html.Locale("address"):</strong> @address.Value
+                                </span>
+                            }
+                            @if (!string.IsNullOrEmpty(phone.Value))
+                            {
+                                <span class="label">
+                                    @*<i class="fa fa-phone"></i>*@
+                                    <strong>@Html.Locale("phone"):</strong> @Html.Phone(phone.Value) @*&nbsp;&nbsp;&nbsp; ;&nbsp;Fax: @Html.Phone(fax.Value)*@
+                                </span>
+                            }
+                            @if (!string.IsNullOrEmpty(fax.Value))
+                            {
+                                <span class="label">
+                                    @*<i class="fa fa-fax"></i>*@
+                                    <strong>@Html.Locale("Fax"):</strong> @fax.Value
+                                </span>
+                            }
+                            @if (!string.IsNullOrEmpty(email.Value))
+                            {
+                                <span class="label">
+                                    @*<i class="fa fa-envelope"></i>*@
+                                    <strong>Email:</strong> @Html.Email(email.Value)
+                                </span>
+                            }
+                            @*@if (!string.IsNullOrEmpty(website.Value))
+                                {
+                                    <span class="label">
+                                        <i class="fa fa-envelope"></i>
+                                        <strong>Website:</strong> <a href="/">@website.Value</a>
+                                    </span>
+                                }*@
+                            @*<span class="label"><i class="fa fa-mobile"></i><strong>@Html.Locale("Hotline"):</strong> @Html.Phone(SiteConfig.SiteInfo.Hotline)</span>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</article>
+

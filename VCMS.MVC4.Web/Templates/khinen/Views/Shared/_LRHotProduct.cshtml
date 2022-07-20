@@ -1,0 +1,93 @@
+﻿
+@*<link rel="stylesheet" href="~/Templates/@SiteConfig.SiteCode/Content/Tooltip/jquery.tooltip.css" type="text/css" />
+<script type="text/javascript" src="~/Templates/@SiteConfig.SiteCode/Content/Tooltip/jquery.tooltip.js"></script>
+<script src="@Url.Content("~/Scripts/jquery.carouFredSel-6.2.1.js")"></script>*@
+
+@using (DataContext db = new DataContext())
+{
+    decimal price = 0.0M;
+    var articleType = db.ArticleTypes.FirstOrDefault(a => a.Code == "PRODUCT");
+    if (articleType != null)
+    {
+        var lst = Article.GetByType(articleType.Id, SiteConfig.LanguageId, ArticleFlags.HOT, 1, 5, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.DESCENDING);
+        <div class="left-col lr-product box-lr lr-hot-product">
+            <div class="header">
+                <h2>Sản phẩm mới</h2>
+            </div>
+            <div class="relative new-product">
+                <div id="new_product">
+                    @foreach (var item in lst.List)
+                    {
+                        decimal.TryParse(item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("PRICE", StringComparison.OrdinalIgnoreCase)).Value.Replace(",", "").Trim(), out price);
+                        <div class="items tooltipleft">
+                            <div class="img">
+                                <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                    <img src="@Url.Content("~/UserUpload/Article/")@item.ImageUrl?width=337" alt="@item.ArticleName" />
+                                </a>
+                            </div>
+                            <div class="tooltip_description" style="display:none">
+                                <div class="name">
+                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                        <span>@item.ArticleName</span>
+                                    </a>
+                                </div>
+                                <div class="price">
+                                    <span class="lbl">Giá : </span>
+                                    <span class="ctn">@(price > 0 ? string.Format("{0:#,##0} đ", price).Replace(",", ".") : "Liên hệ")</span>
+                                </div>
+                                <div class="cart">
+                                    <a href="/ShoppingCart/AddToCart/@item.Id">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                @*<div class="clearfix">
+                </div>
+                <a id="newpro_prev" href="#"></a>
+                <a id="newpro_next" href="#"></a>*@
+            </div>
+        </div>
+    }
+}
+
+@*<script type="text/javascript">
+    $(document).ready(function () {
+        $("#new_product .items").tooltip();
+
+        $("#new_product").carouFredSel({
+            circular: true,
+            infinite: true,
+            auto: true,
+            scroll: {
+                items: 1,
+                pauseOnHover: true,
+                effect: "easeOutBounce",
+                duration: 1000
+            },
+            prev: {
+                button: "#newpro_prev",
+                key: "left"
+            },
+            next: {
+                button: "#newpro_next",
+                key: "right"
+            }
+        });
+
+        $('#newpro_prev').hide();
+        $('#newpro_next').hide();
+
+        $('.new-product').hover(
+              function () {
+                  $('#newpro_prev').show();
+                  $('#newpro_next').show();
+              });
+        $('.new-product').mouseleave(
+            function () {
+                $('#newpro_prev').hide();
+                $('#newpro_next').hide();
+            });
+    });
+</script>*@

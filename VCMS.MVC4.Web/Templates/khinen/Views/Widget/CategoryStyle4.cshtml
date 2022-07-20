@@ -1,0 +1,103 @@
+﻿@model Widget
+@{
+    var category = Category.GetTree(Category.GetByType((int)Model.ArticleTypeId, SiteConfig.LanguageId)).Where(a => a.Level == 0).ToList();
+    if (category.Count > 0)
+    {
+        string path = "";
+        <div class="box-siderbar box-category">
+            <h2 class="heading">@Model.Title</h2>
+            <ul id="accordion">
+                @foreach (var item in category)
+                {
+                    <li>
+                        <a href="@Url.Action("Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.CategoryName" class="level-1">
+                            @if (item.ImageUrl != null)
+                            {
+                                var str = item.ImageUrl.Split('/');
+                                if (str.Length <= 1)
+                                {
+                                    path = "/UserUpload/Category/";
+                                }
+                                else
+                                {
+                                    path = "";
+                                }
+                                <span class="img">
+                                    <img src="@Url.Content(path + item.ImageUrl)?width=25&height=25" alt="@item.CategoryName" />
+                                </span>
+                            }
+                            <span class="name">
+                                @item.CategoryName
+                            </span>
+                        </a>
+                        @if (item.ChildrenCount > 0)
+                        {
+                            <ul>
+                                @foreach (var sub in item.Children)
+                                {
+                                    <li class="list-group-item">
+                                        <a href="@Url.Action("Detail", "Category", new { id = sub.Id, code = sub.ArticleType.UrlFriendly, title = sub.UrlFriendly })" title="@sub.CategoryName" class="level-2">
+                                            @if (sub.ImageUrl != null)
+                                            {
+                                                var str = sub.ImageUrl.Split('/');
+                                                if (str.Length <= 1)
+                                                {
+                                                    path = "/UserUpload/Category/";
+                                                }
+                                                else
+                                                {
+                                                    path = "";
+                                                }
+                                                <img src="@Url.Content(path + sub.ImageUrl)?width=35&height=35" alt="@sub.CategoryName" />
+                                            }
+                                            @sub.CategoryName
+                                        </a>
+                                        @if (sub.ChildrenCount > 0)
+                                        {
+                                            <i class="fa fa-plus sh-item iitem-@sub.Id" onclick="toggleByClass('@sub.Id');"></i>
+                                            <ul class="sh-snap-menu uitem-@sub.Id">
+                                                @foreach (var ssub in sub.Children)
+                                                {
+                                                    <li>
+                                                        <a href="@Url.Action("Detail", "Category", new { id = ssub.Id, code = ssub.ArticleType.UrlFriendly, title = ssub.UrlFriendly })" title="@ssub.CategoryName" class="level-3">
+                                                            @ssub.CategoryName
+                                                        </a>
+                                                        @if (ssub.ChildrenCount > 0)
+                                                        {
+                                                            <i class="fa fa-angle-right"></i>
+                                                            <ul>
+                                                                @foreach (var sssub in ssub.Children)
+                                                                {
+                                                                    <li>
+                                                                        <a href="@Url.Action("Detail", "Category", new { id = sssub.Id, code = sssub.ArticleType.UrlFriendly, title = sssub.UrlFriendly })" title="@sssub.CategoryName" class="level-4">
+                                                                            @sssub.CategoryName
+                                                                        </a>
+                                                                    </li>
+                                                                }
+                                                            </ul>
+                                                        }
+                                                    </li>
+                                                }
+                                            </ul>
+                                        }
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+}
+<script>
+    //$('.list-group-item ul.sh-snap-menu').show();
+    //$('.list-group-item:first-child .sh-item').toggleClass('fa-minus');
+    function toggleByClass(className) {
+        $('.sh-snap-menu').not('.uitem-' + className).hide();
+        $('.sh-item').not('.iitem-' + className).removeClass('fa-minus');
+
+        $('.iitem-' + className).toggleClass('fa-minus');
+        $(".uitem-" + className).toggle();
+    }
+</script>

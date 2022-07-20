@@ -1,0 +1,40 @@
+﻿@model ICollection<Article>
+@{
+    var i = 0;
+    var itemPerRow = 3;
+    var action = ViewContext.RouteData.Values["action"].ToString().ToLower();
+    var controller = ViewContext.RouteData.Values["controller"].ToString().ToLower();
+    if (action == "index" && controller == "home")
+    {   
+        itemPerRow = 4;
+    }
+}
+<div class="product-list">
+    @foreach (var item in Model)
+    {
+
+        if (i % itemPerRow == 0)
+        { 
+        @:<div class="product-line clear-fix">
+}        
+        <div class="product-item @(i % itemPerRow == itemPerRow-1 ? "last-box" : "")">
+            <div class="img">
+               <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" >
+                   <img src="@Url.Content("~/UserUpload/Article/")@(item.ImageUrl)?height=160" alt="@item.ArticleName"/></a>
+            </div>
+            <div class="name">
+                @Html.ActionLink(item.ArticleName, "Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) }, null)
+            </div>
+        </div>
+        if (i++ % itemPerRow == itemPerRow-1 || i == Model.Count)
+        { 
+           @:</div>
+                    }
+    }
+</div>
+<script>
+    $(function () {
+        $(".product-list .product-item").css("margin-right", "@(itemPerRow==4?"3.75%":"7.5%")");
+        $(".product-list .last-box").css("margin-right", "0");
+    })
+</script>

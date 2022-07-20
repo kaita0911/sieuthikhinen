@@ -1,0 +1,20 @@
+﻿@using VCMS.MVC4.Web
+@using System.Text.RegularExpressions
+@using System.Data.Entity
+@{
+    var cart = SiteConfig.ShoppingCart;
+    var qty = cart.Items.Sum(i => i.Quantity);
+    var amount = cart.Items.Sum(i => i.Amount);
+}
+<section id="cart-info" class="shop-cart-fix">
+    <a href="@Url.Action("IndexAjax","ShoppingCart")">
+        @*<span class="lbl">Giỏ hàng: </span>*@ 
+        <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+        <span id="qty" class="ctn">@qty</span>
+        @*<span id="price-cart" class="price">@Convert.ToDecimal(amount).ToString("#,###")đ</span>*@
+    </a>
+</section>
+@*<div id="icon-cart" class="icon-cart @(qty > 0 ? "" : "close")">
+        <i class="fa fa-shopping-cart"></i>
+    </div>*@
+

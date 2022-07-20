@@ -1,0 +1,645 @@
+﻿@using System.Data.Entity;
+@model Article
+@{
+    DataContext db = new DataContext();
+    var articleType = (ViewBag.ArticleType as ArticleType);
+    ViewBag.Title = "Sửa thông tin " + articleType.ArticleTypeDetail[SiteConfig.LanguageId].Name;
+
+    var multiProperties = articleType.Properties.Where(p => p.MultiLanguage);
+    var nonProperties = articleType.Properties.OrderByDescending(p => p.PropertyType).Where(p => !p.MultiLanguage);
+    //options for check other article
+    var otherArticle = nonProperties.Where(p => p.Code.Equals("OTHERARTICLE", StringComparison.OrdinalIgnoreCase));
+    var timecho = Article.GetByTypeCode("TIMECHO", SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 10, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING).List;
+
+    var categories = Category.GetTree(articleType.Categories);
+    var discounts = db.Discounts.ToList();
+    var currencies = db.Currencies.ToList();
+    ViewBag.Article = Model;
+    ViewBag.ArticleCateType = db.Articles.Include(a => a.Categories).FirstOrDefault(a => a.Id == Model.Id);
+    ViewBag.DiscountArticle = db.Articles.Include(a => a.Discounts).FirstOrDefault(a => a.Id == Model.Id);
+    ViewBag.Breadcrumb = new BreadcrumbModel
+    {
+        Items = new BreadcrumbItem[] {
+            new BreadcrumbItem { Url="/", Text="Home", IsFirst=true},
+            new BreadcrumbItem { Url=Url.Action("List","Article", new{id= Model.ArticleTypeId}), Text="Danh sách " + Model.ArticleType.Name},
+            new BreadcrumbItem { Url=null, Text="Chỉnh sửa bài viết", IsLast=true}}
+    };
+    var article = Model;
+    string sdesc = "Mô tả ngắn gọn";
+    string desc = "Mô tả chi tiết";
+    if (articleType.Code == "FAQ")
+    {
+        sdesc = "Nội dung câu hỏi";
+        desc = "Nội dung câu trả lời";
+    }
+    //else if (articleType.Code == "PRODUCT")
+    //{
+    //    desc = "Thiết kế";
+    //}
+}
+<div class="form">
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.ValidationSummary(true)
+        @Html.Hidden("returnUrl", new { returnUrl = ViewBag.ReturnUrl })
+        <div class="toolbar">
+            <span class="button">
+                <button type="submit" class="btn save"><i class="fa fa-save"></i> Save</button>
+            </span>
+            <span class="btn back">
+                <a href="@Request.UrlReferrer">
+                    <i class="fa fa-mail-reply"></i> <span>Trở về</span>
+                </a>
+            </span>
+        </div>
+        <div class="clear-fix">
+            <div class="left width-70">
+                <div id="tabs">
+                    <ul class="nav nav-tabs" role="tablist" id="myTab">
+                        @foreach (var l in SiteConfig.Languages)
+                        {
+                            <li><a href="#tabs-@l.Id" role="tab" data-toggle="tab">@l.DisplayName</a></li>
+                        }
+                    </ul>
+                    <div class="tab-content">
+                        @foreach (var l in SiteConfig.Languages)
+                        {
+                        <div id="tabs-@l.Id">
+
+                            <div class="editor-label">
+                                @Html.Label("tiêu đề")
+                            </div>
+                            <div class="editor-field">
+                                @Html.TextBoxFor(model => model.ArticleDetail[l.Id].ArticleName, new { name = "txtName_" + l.Id.ToString(), @class = "url-source" })
+                                @Html.ValidationMessageFor(model => model.ArticleDetail[l.Id].ArticleName, "Tiêu đề không được trống và không dài quá 200 ký tự")
+                            </div>
+                            <div class="editor-label @(!articleType.SiteMap ? "hidden" : "")">
+                                @Html.Label("url")
+                            </div>
+                            <div class="editor-field @(!articleType.SiteMap ? "hidden" : "")">
+                                @Html.TextBoxFor(model => model.ArticleDetail[l.Id].UrlFriendly, new { name = "txtUrl_" + l.Id.ToString(), @class = "url-dest" })
+                            </div>
+                            @if (articleType.HasShorDesc)
+                            {
+                                <div class="editor-label short-desc">
+                                    @Html.Label(sdesc)
+                                </div>
+                                <div class="editor-field">
+                                    @Html.TextAreaFor(model => model.ArticleDetail[l.Id].ShortDesc, new { @class = "fck" })
+                                </div>
+                            }
+                            @if (articleType.HasDescription)
+                            {
+                                <div class="editor-label full-desc">
+                                    @Html.Label(desc)
+                                </div>
+                                <div class="editor-field margin-bottom-7">
+                                    @Html.TextAreaFor(model => model.ArticleDetail[l.Id].Description, new { @class = "fck" })
+                                </div>
+                            }
+
+                            @foreach (var item in multiProperties.OrderByDescending(m => m.Id).Where(m => m.PropertyType != PropertyType.MULTICHOICE && m.PropertyType != PropertyType.CHOICE && m.PropertyType != PropertyType.HASPRICE))
+                            {
+                                var prop_id = "P_" + item.Id.ToString() + "_" + l.Id.ToString();
+                                <div class="editor-label">
+                                    @Html.Label(item.PropertyDetail[SiteConfig.LanguageId].Name)
+                                </div>
+                                <div class="editor-field">
+                                    @switch (item.PropertyType)
+                                    {
+                                        case PropertyType.STRING:
+                                            if (item.Code == "PRICE" || item.Code == "DPRICE")
+                                            {
+                                                @Html.TextBox(prop_id, Model.PropertyValues.DefaultIfEmpty(new ArticlePropertyValue { ArticleId = Model.Id, PropertyId = item.Id }).FirstOrDefault(pv => pv.PropertyId == item.Id && pv.LanguageId == l.Id).Value, new { @class = "price" })
+                                                break;
+                                            }
+                                            @Html.TextBox(prop_id, Model.PropertyValues.DefaultIfEmpty(new ArticlePropertyValue { ArticleId = Model.Id, PropertyId = item.Id }).FirstOrDefault(pv => pv.PropertyId == item.Id && pv.LanguageId == l.Id) != null ? Model.PropertyValues.DefaultIfEmpty(new ArticlePropertyValue { ArticleId = Model.Id, PropertyId = item.Id }).FirstOrDefault(pv => pv.PropertyId == item.Id && pv.LanguageId == l.Id).Value : "")
+                                            break;
+                                        case PropertyType.TEXT:
+                                            @Html.TextArea(prop_id, Model.PropertyValues.DefaultIfEmpty(new ArticlePropertyValue { ArticleId = Model.Id, PropertyId = item.Id }).FirstOrDefault(pv => pv.PropertyId == item.Id && pv.LanguageId == l.Id) != null ? Model.PropertyValues.DefaultIfEmpty(new ArticlePropertyValue { ArticleId = Model.Id, PropertyId = item.Id }).FirstOrDefault(pv => pv.PropertyId == item.Id && pv.LanguageId == l.Id).Value : "", new { @class = "fck" })
+                                            break;
+                                        case PropertyType.NUMERIC:
+                                            @Html.TextBox(prop_id, Model.PropertyValues.DefaultIfEmpty(new ArticlePropertyValue { ArticleId = Model.Id, PropertyId = item.Id }).FirstOrDefault(pv => pv.PropertyId == item.Id && pv.LanguageId == l.Id).Value, new { type = "number" })
+                                            break;
+                                        case PropertyType.BOOLEAN:
+                                            @Html.CheckBox(prop_id, Model.PropertyValues.DefaultIfEmpty(new ArticlePropertyValue { ArticleId = Model.Id, PropertyId = item.Id }).FirstOrDefault(pv => pv.PropertyId == item.Id && pv.LanguageId == l.Id).Value)
+                                            break;
+                                        case PropertyType.HTML:
+                                            @Html.TextArea(prop_id, Model.PropertyValues.DefaultIfEmpty(new ArticlePropertyValue { ArticleId = Model.Id, PropertyId = item.Id }).FirstOrDefault(pv => pv.PropertyId == item.Id && pv.LanguageId == l.Id) != null ? Model.PropertyValues.DefaultIfEmpty(new ArticlePropertyValue { ArticleId = Model.Id, PropertyId = item.Id }).FirstOrDefault(pv => pv.PropertyId == item.Id && pv.LanguageId == l.Id).Value : "", new { @class = "fck" })
+                                            break;
+                                        default:
+                                            @Html.TextBox(prop_id, Model.PropertyValues.DefaultIfEmpty(new ArticlePropertyValue { ArticleId = Model.Id, PropertyId = item.Id }).FirstOrDefault(pv => pv.PropertyId == item.Id && pv.LanguageId == l.Id).Value)
+                                            break;
+                                    }
+                                </div>
+                            }
+                            @if (articleType.HasMeta)
+                            {
+                                if (articleType.Code != "PRODUCT")
+                                {
+                                    <div class="editor-label">
+                                        @Html.Label("meta keywords") <span>(Mỗi từ cách nhau bằng phím Enter hoặc dấu ",")</span>
+                                    </div>
+                                    <div class="editor-field">
+                                        @Html.TextBoxFor(model => model.ArticleDetail[l.Id].SEOKeywords, new { @class = "keyword" })
+                                        @Html.ValidationMessageFor(model => model.ArticleDetail[l.Id].SEOKeywords, "Không được dài quá 200 ký tự")
+                                    </div>
+                                }
+
+                                <div class="editor-label">
+                                    @Html.Label("meta description")
+                                </div>
+                                <div class="editor-field">
+                                    @Html.TextBoxFor(model => model.ArticleDetail[l.Id].SEODescription)
+                                    @Html.ValidationMessageFor(model => model.ArticleDetail[l.Id].SEODescription, "Không được dài quá 200 ký tự")
+                                </div>
+                            }
+                        </div>
+                        }
+                    </div>
+                </div>
+                <script>
+                    $(".nav-tabs li:first").addClass("active");
+                    $(".tab-content .tab-pane:first").addClass("active");
+                </script>
+                @if (articleType.Code == "ADVs")
+                {
+                    <div style="display: none">
+                        <div class="editor-label">
+                            <label>Ngày bắt đầu</label>
+                        </div>
+                        <div class="editor-field date-time">
+                            @Html.TextBoxFor(model => model.DateCreated, new { @class = "datepicker" })
+                        </div>
+                        <div class="editor-label">
+                            <label>Ngày kết thúc</label>
+                        </div>
+                        <div class="editor-field date-time">
+                            @Html.TextBoxFor(model => model.DateUpdated, new { @class = "datepicker" })
+                            @Html.ValidationMessageFor(model => model.DateUpdated)
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="right width-29">
+                <div class="editor-label">
+                    @Html.Label("thứ tự")
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.SortOrder)
+                    @Html.ValidationMessageFor(model => model.SortOrder)
+                </div>
+
+                @*<div class="editor-label">
+            @Html.Label("Icon Font")
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.IconFont)
+            @Html.ValidationMessageFor(model => model.IconFont)
+        </div>*@
+                @if (articleType.HasImage)
+                {
+                    <div class="editor-label">
+                        @Html.Label("hình đại diện")
+                    </div>
+                    @Html.HiddenFor(model => model.ImageUrl)
+                    <div class="editor-field file file-image article">
+                        <input type="hidden" id="Upload" name="Upload" />
+                        @Html.TextBox("multiple_file", null, new { type = "file", data_val = "true", data_val_image = "Kiểu file hình ảnh không được phép", multiple = "multiple", id = "multiple_file" })<i data-label="Chọn file"></i>
+                        <span id="number">Không tệp tin nào được chọn</span>
+                    </div>
+                    <div id="previewFiles" class="editor-field">
+                    </div>
+                }
+
+                @if (articleType.HasAttachment)
+                {
+                    <div class="editor-label">
+                        @Html.Label("file đính kèm")
+                    </div>
+                    <div class="editor-field file article">
+                        @Html.TextBox("Attachment", null, new { type = "file", data_val = "true", data_val_attach = "Kiểu file đính kèm không được phép" })<i data-label="Chọn file"></i>
+                        @Html.ValidationMessage("Attachment")
+                    </div>
+                }
+                @if (articleType.HasRating)
+                {
+                    <div class="editor-label" style="display:none">
+                        @Html.Label("Đánh giá (sao)")
+                    </div>
+                    <div class="editor-fiel rating" style="display:none">
+                        @for (var i = 0; i <= 5; i++)
+                        {
+                            <label class="radio">
+                                @Html.RadioButtonFor(model => model.Rating, i, null)<i></i> @i
+                            </label>
+                        }
+                    </div>
+                }
+                @if (articleType.HasPrice)
+                {
+                    <div class="editor-label">
+                        @Html.Label("Giá")
+                    </div>
+                    <div class="editor-field pri-and-curr">
+                        @Html.TextBox("Price", string.Format("{" + (!string.IsNullOrWhiteSpace(Model.FormatPrice) ? Model.FormatPrice : "#.###") + "}", Model.Price), new { @class = "price" })
+                        @Html.DropDownList("currencyId", new SelectList(currencies, "Id", "CurrencySymbol"), new { @class = "currency" })
+                    </div>
+                    <div class="editor-field pri-and-curr margin-5-0">
+                        <label class="checkbox">
+                            @Html.CheckBox("chk-inactive", Model.InactivePrice, new { @class = "inactive" })<i></i> <b>Ẩn giá này</b>
+                        </label>
+                    </div>
+                    if (articleType.HasDiscount)
+                    {
+                        <div class="editor-label">
+                            @Html.Label("Giá sau khi giảm")
+                        </div>
+                        <div class="editor-field pri-and-curr">
+                            @Html.TextBox("DiscountPrice", string.Format("{" + (!string.IsNullOrWhiteSpace(Model.FormatPrice) ? Model.FormatPrice : "#.###") + "}", Model.PrivateDiscountPrice), new { @class = "price" })
+                        </div>
+                        if (discounts.Count > 0)
+                        {
+                            <div class="editor-label">
+                                @Html.Label("Giảm giá")
+                            </div>
+                            <div class="editor-field">
+                                @Html.Partial("~/Areas/Admin/Views/Discount/_SearchList.cshtml", discounts)
+                            </div>
+                        }
+                    }
+                    if (articleType.HasNumberProduct)
+                    {
+                        <div class="editor-label">
+                            @Html.Label("Số lượng:")
+                        </div>
+                        <div class="editor-field pri-and-curr">
+                            @Html.TextBoxFor(model => model.Number, new { @type = "number", @class = "form-control" })
+                        </div>
+                    }
+                    if (articleType.HasCategory && articleType.Code == "PRODUCT" || ViewBag.ArticleBrand != null)
+                    {
+
+                        if (timecho.Count > 0)
+                        {
+                            @Html.Label("Chọn thời gian chờ")
+                            foreach (var item in timecho)
+                            {
+                                <div class="item">
+
+                                    <label class="checkbox list-category">
+                                        @if (Model.timeId == item.Id)
+                                        {
+                                            <input name="timeId" type="radio" value="@item.Id" class="check" checked /><i></i>@item.ArticleName
+
+                                        }
+                                        else
+                                        {
+                                            <input name="timeId" type="radio" value="@item.Id" class="check" /><i></i>@item.ArticleName
+
+                                        }
+
+                                    </label>
+                                </div>
+                            }
+                        }
+
+
+                    }
+
+                    <script>
+                                    @*var times =@Model.Time;
+                                    var myRadio = $("input[name=Time]").val();
+                                    Console.log(myRadio, times);*@
+                                    $(document).ready(function () {
+                                        $(".check-male").click(function () {
+                                            $("#male").prop("checked", true);
+                                        });
+                                        $(".check-female").click(function () {
+                                            $("#female").prop("checked", true);
+                                        });
+
+                                        //var myRadio = $("input[name=Time]").val();
+                                        //    console.log(myRadio);
+                                    });
+                    </script>
+
+
+
+                    <br />
+                }
+                @if (articleType.IsNew || articleType.IsHot || articleType.IsMostView)
+                {
+                    <div class="editor-label">
+                        @Html.Label("Thuộc tính")
+                    </div>
+                    <div class="editor-field">
+                        <ul>
+                            @if (articleType.IsNew)
+                            {
+                                <li><label class="checkbox">@Html.CheckBoxFor(model => model.IsNew)<i></i> @((articleType.StrIsNew != null && articleType.StrIsNew != "") ? articleType.StrIsNew : "Mới")</label></li>
+                            }
+                            @if (articleType.IsHot)
+                            {
+                                <li><label class="checkbox">@Html.CheckBoxFor(model => model.IsHot)<i></i> @((articleType.StrIsHot != null && articleType.StrIsHot != "") ? articleType.StrIsHot : "Nổi bật")</label></li>
+                            }
+                            @if (articleType.IsMostView)
+                            {
+                                <li><label class="checkbox">@Html.CheckBoxFor(model => model.IsMostView)<i></i> @((articleType.StrIsMostView != null && articleType.StrIsMostView != "") ? articleType.StrIsMostView : "Xem nhiều")</label></li>
+                            }
+                            @if (articleType.Code == "PRODUCTs")
+                            {
+                                <li><label class="checkbox">@Html.CheckBoxFor(model => model.FullWidth)<i></i>Xem nhiều</label></li>
+                            }
+                        </ul>
+                    </div>
+                    <br />
+                }
+                @if (Roles.IsUserInRole("Super Administrators") && articleType.IsFullWidth)
+                {
+                    <div class="editor-field">
+                        <ul>
+                            <li><label class="checkbox"> @Html.CheckBoxFor(model => model.FullWidth)<i></i> Layout FullWidth</label></li>
+                        </ul>
+                    </div>
+                }
+                @foreach (var item in multiProperties.Where(m => m.PropertyType == PropertyType.CHOICE || m.PropertyType == PropertyType.MULTICHOICE || m.PropertyType == PropertyType.HASPRICE))
+                {
+                    <div class="editor-label">
+                        @Html.Label(item.PropertyDetail[SiteConfig.LanguageId].Name)
+                    </div>
+                    <div class="editor-field">
+                        @switch (item.PropertyType)
+                        {
+                            case PropertyType.MULTICHOICE:
+                                <ul>
+                                    @foreach (var pmv in item.PropertyMultiValues)
+                                    {
+                                        <li>
+                                            <label class="checkbox">
+                                                @if (article.PropertyMultiValues != null)
+                                                {
+                                                    <input name="pmv_multichoice" type="checkbox" value="@pmv.Id" class="check" @(article.PropertyMultiValues.Any(p => p.Id == pmv.Id) ? "checked" : "") />
+                                                }
+                                                else
+                                                {
+                                                    <input name="pmv_multichoice" type="checkbox" value="@pmv.Id" class="check" />
+                                                }
+                                                <i></i>@pmv.PropertyMultiValueDetail[1].Value
+                                            </label>
+                                        </li>
+                                    }
+                                </ul>
+                                break;
+                            case PropertyType.HASPRICE:
+                                <ul>
+                                    @foreach (var pmv in item.PropertyMultiValues)
+                                    {
+                                        var price_id = "Price_" + pmv.Id.ToString();
+                                        var currency_id = "Currency_" + pmv.Id.ToString();
+                                        var price_value = Model.Prices.DefaultIfEmpty(new Price { ArticleId = Model.Id, PropertyMultiValueId = pmv.Id }).FirstOrDefault(pv => pv.PropertyMultiValueId == pmv.Id);
+                                        <li>
+                                            <div class="p-left">
+                                                @pmv.PropertyMultiValueDetail[1].Value
+                                            </div>
+                                            <div class="p-right">
+                                                <div class="editor-field">
+                                                    <div class="ctn-price">
+                                                        @Html.TextBox(price_id, price_value == null ? "" : string.Format("{" + price_value.Formating + "}", price_value.Value), new { @class = "price" })
+                                                        @Html.DropDownList(currency_id, new SelectList(currencies, "Id", "CurrencySymbol", currencies.FirstOrDefault(c => c.IsDefault).Id), new { @class = "currency" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    }
+                                </ul>
+                                break;
+                            case PropertyType.CHOICE:
+                                if (item.PropertyMultiValues.Count > 0)
+                                {
+                                    int p_id = 0;
+                                    if (article != null)
+                                    {
+                                        if (article.PropertyMultiValues.FirstOrDefault(p => p.PropertyId == item.Id) != null)
+                                        { p_id = article.PropertyMultiValues.FirstOrDefault(p => p.PropertyId == item.Id).Id; }
+                                    }
+
+                                    var multiVal = from p in item.PropertyMultiValues
+                                                   select new { Id = p.Id, Value = p.PropertyMultiValueDetail[SiteConfig.LanguageId].Value };
+
+                                    @Html.DropDownList("pmv_choice", new SelectList(multiVal, "Id", "Value", p_id), "-- Chọn giá trị --", new { @class = "form-control" })
+                                }
+                                break;
+                        }
+                    </div>
+                    <br />
+                }
+                @foreach (var item in nonProperties)
+                {
+                    var prop_id = "P_" + item.Id.ToString();
+                    var prop_value = Model.PropertyValues.DefaultIfEmpty(new ArticlePropertyValue { ArticleId = Model.Id, PropertyId = item.Id }).FirstOrDefault(pv => pv.PropertyId == item.Id);
+
+                    <div class="editor-label">
+                        @Html.Label(item.PropertyDetail[SiteConfig.LanguageId].Name)
+                    </div>
+                    <div class="editor-field">
+
+                        @switch (item.PropertyType)
+                        {
+                            case PropertyType.STRING:
+                                @Html.TextBox(prop_id, prop_value == null ? "" : prop_value.Value)
+                                break;
+                            case PropertyType.TEXT:
+                                @Html.TextArea(prop_id, prop_value == null ? "" : prop_value.Value)
+                                break;
+                            case PropertyType.NUMERIC:
+                                if (item.Code.Equals("DELAY", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    @Html.TextBox(prop_id, prop_value == null ? "" : prop_value.Value, new { @type = "number", @class = (Roles.IsUserInRole("Super Administrators") ? "form-control" : "hidden") })
+                                    break;
+                                }
+                                if (item.Code.Equals("NUMBER", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    @Html.TextBox(prop_id, prop_value == null ? "" : prop_value.Value, new { @type = "number", @class = "form-control" })
+                                    break;
+                                }
+                                @Html.TextBox(prop_id, prop_value == null ? "" : prop_value.Value, new { @type = "number" })
+                                break;
+                            case PropertyType.HTML:
+                                @Html.TextArea(prop_id, prop_value == null ? "" : prop_value.Value, new { @class = "fck-img" })
+                                break;
+                            case PropertyType.BOOLEAN:
+                                @Html.CheckBox(prop_id, prop_value == null ? false : prop_value.Value == "true,false" ? true : false)
+                                break;
+                            case PropertyType.MULTICHOICE:
+                                <ul>
+                                    @foreach (var pmv in item.PropertyMultiValues)
+                                    {
+                                        <li>
+                                            <label class="checkbox">
+                                                @if (article.PropertyMultiValues != null)
+                                                {
+                                                    <input name="pmv_multichoice" type="checkbox" value="@pmv.Id" class="check" @(article.PropertyMultiValues.Any(p => p.Id == pmv.Id) ? "checked" : "") />
+                                                }
+                                                else
+                                                {
+                                                    <input name="pmv_multichoice" type="checkbox" value="@pmv.Id" class="check" />
+                                                }
+                                                <i></i>@pmv.PropertyMultiValueDetail[1].Value
+                                            </label>
+                                        </li>
+                                    }
+                                </ul>
+                                break;
+                            case PropertyType.CHOICE:
+                                if (item.PropertyMultiValues.Count > 0)
+                                {
+                                    int p_id = 0;
+                                    if (article != null)
+                                    {
+                                        if (article.PropertyMultiValues.FirstOrDefault(p => p.PropertyId == item.Id) != null)
+                                        { p_id = article.PropertyMultiValues.FirstOrDefault(p => p.PropertyId == item.Id).Id; }
+                                    }
+
+                                    var multiVal = from p in item.PropertyMultiValues
+                                                   select new { Id = p.Id, Value = p.PropertyMultiValueDetail[SiteConfig.LanguageId].Value };
+
+                                    @Html.DropDownList("pmv_choice", new SelectList(multiVal, "Id", "Value", p_id), "-- Chọn giá trị --", new { @class = "form-control" })
+                                }
+                                break;
+                            case PropertyType.HASPRICE:
+                                <ul>
+                                    @foreach (var pmv in item.PropertyMultiValues)
+                                    {
+                                        var price_id = "Price_" + pmv.Id.ToString();
+                                        var currency_id = "Currency_" + pmv.Id.ToString();
+                                        var price_value = Model.Prices.DefaultIfEmpty(new Price { ArticleId = Model.Id, PropertyMultiValueId = pmv.Id }).FirstOrDefault(pv => pv.PropertyMultiValueId == pmv.Id);
+                                        <li>
+                                            <div class="p-left">
+                                                @pmv.PropertyMultiValueDetail[1].Value
+                                            </div>
+                                            <div class="p-right">
+                                                <div class="editor-field">
+                                                    <div class="ctn-price">
+                                                        @Html.TextBox(price_id, price_value == null ? "" : string.Format("{" + price_value.Formating + "}", price_value.Value), new { @class = "price" })
+                                                        @Html.DropDownList(currency_id, new SelectList(currencies, "Id", "CurrencySymbol", currencies.FirstOrDefault(c => c.IsDefault).Id), new { @class = "currency" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    }
+                                </ul>
+                                break;
+                            default:
+                                @Html.TextBox(prop_id, prop_value == null ? "" : prop_value.Value)
+                                break;
+                        }
+                    </div>
+                }
+                @if (articleType.HasCategory && categories.Count > 0)
+                {
+                    <div>
+                        @Html.Label("Chọn Nhóm")
+                        @Html.Partial("~/Areas/Admin/Views/Category/_SearchList.cshtml", categories)
+                    </div>
+                }
+                @if (articleType.HasCategory && articleType.Code == "PRODUCT" && ViewBag.ArticleBrand != null)
+                {
+                    var articleBrand = (ViewBag.ArticleBrand as ArticleType);
+                    var brand = Category.GetTree(articleBrand.Categories);
+                    if (brand.Count > 0)
+                    {
+                        <br />
+                        <div>
+                            @Html.Label("Chọn nhà sản xuất")
+                            @Html.Partial("~/Areas/Admin/Views/Category/_SearchList_Brand.cshtml", brand)
+                        </div>
+                    }
+                    var ArticleGroupsx = (ViewBag.ArticleGroupsx as ArticleType);
+                    var groupsx = Category.GetTree(ArticleGroupsx.Categories);
+                    if (groupsx.Count > 0)
+                    {
+                        <br />
+                        <div>
+                            @Html.Label("Chọn xuất xứ")
+                            @Html.Partial("~/Areas/Admin/Views/Category/_SearchList_GroupPr.cshtml", groupsx)
+                        </div>
+                    }
+                }
+                @*@if (otherArticle.Count() > 0)
+        {
+            <br />
+            <div>
+                @Html.Label("Chọn phụ kiện đi kèm")
+                @Html.Partial("~/Areas/Admin/Views/Article/_Related.cshtml", articleType)
+            </div>
+        }*@
+            </div>
+        </div>
+        <div class="toolbar">
+            <span class="button">
+                <button type="submit" class="btn save"><i class="fa fa-save"></i> Save</button>
+            </span>
+            <span class="btn back">
+                <a href="@Request.UrlReferrer">
+                    <i class="fa fa-mail-reply"></i> <span>Trở về</span>
+                </a>
+            </span>
+        </div>
+    }
+</div>
+
+@section Scripts{
+     <script>
+        //<![CDATA[
+        var ArticleName = '@Model.ArticleDetail[1].UrlFriendly';
+        //]]>
+    </script>
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryui")
+    @*@Scripts.Render("~/bundles/ckeditor")*@
+    @*@Scripts.Render("~/bundles/froala")*@
+    <script>
+        $(function () {
+            $(document).ready(function () {
+                $(".datepicker").datepicker({
+                    changeMonth: true,
+                    changeYear: true,
+                    dateFormat: 'mm/dd/yy'
+                });
+            });
+
+            $(".button .save").click(function () {
+                var start_date = $("#DateCreated").val();
+                var end_date = $("#DateUpdated").val();
+                if (new Date(start_date) > new Date(end_date)) {
+                    alert("Ngày kết thúc phải lớn hơn ngày bắt đầu");
+                    return false;
+                }
+            });
+
+            $(".keyword").keyword();
+            $("#tabs").validtabs();
+
+            $(".url-source").each(function () {
+                $(this).latinize({ destination: $(".url-dest", $(this).parent().parent()) });
+            });
+
+            $(".price").keyup(function (e) {
+                if (e.which >= 37 && e.which <= 40) {
+                    e.preventDefault()
+                }
+                var t = $(this);
+                var n = t.val().replace(/,/gi, "").split("").reverse().join("");
+                var r = RemoveRougeChar(n.replace(/(.{3})/g, "$1,").split("").reverse().join(""));
+                t.val(r);
+            })
+        })
+
+        function RemoveRougeChar(e) {
+            if (e.substring(0, 1) == ",") {
+                return e.substring(1, e.length)
+            } return e
+        }
+    </script>
+}

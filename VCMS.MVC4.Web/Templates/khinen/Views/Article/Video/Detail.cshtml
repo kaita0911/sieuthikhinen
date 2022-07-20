@@ -1,0 +1,72 @@
+﻿@model VCMS.MVC4.Data.Article
+@{
+    var type = ViewBag.Type as ArticleType;
+    var url = Model.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("URL", StringComparison.OrdinalIgnoreCase));
+<article class="article-detail" itemscope itemtype="http://schema.org/Article">
+    @if (type.ShowImage && type.HasImage)
+    {
+        <figure class="blog-image" itemprop="image">
+            @Html.Image(Model.ImageUrl, new ImageOptions { Width = 350, Mode = ImageMode.max }, new { alt = Model.ArticleName })
+        </figure>
+    }
+
+    <h1 class="title detail" itemprop="name">@Model.ArticleName</h1>
+
+    <div class="video">
+        <iframe width="70%" height="400" src="@url.Value.Replace("watch?v=", "embed/")" frameborder="0" allowfullscreen></iframe>
+    </div>
+    <div class="description short" itemprop="description">
+        @Html.Raw(Model.ShortDescription)
+    </div>
+    <div class="description full" itemprop="text">
+        @Html.Raw(Model.Description)
+    </div>
+    @if (type.HasAttachment)
+    {
+        <div class="attachment">
+            @if (type.HasAttachment && Model.Attachments.Count > 0)
+            {
+                var j = 1;
+                foreach (var aitem in Model.Attachments)
+                {
+                    <div class="box-download">
+                        <a download="@aitem.OriginalFileName" href="@aitem.FileName" class="d-detail">
+                            <i class="fa fa-cloud-download"></i>File đính kèm @j
+                        </a>
+                    </div>
+                    j++;
+                }
+            }
+        </div>
+    }
+    @if (!string.IsNullOrWhiteSpace(Model.SEOKeywords))
+    {
+        <div class="tags">
+            <strong>Tags:</strong>
+            @foreach (var item in Model.SEOKeywords.Split(','))
+            {
+                <a href="@Url.Action("SearchTag", "Home", new { keyword = item })" target="_blank" itemprop="keywords">
+                    <span><i class="fa fa-tags"></i> @item</span>
+                </a>
+            }
+        </div>
+    }
+    <div class="clearfix"></div>
+    <div class="a-share">
+        @if (type.ShowShareArticle)
+        {
+            @Html.Partial("_ShareArticle")
+        }
+    </div>
+</article>
+    @Html.Action("Other", "Article", new { id = Model.Id, typeid = Model.ArticleTypeId, categoryId = Model.Categories.Count > 0 ? Model.Categories.Skip(Model.Categories.Count - 1).FirstOrDefault().Id : 0, pageSize = 6, includeFlags = ArticleIncludeFlags.ARTICLE_DETAIL | ArticleIncludeFlags.ARTICLE_TYPE })
+    <div class="clearfix"></div>
+    if (Request.IsAuthenticated && (Roles.IsUserInRole("Super Administrators") || Roles.IsUserInRole("Administrators")))
+    {
+        <a href="@Url.Action("Edit", "Article", new { id = Model.Id, area = "Admin" })" target="_blank"><i class="fa fa-edit"></i> @Html.Locale("view_admin")</a>
+    }
+    if (type.ShowComment)
+    {
+        <div class="load-iframe" data-iframe-load="@Url.Action("IFrameLoad", "Home", new { view = "_Comment" })"></div>
+    }
+}

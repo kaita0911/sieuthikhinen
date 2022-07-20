@@ -1,0 +1,97 @@
+﻿@model Widget
+@{
+    var article = Article.GetByType((int)Model.ArticleTypeId, SiteConfig.SiteId, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection);
+}
+@if (article.List.Count > 0)
+{
+    <div class="home-news box-home">
+        <div class="container">
+            @*<h2 class="heading">
+                <span>@Model.Title</span>
+                <a class="view-all pull-right" href="/tin-tuc.html">@Html.Locale("view_all")</a>
+            </h2>*@
+            <div class="row">
+                @foreach (var item in article.List.Skip(0).Take(1))
+                {
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class=" mn-left">
+                            @if (!Model.HiddenImage)
+                            {
+                                <figure>
+                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName" class="banner-cubic-7">
+                                        @Html.Image(item.ImageUrl, new ImageOptions { Width = 570, Height = 370, Watermark = SiteConfig.WatermarkFill }, new { alt = item.ArticleName })
+                                    </a>
+                                </figure>
+                            }
+                            <div class="meta">
+                                <h3>
+                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                        @item.ArticleName
+                                    </a>
+                                </h3>
+                                <div class="date"><i class="fa fa-calendar"></i> @item.Day</div>
+                                <div class="description">
+                                    @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, 150))
+                                </div>
+                            </div>
+                            <div class="detail">
+                                <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                    @Html.Locale("view_detail")
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <div class="box-block mn-right">
+                        @foreach (var item in article.List.Skip(1).Take(4))
+                        {
+                            <div class="item">
+                                <div class="row">
+                                    @*<div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                        @if (!Model.HiddenImage)
+                                        {
+                                            <figure>
+                                                <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName" class="banner-cubic-7">
+                                                    @Html.Image(item.ImageUrl, new ImageOptions { Width = 170, Height = 160, Watermark = SiteConfig.WatermarkFill }, new { alt = item.ArticleName })
+                                                </a>
+                                            </figure>
+                                        }
+                                    </div>*@
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="meta">
+                                            <h3>
+                                                <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                                    @item.ArticleName
+                                                </a>
+                                            </h3>
+                                            @if (Model.ShowDate)
+                                            {
+                                                <span class="date"><i class="fa fa-calendar"></i> @item.Day</span>
+                                            }
+                                            @if (Model.ShowDescription)
+                                            {
+                                                <span class="description">
+                                                    @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, Model.NumberText))
+                                                </span>
+                                            }
+                                            @if (Model.ShowViewMore)
+                                            {
+                                                <div class="action">
+                                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                                        @*<i class="fa fa-ioxhost"></i>*@ @Html.Locale("view_detail")
+                                                    </a>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="clear:both"></div>
+}

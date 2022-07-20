@@ -1,0 +1,51 @@
+﻿@model Widget
+@{
+    var article = Article.GetByType((int)Model.ArticleTypeId, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection, Model.Includes);
+    if (article.List.Count > 0)
+    {
+        var i = 0; var itemrow = 3;
+        <div class="box-home-news">
+            <div class="">
+                <h2 class="heading-bottom">
+                    <a href="/tin-tuc.html">@Model.Title</a>
+                </h2>
+                <div class="content-background">
+                    <div class="owl-carousel" data-plugin-options='{"items": 1, "singleItem": false, "autoPlay": false, "navigation": true, "pagination": true,"slideSpeed":400,"addClassActive":true,"itemsDesktop": [1199, 1],"itemsDesktopSmall": [991, 1],"itemsTablet": [768, 1],"itemsMobile": [479, 1]}' data-snap-ignore="true">
+                        @foreach (var item in article.List)
+                        {
+                            if (i % itemrow == 0)
+                            {
+                                @:<div class="item">
+                            }
+                            <div class="box-new">
+
+                                <figure>
+                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })">
+                                        @Html.Image(item.ImageUrl, new ImageOptions { Width = 80, Height = 65, Mode = ImageMode.stretch }, new { alt = item.ArticleName, @class = "owl" })
+                                    </a>
+                                </figure>
+                                <div class="title">
+                                    <h3 class="name">
+                                        <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })">
+                                            @*@item.ArticleName*@
+                                            @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ArticleName, 15))
+                                        </a>
+                                    </h3>
+                                    @*<div class="s-desc">
+                                        @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, 10))
+                                    </div>*@
+
+                                </div>
+                            </div>
+                           
+                            if (i++ % itemrow == itemrow - 1 || i == article.List.Count)
+                            {
+                                @:</div>
+                        }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}

@@ -1,0 +1,29 @@
+﻿@using System.Data.Entity;
+@using (DataContext db = new DataContext())
+{
+    var article = Article.GetByTypeCode("PHOTOS", SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.NEW, 1, 6, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING).List;
+    if (article.Count > 0)
+    {
+        <div class="box-footer f-library">
+            <h2 class="heading"><a href="/hinh-anh.html">Hình ảnh về chúng tôi</a></h2>
+            <div class="content">
+                @foreach (var item in article)
+                {
+                    <div class="item">
+                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                        {
+                            <figure>
+                                <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                    @Html.Image(item.ImageUrl, new ImageOptions { Width = 75, Height = 75, Mode = ImageMode.pad }, new { alt = item.ArticleName })
+                                </a>
+                            </figure>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    }
+}
+
+
+

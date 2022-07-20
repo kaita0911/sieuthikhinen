@@ -1,0 +1,101 @@
+﻿<link rel="stylesheet" href="~/Content/stickytooltip/stickytooltip.css" />
+<script src="~/Content/stickytooltip/stickytooltip.js"></script>
+@model Widget
+@{
+    var article = Article.GetByType((int)Model.ArticleTypeId, SiteConfig.SiteId, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection, Model.Includes);
+    if (article.List.Count > 0)
+    {
+        var i = 1;
+        <div class="box-products-home">
+            <div class="container">
+                <div class="heading">
+                    <h2>@Model.Title</h2>
+                    @*<span>Sản phẩm đặc biệt dành cho bạn</span>*@
+                </div>
+                @*<div class="link">
+                        <div class="ctn">
+                            <a href="/san-pham.html?flag=HOT">Sản phẩm nổi bật</a> <span>|</span> <a href="/san-pham.html?isDiscount=true">Sản phẩm khuyến mãi</a> <span>|</span> <a href="/san-pham.html?flag=NEW">Sản phẩm mới</a>
+                        </div>
+                    </div>*@
+                <div class="content-background">
+                    <div class="row">
+                        @foreach (var item in article.List)
+                        {
+                            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                                <div class="box-block box-product">
+                                    @if (!Model.HiddenImage)
+                                    {
+                                        <figure>
+                                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" data-tooltip="sticky-@item.Id">
+                                                @Html.Image(item.ImageUrl, new ImageOptions { Width = 260, Height = 260, Watermark = SiteConfig.Watermark, Mode = ImageMode.pad }, new { alt = item.ArticleName, @class = (Model.LazyOwl ? "owl" : "") })
+                                            </a>
+                                            @if (Model.ShowIconFly && item.ImageUrl != null)
+                                            {
+                                                <a class="zoom lightbox" href="@Url.Content(item.ImageUrl)" data-plugin-options="{type:image;}" title="@item.ArticleName">
+                                                    <i class="fa fa-search-plus"></i>
+                                                </a>
+                                                <a class="zoom" href="@Url.Action("Contact", "Home", new { id = item.Id })">
+                                                    @Html.Locale("contact")
+                                                </a>
+                                            }
+                                        </figure>
+                                    }
+                                    <div class="meta">
+                                        <div class="clearfix"></div>
+
+                                        <h3>
+                                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.ArticleTypeDetail[SiteConfig.LanguageId].UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">@item.ArticleName</a>
+                                        </h3>
+                                        <div class="price-all">
+                                            <span class="lbl">Giá: </span>
+                                            @if (item.DiscountPrice > 0)
+                                            {
+                                                <span class="price">@Html.DiscountPrice(item.ItemPrice)</span>
+                                                <span class="price-old">@Html.Price(item.ItemPrice)</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="price">@Html.Price(item.ItemPrice)</span>
+                                            }
+                                            <div class="action">
+                                                <a href="@Url.Action("Contact", "Home", new { id=item.Id })" class="cart">
+                                                    Đặt hàng
+                                                </a>
+                                                @*@if (item.Price > 0)
+                                                    {
+                                                       <a href="@Url.Action("AddToCart", "ShoppingCart", new { id = item.Id })" class="cart @(item.Price > 0 ? "addToCart" : "")">
+                                                            Thêm vào giỏ <i class="fa fa-shopping-cart"></i>
+                                                        </a>
+                                                    }*@
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                                            i++;
+                        }
+                    </div>
+                </div>
+                <div id='mystickytooltip' class="stickytooltip">
+                    <div>
+                        @foreach (var at in article.List)
+                        {
+                            if (!string.IsNullOrEmpty(at.ShortDescription))
+                            {
+                                <div id='sticky-@at.Id' class="atip">
+                                    <h4 class="title">
+                                        <span>@at.ArticleName</span>
+                                    </h4>
+                                    <div class="s-desc">
+                                        @Html.Raw(at.ShortDescription)
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    }
+}

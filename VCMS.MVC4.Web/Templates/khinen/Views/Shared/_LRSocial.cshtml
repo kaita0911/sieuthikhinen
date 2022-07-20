@@ -1,0 +1,38 @@
+﻿@*<div class="lr-social">
+        <div class="items">
+            <a href="@Html.Raw(SiteConfig.SitePlugin("YT"))" target="_blank"><img src="@Url.Content("~/Templates/" + SiteConfig.SiteCode + "/Content/images/youtube.png")" /></a>
+        </div>
+        <div class="items">
+            <a href="@Html.Raw(SiteConfig.SitePlugin("GG"))" target="_blank"><img src="@Url.Content("~/Templates/" + SiteConfig.SiteCode + "/Content/images/google.png")" /></a>
+        </div>
+        <div class="items">
+            <a href="@Html.Raw(SiteConfig.SitePlugin("TW"))" target="_blank"><img src="@Url.Content("~/Templates/" + SiteConfig.SiteCode + "/Content/images/twitter.png")" /></a>
+        </div>
+        <div class="items">
+            <a href="@Html.Raw(SiteConfig.SitePlugin("FB"))" target="_blank"><img src="@Url.Content("~/Templates/"+ SiteConfig.SiteCode +"/Content/images/facebook.png")" /></a>
+        </div>
+    </div>*@
+
+<div class="lr-social">
+    <div class="fb-livechat">
+        <div class="ctrlq fb-overlay"></div>
+        <div class="fb-widget">
+            <div class="ctrlq fb-close"></div>
+            <div class="fb-page" data-href="https://www.facebook.com/sieuthikhinen" data-tabs="messages" data-width="360" data-height="400" data-small-header="true" data-hide-cover="true" data-show-facepile="false"> </div>
+            <div id="fb-root"></div>
+        </div>
+
+        <a href="https://m.me/528239350859508" title="Gửi tin nhắn cho chúng tôi qua Facebook" class="ctrlq fb-button">
+            @Html.Image(SiteConfig.Image("mess.png"), new ImageOptions { Lazy = false }, new { alt = "messenger" })
+        </a>
+    </div>
+    <a href="https://zalo.me/@Html.Raw(Html.Widget("zalo"))" title="@Html.Setting("zalo")" target="_blank" rel="noopener" class="zalo">
+        @Html.Image(SiteConfig.Image("zalo.png"), new ImageOptions { Lazy = false }, new { alt = "zalo" })
+        <span>@Html.Raw(Html.Setting("zalo"))</span>
+    </a>
+    <script src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.9"></script>
+    <script>$(document).ready(function () { function detectmob() { if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/webOS/i) || navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPod/i) || navigator.userAgent.match(/BlackBerry/i) || navigator.userAgent.match(/Windows Phone/i)) { return true; } else { return false; } } var t = { delay: 125, overlay: $(".fb-overlay"), widget: $(".fb-widget"), button: $(".fb-button") }; setTimeout(function () { $("div.fb-livechat").fadeIn() }, 8 * t.delay); if (!detectmob()) { $(".ctrlq").on("click", function (e) { e.preventDefault(), t.overlay.is(":visible") ? (t.overlay.fadeOut(t.delay), t.widget.stop().animate({ bottom: 0, opacity: 0 }, 2 * t.delay, function () { $(this).hide("slow"), t.button.show() })) : t.button.fadeOut("medium", function () { t.widget.stop().show().animate({ bottom: "30px", opacity: 1 }, 2 * t.delay), t.overlay.fadeIn(t.delay) }) }) } });</script>
+</div>
+
+@*@Html.Raw(Html.Widget("mess"))*@
+@*<img src="~/Templates/DiamonVillas/Content/Images/zalo.png" alt="" />*@

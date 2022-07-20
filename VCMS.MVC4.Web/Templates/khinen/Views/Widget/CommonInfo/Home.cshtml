@@ -1,0 +1,42 @@
+﻿@model Widget
+@{
+    var article = Article.GetByType((int)Model.ArticleTypeId, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection);
+}
+@if (article.List.Count > 0)
+{
+    <div class="home-common-info">
+        <div class="container">
+            @*<h2 class="heading">
+                    @Model.Title
+                </h2>*@
+            <div class="row">
+                @foreach (var item in article.List)
+                {
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                        <div class="items">
+                            @if (!Model.HiddenImage)
+                            {
+                                <figure>
+                                    <a title="@item.ArticleName">
+                                        @Html.Image(item.ImageUrl, new ImageOptions { Width = 70, Height = 71, Watermark = SiteConfig.WatermarkFill, Mode = ImageMode.crop }, new { alt = item.ArticleName })
+                                    </a>
+                                </figure>
+                            }
+                            <div class="meta">
+                                <h3>
+                                    <a title="@item.ArticleName">
+                                        @item.ArticleName
+                                    </a>
+                                </h3>
+                                <div class="description">
+                                    @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, 30))
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+

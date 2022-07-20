@@ -1,0 +1,71 @@
+﻿@model Widget
+@{
+    var article = Article.GetByType(Model.ArticleTypeId.Value, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection, Model.Includes);
+
+}
+@if (article.List.Count > 0)
+{
+    var i = 1;
+    var fitem = article.List.FirstOrDefault();
+    var furlv = fitem.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("URL", StringComparison.OrdinalIgnoreCase));
+    <div class="box-video-home box-home-2">
+        @*<h2 class="heading">
+            <a href="/video.html"><span>@Model.Title</span></a>
+        </h2>*@
+        <div class="box-video">
+            <div class="row">
+                <div class="col-md-12">
+                    @if (!string.IsNullOrWhiteSpace(furlv.Value))
+                    {
+                        <div class="content">
+                            <iframe width="100%" height="345" src="@furlv.Value.Replace("watch?v=", "embed/")" frameborder="0" allowfullscreen></iframe>
+                            @*<h3>@fitem.ArticleName</h3>*@
+                        </div>
+                    }
+                </div>
+                @*<div class="col-md-6">
+                    <ul class="list-video">
+                        @foreach (var item in article.List)
+                        {
+                            var urlv = item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("URL", StringComparison.OrdinalIgnoreCase));
+                            if (!string.IsNullOrWhiteSpace(furlv.Value))
+                            {
+                                <li class="item-@(i)">
+                                    <i class="fa fa-play-circle" aria-hidden="true"></i>
+                                    <h3>
+
+                                        <a href="javascript:void(0)" class="action" data-title="@item.ArticleName" data-url="@urlv.Value.Replace("watch?v=", "embed/")">
+                                            @item.ArticleName
+                                        </a>
+                                    </h3>
+                                </li>
+                            }
+
+                            i++;
+                        }
+                    </ul>
+                </div>*@
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $('.list-video li:first').addClass('active-video');
+        
+            $('.list-video li').click(function () {
+                
+                $('.active-video').removeClass('active-video');
+                $(this).addClass('active-video');
+            })
+        } )
+    </script>
+}
+
+<script>
+    $(".list-video .action").click(function () {
+        var url = $(this).attr("data-url");
+        var title = $(this).attr("data-title");
+        $(".box-video .content iframe").attr("src", url + "?autoplay=1");
+        $(".box-video .content h3").text(title);
+    });
+</script>

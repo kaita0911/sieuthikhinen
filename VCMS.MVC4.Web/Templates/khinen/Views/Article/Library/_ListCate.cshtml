@@ -1,0 +1,74 @@
+﻿@model ArticleResult
+@if (Model.List.Count > 0)
+{
+    var lstCate = Category.GetByType(4, SiteConfig.SiteId, SiteConfig.LanguageId);
+    var temp = Article.GetByCategories(lstCate.Select(c => c.Id).ToArray(), SiteConfig.LanguageId, ArticleFlags.ACTIVE, 6, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING, ArticleIncludeFlags.ARTICLE_TYPE | ArticleIncludeFlags.FILES);
+    string path = "";
+    <div class="box-library-cate article article-list category-list">
+        <h1 class="title">
+            Thư viện
+        </h1>
+        <div class="content">
+            @foreach (var sitem in lstCate)
+            {
+                var lst = temp.Where(a => a.CurrentCategory.Id == sitem.Id).ToList();
+                <div class="citem">
+                    <h3 class="c-header">
+                        <a class="left" href="@Url.Action("Detail", "Category", new {id=sitem.Id,code=sitem.ArticleType.UrlFriendly,title=Unichar.UnicodeStrings.UrlString(sitem.CategoryName) })">
+                            @sitem.CategoryName
+                        </a>
+                        <a class="right"></a>
+                    </h3>
+                    <div class="art-content">
+                        <div class="row">
+                            @foreach (var item in lst)
+                            {
+
+                                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                    <div class="item">
+                                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                        {
+                                            var str = item.ImageUrl.Split('/');
+                                            if (str.Length <= 1)
+                                            {
+                                                path = "/UserUpload/Article/";
+                                            }
+                                            else
+                                            {
+                                                path = "";
+                                            }
+                                            <figure>
+                                                <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                                    @Html.Image(path + item.ImageUrl, new ImageOptions { Width = 337, Height = 200, Mode = ImageMode.pad }, new { alt = item.ArticleName })
+                                                </a>
+                                            </figure>
+                                        }
+
+                                        <div class="meta">
+                                            <h4><a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">@item.ArticleName</a></h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                @*<div class="col-lg-8 col-md-8 col-sm-6 col-xs-6">
+                                        <div class="meta">
+                                            <h3><a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">@item.ArticleName</a></h3>
+                                            <span class="date">@item.Day</span>
+                                            <div class="description">
+                                                @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, 50))
+                                            </div>
+                                        </div>
+                                    </div>*@
+
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+}
+else
+{
+    <span>@Html.Locale("article_null")</span>
+}

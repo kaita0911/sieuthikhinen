@@ -1,0 +1,110 @@
+﻿@using VCMS.MVC4.Web
+@model VCMS.MVC4.Data.Currency
+@{
+    DataContext db = new DataContext();
+    ViewBag.Title = "Sửa";
+    var postion = new List<object>();
+    postion.Add(new { Value = "-1", Name = "Mặc định" });
+    postion.Add(new { Value = "0", Name = "- $Giá" });
+    postion.Add(new { Value = "1", Name = "- Giá$" });
+    postion.Add(new { Value = "2", Name = "- $ Giá" });
+    postion.Add(new { Value = "3", Name = "- Giá $" });
+}
+<div class="form">
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.ValidationSummary(true)
+        <fieldset>
+            <legend>Sửa Currency</legend>
+            @Html.HiddenFor(model => model.Id)
+            <div class="editor-label">
+                <label>Tên</label>
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Name)
+                @Html.ValidationMessageFor(model => model.Name)
+            </div>
+            <div class="editor-label">
+                <label>Mã</label>
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.Code, new { @class = "w-300" })
+                @Html.ValidationMessageFor(model => model.Code)
+            </div>
+            <div class="editor-label">
+                <label>Tỷ giá</label>
+            </div>
+            <div class="editor-field pri-and-curr w-300">
+                @Html.TextBox("Rate", string.Format("{0:#,###}", Model.Rate), new { @class = "price" })
+                @Html.ValidationMessageFor(model => model.Rate)
+            </div>
+            <div class="dis-percentage margin-bottom-7">
+                <div class="editor-label">
+                    <label>Định dạng</label>
+                </div>
+                <div class="editor-field">
+                    @Html.TextBoxFor(model => model.Formatting, new { @class = "w-300" })
+                </div>
+            </div>
+            <div class="dis-percentage margin-bottom-7">
+                <div class="editor-field checkbox">
+                    <label>
+                        @Html.CheckBoxFor(model => model.CheckFormat)<i></i> Theo định dạng nhập vào
+                    </label>
+                </div>
+            </div>
+            <div class="dis-percentage">
+                <div class="editor-label">
+                    <label>Kí hiệu</label>
+                </div>
+                <div class="editor-field">
+                    @Html.TextBoxFor(model => model.CurrencySymbol, new { @class = "w-300" })
+                </div>
+            </div>
+            <div class="dis-percentage">
+                <div class="editor-label">
+                    <label>Vị trí xuất hiện của kí hiệu</label>
+                </div>
+                <div class="editor-field">
+                    @Html.DropDownListFor(model => model.CurrencyPositivePattern, new SelectList(postion, "Value", "Name"), new { @class = "form-control" })
+                </div>
+            </div>
+            
+            <div class="toolbar">
+                <span class="button">
+                    <button type="submit" class="btn save"><i class="fa fa-save"></i> <span>Lưu</span></button>
+                </span>
+                <span class="btn back">
+                    <a href="@Url.Action("CurrencyList", "Price")">
+                        <i class="fa fa-mail-reply"></i> <span>Trở về danh sách</span>
+                    </a>
+                </span>
+            </div>
+        </fieldset>
+    }
+
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+        @Scripts.Render("~/bundles/jqueryui")
+        <script>
+            $(function () {
+
+                $(".price").keyup(function (e) {
+                    if (e.which >= 37 && e.which <= 40) {
+                        e.preventDefault()
+                    }
+                    var t = $(this);
+                    var n = t.val().replace(/,/gi, "").split("").reverse().join("");
+                    var r = RemoveRougeChar(n.replace(/(.{3})/g, "$1,").split("").reverse().join(""));
+                    t.val(r);
+                })
+            })
+
+            function RemoveRougeChar(e) {
+                if (e.substring(0, 1) == ",") {
+                    return e.substring(1, e.length)
+                } return e
+            }
+        </script>
+    }
+</div>

@@ -1,0 +1,49 @@
+﻿@model ContactModel
+@{
+    ViewBag.Title = Resources.VCMS.contact;
+    ViewBag.Breadcrumb = new BreadcrumbModel { Items = new List<BreadcrumbItem> { new BreadcrumbItem { Text = ViewBag.Title.ToString(), Url = null, IsLast = true } } };
+    
+}
+
+
+<section >
+    @if (ViewBag.Result!=null && (int)ViewBag.Result == 0)
+    {
+       <span class="message"> Cảm ơn bạn đã liên hệ với chúng tôi. Mọi thông tin, câu hỏi sẽ được hồi đáp trong thời gian sớm nhất có thể.</span>
+    }
+    else if (ViewBag.Result != null && (int)ViewBag.Result == -1)
+    { 
+        <span class="error"> @ViewBag.Message</span>
+    }
+    
+</section>
+
+<section class="form">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary()
+        <label>Tên</label>
+        @Html.EditorFor(model => model.Name)
+         <label>@Html.Raw(Resources.VCMS.company)</label>
+        @Html.EditorFor(model => model.Company)
+        <label>@Html.Raw(Resources.VCMS.address)</label>
+        @Html.EditorFor(model => model.Address)
+        <label>Email</label>
+        @Html.EditorFor(model => model.Email)
+        <label>Điện thoại</label>
+        @Html.EditorFor(model => model.Phone)
+        <label>Tiêu đề</label>
+        @Html.EditorFor(model => model.Subject)
+        <label>Nội dung</label>
+        @Html.TextAreaFor(model => model.Body, new { rows = 10, cols = 80 })
+        <br />
+        <input type="submit" value="Liên hệ" />
+    }
+</section>
+
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryui")
+
+}

@@ -1,0 +1,34 @@
+﻿@model Category
+@{
+    ViewBag.Title = Model.CategoryName;
+    ViewBag.Keywords = Model.CategoryDetail[SiteConfig.LanguageId].SEOKeywords;
+    ViewBag.Description = Model.CategoryDetail[SiteConfig.LanguageId].SEODescription;
+    Model.ArticleType.LanguageId = SiteConfig.LanguageId;
+    ViewBag.Breadcrumb = new BreadcrumbModel
+    {
+        Items = new BreadcrumbItem[] { 
+        new BreadcrumbItem{Url=Url.Action("Index","ArticleType",new{code=Model.ArticleType.UrlFriendly}),Text = Model.ArticleType.Name},
+        new BreadcrumbItem{Url=null,Text = Model.CategoryName, IsLast=true}
+    }
+    };
+    string viewName = null;
+    var articleType = Model.ArticleType;
+    if (articleType != null)
+    {
+        if (File.Exists(Server.MapPath("~/Views/Article/" + articleType.Code + "/_List.cshtml")))
+        {
+            viewName = articleType.Code + "/_list.cshtml";
+        }
+
+    }
+}
+@Html.Partial("_SocialShare")
+<h1>@Model.CategoryName</h1>
+@if (viewName != null)
+{
+    @Html.Partial("~/Views/Article/" + viewName, Model.Articles.OrderBy(a=>a.SortOrder).ToList())
+}
+else
+{
+    @Html.Partial("~/Views/Article/_List.cshtml", Model.Articles.OrderBy(a=>a.SortOrder).ToList())
+}

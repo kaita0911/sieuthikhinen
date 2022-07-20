@@ -1,0 +1,58 @@
+﻿@model Widget
+@{
+    var article = Article.GetByType((int)Model.ArticleTypeId, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection, Model.Includes);
+    if (article.List.Count > 0)
+    {
+        <div class="box-l-slider-news box-home2">
+            <div class="container">
+                <h2 class="heading">
+                    <a href="/tin-tuc.html">@Model.Title</a>
+                    <span>Những tin tức liên quan đến ngành xây dựng nhất gần đây</span>
+                </h2>
+                <div class="content">
+                    <div class="owl-carousel" data-plugin-options='{"items": 3, "singleItem": false, "autoPlay": false, "navigation": true, "pagination": false ,"slideSpeed":400,"addClassActive":true,"itemsDesktop": [1199, 3],"itemsDesktopSmall": [991, 3],"itemsTablet": [768, 2],"itemsMobile": [479, 1]}' data-snap-ignore="true">
+                        @foreach (var item in article.List)
+                        {
+                            <div class="item">
+                                <figure>
+                                    <a class="banner-cubic-7" href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                                        @Html.Image(item.ImageUrl, new ImageOptions { Width = 350, Height = 240, Mode = ImageMode.crop }, new { alt = item.ArticleName, @class = "owl" })
+                                    </a>
+
+                                </figure>
+                                <div class="meta">
+                                    <h3 class="name">
+                                        <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })">
+                                            @item.ArticleName
+                                        </a>
+                                    </h3>
+                                    <div class="s-desc">
+                                        @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, Model.NumberText))
+                                    </div>
+                                    <span class="date">
+                                       <i class="fa fa-clock-o"></i> @item.Day
+                                    </span>
+                                    <div class="view-detail">
+                                        <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })">
+                                            @Html.Locale("view_detail")
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                   
+                    @if (Model.ShowViewAll)
+                    {
+                        <div class="view-all">
+                            <a href="/tin-tuc.html">
+                                @Html.Locale("view_all")
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+}
+

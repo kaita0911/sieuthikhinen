@@ -1,0 +1,23 @@
+﻿@model BreadcrumbModel
+@{
+    var model = Model;
+}
+<div class="breadcrumb @(model.CssClass)">
+    <ul>
+
+        <li class="first"><a href="@Url.Action("Index", "Home")">
+            <img src="@Url.Content("~/Content/images/nav-home.png")" /></a><span>@Html.ActionLink("Home", "Index", "Home")</span></li>
+        @foreach (var item in model.Items)
+        {
+            if (item.IsLast)
+            {
+            <li class="last"><span>@Html.Raw(item.Text)</span></li>
+            }
+            else
+            {
+            <li><a href="@item.Url">@Html.Raw(item.Text)</a></li>
+            }
+        }
+
+    </ul>
+</div>

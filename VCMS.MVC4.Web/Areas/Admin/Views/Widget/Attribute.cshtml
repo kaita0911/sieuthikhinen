@@ -1,0 +1,8 @@
+﻿@model ArticleType
+@{
+    Layout = null;
+}
+@if (Model != null)
+{
+    @Html.DropDownList("Attribute", null, new { @class = "form-control" })
+}

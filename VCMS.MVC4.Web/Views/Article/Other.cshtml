@@ -1,0 +1,12 @@
+﻿@model ICollection<Article>
+@{
+    Layout = null;
+}
+<ul>
+    @foreach (var item in Model)
+    {
+        <li>
+            @Html.ActionLink(item.ArticleName, "Detail",new{id=item.Id, code=item.ArticleType.UrlFriendly,title=Unichar.UnicodeStrings.UrlString(item.ArticleName)})
+        </li>
+    }
+</ul>

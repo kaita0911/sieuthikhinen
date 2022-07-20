@@ -1,0 +1,275 @@
+﻿@model ArticleType
+@{
+    Layout = "_LayoutAccount.cshtml";
+    int clevel1 = 0;
+    int clevel2 = 0;
+    int cid = 0;
+    int aid = 0;
+    string url = "/Account/ListProduct/";
+    if (Request["clevel1"] != null)
+    {
+        cid = clevel1 = Convert.ToInt32(Request["clevel1"]);
+    }
+    if (Request["clevel2"] != null)
+    {
+        var tid = Convert.ToInt32(Request["clevel2"]);
+        if (tid > 0)
+        {
+            cid = clevel2 = Convert.ToInt32(Request["clevel2"]);
+        }
+    }
+    if (Request["art"] != null)
+    {
+        aid = Convert.ToInt32(Request["art"]);
+    }
+    ViewBag.Title = "";
+    var lst_cate = Category.GetTree(Category.GetByType(Model.Id, SiteConfig.SiteId, 1, CategoryFlags.ACTIVE | CategoryFlags.INACTIVE).OrderBy(c => c.CategoryName).ToList()).Where(c => c.Level == 0);
+    var lst_level1 = Category.GetByParent(clevel1, Model.Id, 1).OrderBy(c => c.CategoryName);
+    if (Request["kw"] != null)
+    {
+        lst_level1 = Category.Search(Model.Id, clevel1, Request["kw"].ToString(), SiteConfig.LanguageId).OrderBy(c => c.CategoryName);
+    }
+    ViewBag.Title = Html.Locale("account_list_product").ToHtmlString();
+    ViewBag.Breadcrumb = new BreadcrumbModel { Items = new List<BreadcrumbItem> { new BreadcrumbItem { Text = Html.Locale("account_list_product").ToHtmlString(), Url = null, IsLast = true } } };
+}
+<div class="acc-product">
+    <h1 class="heading"></h1>
+    <div class="row content">
+        <div class="col-md-2 col-sm-4 col-sm-12 left-menu">
+            @Html.Partial("_MenuProductAc")
+        </div>
+        <div class="col-md-10 col-sm-8 col-sm-12 right-ctn">
+            <div class="row art-type">
+                <div class="col-md-2 col-sm-4 col-sm-12 col-1">
+                    @if (lst_cate.Count() > 0)
+                    {
+                        @Html.DropDownList("cate", new SelectList(lst_cate, "Id", "CategoryName", clevel1), "-- Chọn nhóm --", new { @class = "form-control" })
+                    }
+                    <div class="level-1">
+                        <div class="search-box search-category">
+                            <input name="keyword" type="text" class="text-box pull-left" value="@Request["kw"]" placeholder="Nhập từ khóa" />
+                            <button type="submit" class="btn search"><i class="fa fa-search"></i></button>
+                        </div>
+                        @if (lst_level1.Count() > 0)
+                        {
+                            <ul>
+                                @foreach (var item in lst_level1)
+                                {
+                                    int count = Article.CountByCategory(SiteConfig.UserId, item.Id, SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE | ArticleFlags.INACTIVE, true);
+                                    <li class="@(clevel2 == item.Id?"active":"")">
+                                        @if (Request["kw"] != null)
+                                        {
+                                            <a href="@url@Model.Id?clevel1=@clevel1&clevel2=@item.Id&kw=@Request["kw"].ToString()">
+                                                @item.CategoryName <span>(@count)</span>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a href="@url@Model.Id?clevel1=@clevel1&clevel2=@item.Id">
+                                                @item.CategoryName <span>(@count)</span>
+                                            </a>
+                                        }
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <span>No data...</span>
+                        }
+                    </div>
+                </div>
+                <div class="col-md-5 col-sm-5 col-sm-12 col-2">
+                    @{
+                        if (cid > 0)
+                        {
+                            int pageIndex = 1;
+                            int pageSize = 15;
+                            if (Request["pageIndex"] != null)
+                            {
+                                pageIndex = Convert.ToInt32(Request["pageIndex"]);
+                            }
+                            if (Request["pageSize"] != null)
+                            {
+                                pageSize = Convert.ToInt32(Request["pageSize"]);
+                            }
+                            var art_list = Article.GetByCategory(SiteConfig.UserId, cid, SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE | ArticleFlags.INACTIVE, pageIndex: pageIndex, pageSize: pageSize, sortOrder: ArticleSortOrder.SORT_ORDER, direction: VCMS.MVC4.Data.SortDirection.DESCENDING, admin: true);
+                            int count = Article.CountByCategory(SiteConfig.UserId, cid, SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE | ArticleFlags.INACTIVE, true);
+
+                            if (Request["akw"] != null)
+                            {
+                                art_list = Article.SearchByUser(SiteConfig.UserId, SiteConfig.SiteId, SiteConfig.LanguageId, Request["akw"].ToString(), cid, pageIndex, pageSize, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.DESCENDING);
+                                count = Article.SearchCountByUser(SiteConfig.UserId, Model.Id, SiteConfig.SiteId, SiteConfig.LanguageId, Request["akw"].ToString(), cid);
+                            }
+                            <div class="tool-bar">
+                                @if (clevel1 > 0)
+                                {
+                                    <a href="@Url.Action("CreateProduct", new { cid = cid, sid = clevel1 })">
+                                        <i class="fa fa-plus"></i>
+                                        <span class="hidden-xs">Thêm mới</span>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("CreateProduct", new { cid = cid })">
+                                        <i class="fa fa-plus"></i>
+                                        <span class="hidden-xs">Thêm mới</span>
+                                    </a>
+                                }
+                                @*<a href="javascript:void(0)" id="update-attribute">
+                                    <i class="fa fa-puzzle-piece"></i>
+                                    <span class="hidden-xs">Cập nhật thuộc tính</span>
+                                </a>*@
+                            </div>
+                            <div class="search-box search-article">
+                                <input name="keyword" type="text" class="text-box pull-left" value="@Request["akw"]" placeholder="Nhập từ khóa" />
+                                <button type="submit" class="btn search"><i class="fa fa-search"></i></button>
+                            </div>
+                            @Html.Pager(new PagerOptions { ItemCount = count, VisibleItemCount = 7, PageSize = pageSize }, null)
+                            <ul class="art-list">
+                                @foreach (var item in art_list.List)
+                                {
+                                    <li class="item @(aid == item.Id?"active":"")">
+                                        <div class="img">
+                                            @if (item.ImageUrl != null)
+                                            {
+                                                <a href="@url@Model.Id?clevel1=@clevel1&clevel2=@clevel2&art=@item.Id&pageSize=@pageSize&pageIndex=@pageIndex@(Request["kw"] != null?"&kw="+Request["kw"].ToString():"")@(Request["akw"] != null?"&kw="+Request["akw"].ToString():"")">
+                                                    <img src="@Url.Content("~/" + item.ImageUrl)?width=50" />
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <i class="fa fa-picture-o"></i>
+                                            }
+                                        </div>
+                                        <div class="info">
+                                            <div class="name">
+                                                <a href="@url@Model.Id?clevel1=@clevel1&clevel2=@clevel2&art=@item.Id&pageSize=@pageSize&pageIndex=@pageIndex@(Request["kw"] != null?"&kw="+Request["kw"].ToString():"")@(Request["akw"] != null?"&akw="+Request["akw"].ToString():"")">
+                                                    @item.ArticleName
+                                                </a>
+                                            </div>
+                                            <div class="price">
+                                                <span class="ctn">@Html.Price(item.ItemPrice)</span>
+                                            </div>
+                                            
+                                            <div class="action">        
+                                                <p><a class="fa fa-trash-o" href="@Url.Action("DeleteItem", new { id = item.Id, returnUrl = ViewContext.HttpContext.Request.Url.PathAndQuery })" onclick="return confirm('Bạn có chắc muốn xóa bài viết này')" title="Xóa"></a></p>
+                                                <p> <a href="@Url.Action("EditProduct", new { id = item.Id, returnUrl = ViewContext.HttpContext.Request.Url.PathAndQuery })" class="fa fa-edit" data-toggle="tooltip" data-placement="top" title="Sửa"></a></p>     
+                                                @*<p>
+                                                    <label>@Html.CheckBoxFor(model => item.InActive, new { value = item.Id, @class = "in-active" })<i></i>Inactive</label>
+                                                </p>*@
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                            @Html.Pager(new PagerOptions { ItemCount = count, VisibleItemCount = 7, PageSize = pageSize }, null)
+                        }
+                    }
+                </div>
+                <div class="col-md-5 col-sm-5 col-sm-12 col-3">
+                    @if (aid > 0)
+                    {
+                        var art = Article.GetById(aid, SiteConfig.SiteId, SiteConfig.LanguageId);
+                        if (art != null)
+                        {
+                            <div class="art-detail">
+                                <div class="img">
+                                    @if (art.ImageUrl != null)
+                                    {
+                                        <img src="@Url.Content("~/" + art.ImageUrl)?width=150" />
+                                    }
+                                </div>
+                                <h4 class="ttl">
+                                    <span>@art.ArticleName</span>
+                                </h4>
+                                <div class="price">
+                                    <span class="lbl">Giá: </span>
+                                    <span class="ctn">@Html.Price(art.ItemPrice)</span>
+                                </div>
+                                <div class="s-desc">
+                                    @Html.Raw(art.ShortDescription)
+                                </div>
+                                <div class="desc">
+                                    <fieldset>
+                                        <legend>Mô tả chi tiết</legend>
+                                        <div class="ctn">
+                                            @Html.Raw(art.Description)
+                                        </div>
+                                    </fieldset>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $("#cate").change(function () {
+                var val = $(this).val();
+                if (val != "") {
+                    window.location.href = "@url@Model.Id?clevel1=" + val;
+                }
+    });
+
+    $(".search-category .search").click(function () {
+        var val = $(".search-category .text-box").val();
+        window.location.href = "@url@Model.Id?clevel1=" + @clevel1 + "&kw=" + val;
+    });
+
+    $(".search-category .text-box").on('keypress', function (e) {
+        if (e.which == 13) {
+             var val = $(this).val();
+              window.location.href = "@url@Model.Id?clevel1=" + @clevel1 + "&kw=" + val;
+        }
+    });
+
+    $(".search-article .search").click(function () {
+        var val = $(".search-article .text-box").val();
+        var cval = $(".search-category .text-box").val();
+        if (cval != "") {
+            window.location.href = "@url@Model.Id?clevel1=" + @clevel1 + "&clevel2=" + @clevel2 + "&akw=" + val + "&kw=" + cval;
+        }
+        else {
+            window.location.href = "@url@Model.Id?clevel1=" + @clevel1 + "&clevel2=" + @clevel2 + "&akw=" + val;
+        }
+
+});
+
+    $(".search-article .text-box").on('keypress', function (e) {
+        if (e.which == 13) {
+            var val = $(this).val();
+            var cval = $(".search-category .text-box").val();
+            if (cval != "") {
+            window.location.href = "@url@Model.Id?clevel1=" + @clevel1 + "&clevel2=" + @clevel2 + "&akw=" + val + "&kw=" + cval;
+        }
+        else {
+            window.location.href = "@url@Model.Id?clevel1=" + @clevel1 + "&clevel2=" + @clevel2 + "&akw=" + val;
+        }
+        }
+    });
+
+    @*$("#update-attribute").click(function () {
+                    var json = [];
+                    $(".item input[type='checkbox']").each(
+                        function () {
+                            var inActive = $(this).parentsUntil(".art-list").find(".in-active:checked").length > 0;
+                            json.push({ "id": $(this).val(), "inActive": inActive });
+                        });
+                    if (json.length > 0) {
+                        $.ajax({
+                            url: '@Url.Action("UpdateAttributes")',
+                            type: 'POST',
+                            success: function (data) {
+                                if (data.Status == 0) {
+                                    alert(data.Message);
+                                    window.location.reload();
+                                }
+                            },
+                            data: "json=" + JSON.stringify(json)
+                        });
+                    }
+                });*@
+</script>

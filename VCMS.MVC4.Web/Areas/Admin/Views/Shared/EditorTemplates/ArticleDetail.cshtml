@@ -1,0 +1,91 @@
+﻿@model ArticleDetail
+@{
+    var l = Model.LanguageId;
+    var articleType = (ArticleType)ViewBag.ArticleType;
+    var multiProperties = articleType.Properties.Where(p => p.MultiLanguage);
+    string sdesc = "Mô tả ngắn gọn";
+    string desc = "Mô tả chi tiết";
+    if(articleType.Code == "FAQ")
+    {
+        sdesc = "Nội dung câu hỏi";
+        desc = "Nội dung câu trả lời";
+    }
+    //else if (articleType.Code == "PRODUCT")
+    //{
+    //    desc = "Thiết kế";
+    //}
+}
+@Html.HiddenFor(model => model.LanguageId)
+<div id="tabs-@l" class="tab-pane">
+
+    <div class="editor-label">
+        @Html.Label("tiêu đề")
+    </div>
+    <div class="editor-field">
+        @Html.TextBoxFor(model => model.ArticleName, new { name = "txtName_" + l.ToString(), data_auto_copy = "true", @class = "url-source" })
+        @Html.ValidationMessageFor(model => model.ArticleName, "Tiêu đề không được trống và không dài quá 200 ký tự")
+    </div>
+    <div class="editor-label">
+        @Html.Label("url")
+    </div>
+    <div class="editor-field">
+        @Html.TextBoxFor(model => model.UrlFriendly, new { name = "txtUrl_" + l.ToString(), @class = "url-dest" })
+    </div>
+    @if (articleType.HasShorDesc)
+    {
+        <div class="editor-label short-desc">
+            @Html.Label(sdesc)
+        </div>
+        <div class="editor-field">
+            @Html.TextAreaFor(model => model.ShortDesc, new { @class = "fck" })
+        </div>
+    }
+    @if (articleType.HasDescription)
+    {
+        <div class="editor-label full-desc">
+            @Html.Label(desc)
+        </div>
+        <div class="editor-field margin-bottom-7">
+            @Html.TextAreaFor(model => model.Description, new { @class = "fck" })
+        </div>
+    }
+    @foreach (var item in multiProperties.Where(p => p.PropertyType != PropertyType.HASPRICE && p.PropertyType != PropertyType.CHOICE && p.PropertyType != PropertyType.MULTICHOICE))
+    {
+        var prop_id = "P_" + item.Id.ToString() + "_" + l.ToString();
+        <div class="editor-label">
+            @Html.Label(item.PropertyDetail[SiteConfig.LanguageId].Name)
+        </div>
+        <div class="editor-field">
+            @if (item.PropertyType == PropertyType.TEXT || item.PropertyType == PropertyType.HTML)
+            {
+                @Html.TextArea(prop_id, new { @class = "fck" })
+            }
+            else
+            {
+                @Html.TextBox(prop_id)
+            }
+        </div>
+    }
+    @if (articleType.HasMeta)
+    {
+        if (articleType.Code != "PRODUCT")
+        {
+            <div class="editor-label">
+                @Html.Label("meta keywords")
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.SEOKeywords, new { @class = "keyword" })
+                @Html.ValidationMessageFor(model => model.SEOKeywords, "không được dài quá 200 ký tự")
+            </div>
+        }
+          
+        <div class="editor-label">
+            @Html.Label("meta description")
+        </div>
+        <div class="editor-field">
+            @Html.TextBoxFor(model => model.SEODescription)
+            @Html.ValidationMessageFor(model => model.SEODescription, "không được dài quá 200 ký tự")
+        </div>
+    }
+
+</div>

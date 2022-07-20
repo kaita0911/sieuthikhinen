@@ -1,0 +1,112 @@
+﻿@using VCMS.MVC4.Web
+@using VCMS.MVC4.Data
+@model VCMS.MVC4.Data.Category
+@{
+    ViewBag.Title = "Edit";
+    var item = Model;
+    DataContext db = new DataContext();
+    var discounts = db.Discounts.ToList();
+    var currencies = db.Currencies.ToList();
+}
+
+
+<div class="form">
+    @using (Html.BeginForm(null, null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div>
+            <label>Nhóm cha</label>
+            @Html.Partial("_OptionList", (List<Category>)ViewBag.Categories)
+        </div>
+        <div id="tabs" class="margin-top-20">
+            <ul class="nav nav-tabs" role="tablist" id="myTab">
+                @foreach (var l in SiteConfig.Languages)
+                {
+                    <li><a href="#tabs-@l.Id" role="tab" data-toggle="tab">@l.DisplayName</a></li>
+                }
+            </ul>
+
+            <div class="tab-content">
+                @Html.EditorFor(m => m.CategoryDetail)
+            </div>
+            <script>
+                $(".nav-tabs li:first").addClass("active");
+                $(".tab-content .tab-pane:first").addClass("active");
+            </script>
+        </div>
+       
+        if (Model.CategoryType.Code.Equals("COLOR", StringComparison.OrdinalIgnoreCase))
+        {
+                <div class="editor-label">
+                    @Html.Label("Mã màu")
+                </div>
+                <div class="editor-field">
+                    @Html.TextBoxFor(model => model.Font)
+                </div>
+        }
+        if (Roles.IsUserInRole("Super Administrators") && !Model.CategoryType.Code.Equals("COLOR", StringComparison.OrdinalIgnoreCase))
+        {
+             <div class="editor-label">
+                 @Html.Label("Font")
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.Font)
+            </div>
+        }
+        @*<div class="editor-label">
+            @Html.Locale("shipped_price")
+        </div>
+
+        <div class="editor-field pri-and-curr  w-300">
+            @Html.TextBoxFor(model => model.ShippedPrice, new { @class = "price" })
+            @Html.DropDownList("Currency", new SelectList(currencies, "Id", "CurrencySymbol", currencies.FirstOrDefault(c => c.IsDefault).Id), new { @class = "currency" })
+        </div>*@
+        <div class="file">
+            <label>Image</label>
+            <input type="file" name="ImageUrl" /><i data-label="Chọn file"></i>
+        </div>
+        <div class="toolbar">
+            <span class="button">
+                <button type="submit" class="btn save"><i class="fa fa-save"></i> Save</button>
+            </span>
+            <span class="btn back">
+                <a href="@Url.Action("ListByCateType", "Category", new { id = Model.CategoryTypeId })">
+                    <i class="fa fa-mail-reply"></i> <span>Trở về</span>
+                </a>
+            </span>
+        </div>
+        <div>
+            @Html.ValidationSummary()
+        </div>
+    }
+</div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryui")
+    @Scripts.Render("~/bundles/editor")
+    <script>
+        $(function () {
+            $("input[data-auto-copy=true]").autoCopy();
+            $(".url-source").each(function () {
+                $(this).latinize({ destination: $(".url-dest", $(this).parent().parent()) });
+            });
+            $("#tabs").validtabs();
+            $(".keyword").keyword();
+
+        })
+        function RemoveRougeChar(e) {
+            if (e.substring(0, 1) == ",") {
+                return e.substring(1, e.length)
+            } return e
+        }
+        $(".price").keyup(function (e) {
+            if (e.which >= 37 && e.which <= 40) {
+                e.preventDefault()
+            }
+            var t = $(this);
+            var n = t.val().replace(/,/gi, "").split("").reverse().join("");
+            var r = RemoveRougeChar(n.replace(/(.{3})/g, "$1,").split("").reverse().join(""));
+            t.val(r);
+        })
+    </script>
+}

@@ -1,0 +1,41 @@
+﻿@model List<Article>
+@{
+    var k = 0;
+    var j = 0;
+    if (Model.Count > 0)
+    {
+        <section id="banner">
+            @*<div class="container">*@
+            <div id="myCarousel" class="carousel slide" data-ride="carousel">
+                <ol class="carousel-indicators">
+                    @foreach (var item in Model)
+                    {
+                        <li data-target="#myCarousel" data-slide-to="@k" class="@(k==0? "active":"")"></li>
+                        k++;
+                    }
+                </ol>
+                <div class="carousel-inner">
+                    @foreach (var item in Model)
+                    {
+                        var link = item["URL"];
+                        <div class="item @(j==0? "active":"")">
+                            <figure>
+                                <a href="@if(link!=null){@link}"><img src="@Url.Content(item.ImageUrl).ToLower()" alt="@item.ArticleName" /></a>
+                            </figure>
+                        </div>
+                        j++;
+                    }
+                </div>
+                <a class="left carousel-control hidden-xs" href="#myCarousel" data-slide="prev">
+                    <span class="fa fa-angle-left"></span>
+                    <span class="sr-only">@Html.Locale("prev")</span>
+                </a>
+                <a class="right carousel-control hidden-xs" href="#myCarousel" data-slide="next">
+                    <span class="fa fa-angle-right"></span>
+                    <span class="sr-only">@Html.Locale("next")</span>
+                </a>
+            </div>
+            @*</div>*@
+        </section>
+    }
+}

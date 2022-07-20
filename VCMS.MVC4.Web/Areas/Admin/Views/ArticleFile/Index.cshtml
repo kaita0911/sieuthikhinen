@@ -1,0 +1,164 @@
+﻿@model ICollection<ArticleFile>
+
+@{
+    ViewBag.Title = "File Manager";
+    var article = (Article)ViewBag.Article;
+    var fileType = (ArticleFileType)Enum.Parse(typeof(ArticleFileType), Request["fileType"].ToUpper());
+    ViewBag.Breadcrumb = new BreadcrumbModel
+    {
+        Items = new BreadcrumbItem[] {
+    new BreadcrumbItem { Url="/", Text="Home", IsFirst=true},
+    new BreadcrumbItem { Url=Url.Action("List","Article",new{id=article.ArticleTypeId}), Text="Danh sách " + article.ArticleType.Name},
+    new BreadcrumbItem { Url=null, Text="Quản lý file", IsLast=true}}
+    };
+}
+
+<div class="btn-group">
+    <span class="btn create">
+        <a href="@Url.Action("Create", "ArticleFile", new { id = ViewContext.RouteData.Values["id"], fileType = fileType })">
+            <i class="fa fa-plus"></i> <span class="hidden-xs">Thêm mới</span>
+        </a>
+    </span>
+    <div class="btn-group btn type">
+        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            Thao tác
+            <i class="fa fa-caret-down"></i>
+        </a>
+        <ul class="dropdown-menu fa-ul">
+            <li>
+                <a href="@Url.Action("Update",null,null)" id="update_order">
+                    <i class="fa fa-sort-numeric-desc"></i> <span class="hidden-xs">Cập nhật thứ tự</span>
+                </a>
+            </li>
+
+        </ul>
+    </div>
+    <span class="btn delete">
+        <a href="@Url.Action("Delete", "ArticleFile")" id="delete">
+            <i class="fa fa-trash-o"></i> <span class="hidden-xs">Xóa</span>
+        </a>
+    </span>
+
+    @if (fileType == ArticleFileType.IMAGE)
+    {
+        <span class="btn save hidden-xs">
+            <a href="@Url.Action("Update", "ArticleFile")" id="update">
+                <i class="fa fa-save"></i> <span class="hidden-xs">Đặt hình đại diện</span>
+            </a>
+        </span>
+    }
+
+    <span class="btn back">
+        <a href="@Url.Action("List", "Article", new { id = article.ArticleTypeId })">
+            <i class="fa fa-mail-reply"></i> <span>Trở về</span>
+        </a>
+    </span>
+</div>
+<table class="table table-hover">
+    <thead class="header">
+        <tr>
+            <th class="check">
+                <label class="checkbox single noborder">@Html.CheckBox("chkSelectAll", false, new { id = "check-all" })<i></i></label>
+            </th>
+            <th class="img">
+                @Html.Label("Hình ảnh")
+            </th>
+            <th class="name">
+                @Html.Label("Tiêu đề")
+            </th>
+            <th class="title">
+                @Html.Label("Thông tin")
+            </th>
+            <th class="sortorder">Thứ tự</th>
+            @if (fileType == ArticleFileType.IMAGE)
+            {
+                <th class="img">Hình đại diện</th>
+            }
+
+            <th class="action">Thao tác</th>
+
+        </tr>
+    </thead>
+    <tbody class="items">
+        @foreach (var item in Model.OrderBy(f => f.SortOrder))
+        {
+            <tr class="item">
+                <td class="check"><label class="checkbox fix"><input type="checkbox" value="@item.Id" /><i></i></label></td>
+                <td class="img">
+                    @if (fileType == ArticleFileType.IMAGE)
+                    {
+                        <a href="@Url.Content(item.FileName)?width=400&mode=crop" class="preview">
+                            @Html.Image(item.FileName, new ImageOptions { Width = 50, Height = 30, SearchParentIfNotExists = true })
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Content(item.FilePath)" target="_blank" class="file-icon @System.IO.Path.GetExtension(item.FileName).Substring(1).ToLower()"></a>
+                    }
+                </td>
+                <td class="name">
+                    <span>@item.Title</span>
+                </td>
+                <td class="title">
+                    <strong>Filename:</strong> @item.FileName
+                    <br />
+                    <strong>Filesize:</strong> @item.FileSize.ToString("#,###") bytes<br />
+                    <strong>Original Filename:</strong> @item.OriginalFileName
+                </td>
+                <td class="sort">
+                    <input type="text" value="@item.SortOrder" name="sort" rel="@item.Id" />
+                </td>
+                @if (fileType == ArticleFileType.IMAGE)
+                {
+                    <td class="img">
+                        <label class="radio fix"><input type="radio" value="@item.Id" name='default' checked="@item.IsDefault" /><i></i></label>
+                    </td>
+                    <td class="action">
+                        <a href="@Url.Action("Edit", new { id = item.Id })" class="edit-link" title="Sửa">
+                            <i class="fa fa-edit"></i><span class="hidden-sm">Edit</span>
+                        </a>
+                    </td>
+                }
+
+                @if (fileType == ArticleFileType.ATTACHMENT)
+                {
+                    <td class="action">
+                        <a href="@Url.Action("Edit", new { id = item.Id })" class="edit-link" title="Sửa">
+                            <i class="fa fa-edit"></i><span class="hidden-sm">Edit</span>
+                        </a>
+                    </td>
+                }
+
+            </tr>
+        }
+    </tbody>
+</table>
+@section Scripts
+{
+    <script type="text/javascript">
+        $(function () {
+            $("#check-all").checkAll(".item .check input[type='checkbox']");
+            $("#delete").sdelete({
+                url: '@Url.Action("Delete")',
+                selector: ".item .check input[type='checkbox']",
+            });
+
+            $("#update").click(function (evt) {
+                evt.preventDefault();
+                var selected = $(".item input[type='radio']:checked").val();
+                $.ajax({
+                    url: "@Url.Action("Update")",
+                    data: "articleId=@ViewContext.RouteData.Values["id"]&defaultId=" + selected,
+                    type: "post",
+                    success: function (data) { alert(data.Message) }
+                })
+            });
+
+            $("#update_order").update({
+                url: '@Url.Action("UpdateOrder")',
+                selector: ".item input[name='sort']",
+            });
+        })
+    </script>
+    <script src="@Url.Content("~/Scripts/jquery.simplepreview.js")"></script>
+}

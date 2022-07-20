@@ -1,0 +1,93 @@
+﻿@model VCMS.MVC4.Data.Article
+
+@{
+    ViewBag.Title = Model.ArticleName;
+    ViewBag.Keywords = Model.SEOKeywords;
+    ViewBag.Description = Model.SEODescription;
+    var articleType = Model.ArticleType;
+    articleType.LanguageId = SiteConfig.LanguageId;
+    var otherCount = 6;// articleType.Code.Equals("PRODUCTS", StringComparison.OrdinalIgnoreCase) ? 6 : 10;
+    var breadcrumb = new BreadcrumbModel
+    {
+        Items = new List<BreadcrumbItem>{
+        new BreadcrumbItem{Text = articleType.Name, Url = Url.Action("Index", "ArticleType", new{ code = articleType.UrlFriendly }) },
+        
+        }
+    };
+
+    if (Model.Categories != null && Model.Categories.Count > 0)
+    {
+        var cat = Model.Categories.FirstOrDefault();
+        if (cat != null)
+        {
+            if (cat.Parent != null)
+            {
+                var pname = cat.Parent.CategoryDetail[SiteConfig.LanguageId].CategoryName;
+                breadcrumb.Items.Add(new BreadcrumbItem { Text = pname, Url = Url.Action("Detail", "Category", new { id = cat.Parent.Id, code = Model.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(pname) }) });
+            }
+            var name = cat.CategoryDetail[SiteConfig.LanguageId].CategoryName;
+            breadcrumb.Items.Add(new BreadcrumbItem { Text = name, Url = Url.Action("Detail", "Category", new { id = cat.Id, code = Model.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(name) }) });
+        }
+
+    }
+    breadcrumb.Items.Add(new BreadcrumbItem { Text = Model.ArticleName, IsLast = true });
+    ViewBag.Breadcrumb = breadcrumb;
+    string viewName = null;
+    if (articleType != null)
+    {
+        if (ViewEngines.Engines.FindView(ViewContext.Controller.ControllerContext, articleType.Code + "/Detail", null).View != null)
+        {
+            viewName = articleType.Code + "/Detail";
+        }
+
+    }
+}
+
+@Html.Partial("_SocialShare")
+@if (viewName != null)
+{
+    @Html.Partial(viewName, Model)
+ 
+}
+else
+{
+    <div class="news-detail" itemscope itemtype="http://schema.org/Article">
+        <h1 class="name" itemprop="name">@Model.ArticleName</h1>
+        <div class="date">
+            @Model.DateCreated
+        </div>
+        <div class="headline" itemprop="headline">
+            @Html.Raw(VNS.Web.Helpers.HTMLHelper.GetInnerText(Model.ShortDescription).Trim())
+        </div>
+        <div class="image">
+
+            <img itemprop="image" src="@Url.Content("~/UserUpload/Article/")@Model.ImageUrl" alt="@Model.ArticleName" />
+
+        </div>
+        <div class="description" itemprop="text">
+            @Html.Raw(Model.Description)
+        </div>
+
+        @if (Model.Attachments.Count > 0)
+        {
+            <h4>File đính kèm</h4>
+            <div class="description">
+
+                <div>
+                    Download file đính kèm @Model.ArticleType.Name <strong>@Model.ArticleName</strong> :
+                <ul class="attachment-list">
+                    @foreach (var file in Model.Attachments)
+                    {
+                        <li>@Html.ActionLink(file.OriginalFileName, "Download", "ArticleFile", new { id = file.Id }, null)</li>
+                    }
+                </ul>
+                </div>
+
+            </div>
+        }
+    </div>
+}
+<div class="other">
+    <h2>@Model.ArticleType.Name khác</h2>
+    @Html.Action("Other", new { id = Model.Id, typeid = Model.ArticleTypeId, count = otherCount })
+</div>

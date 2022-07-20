@@ -1,0 +1,87 @@
+﻿@model VCMS.MVC4.Data.Category
+@{
+    var articleType = (ArticleType)ViewBag.ArticleType;
+    var item = Model;
+}
+<tr class="item">
+    <td class="check">
+        <label class="checkbox fix">
+            @if (Roles.IsUserInRole("Moderators"))
+            {
+                if (SiteConfig.CurrentUser.UserId == Model.UserCreatedId)
+                {
+                    <input type="checkbox" value="@item.Id" class="check" /><i></i>
+                }
+            }
+            else
+            {
+                <input type="checkbox" value="@item.Id" class="check" /><i></i>
+            }
+        </label>
+    </td>
+    <td class="name">
+        <div level="@item.Level" class="level level_@item.Level">
+            <a href="javascript:void(0)" class="@(item.ChildrenCount > 0 ? "collapse" : "hidden")"></a>
+            <span>@item.CategoryName</span>
+        </div>
+    </td>
+    <td class="img">
+        <span>
+            @if (item.ImageUrl != null)
+            {
+            <a href="@Url.Content(item.ImageUrl)" title="@item.CategoryName">
+                @Html.Image(item.ImageUrl, new ImageOptions { Width = 20, Height = 20, Mode = ImageMode.pad, Lazy = false }, new { alt = item.CategoryName })
+
+            </a>
+            }
+            else
+            {
+                <i class="fa fa-picture-o"></i>
+            }
+        </span>
+    </td>
+    <td class="attr hidden">
+        <label class="checkbox fix">@Html.CheckBoxFor(model => model.IsActive, new { value = item.Id, @class = "is-active" })<i></i></label>
+    </td>
+    @if (articleType.IsNewCate)
+    {
+        <td class="attr">
+            <label class="checkbox fix">@Html.CheckBoxFor(model => model.IsNew, new { value = item.Id, @class = "is-new" })<i></i></label>
+        </td>
+    }
+    @if (articleType.IsHotCate)
+    {
+        <td class="attr">
+            <label class="checkbox fix">@Html.CheckBoxFor(model => model.IsHot, new { value = item.Id, @class = "is-hot" })<i></i></label>
+        </td>
+    }
+    @if (articleType.IsMostViewCate)
+    {
+        <td class="attr">
+            <label class="checkbox fix">@Html.CheckBoxFor(model => model.IsMostView, new { value = item.Id, @class = "is-mostview" })<i></i></label>
+        </td>
+    }
+    <td class="date">
+        <span>@item.DateCreated.ToString("dd/MM/yyy HH:mm")</span>
+    </td>
+    <td class="sort">
+        <input type="text" value="@item.SortOrder" name="sort" rel="@item.Id" />
+    </td>
+    <td class="action">
+        @if (Roles.IsUserInRole("Moderators"))
+        {
+            if (SiteConfig.CurrentUser.UserId == Model.UserCreatedId)
+            {
+                <a href="@Url.Action("Edit", new { id = item.Id })" class="edit-link" title="Sửa">
+                    <i class="fa fa-edit"></i><span class="hidden-sm">Edit</span>
+                </a>
+            }
+        }
+        else
+        {
+            <a href="@Url.Action("Edit", new { id = item.Id })" class="edit-link" title="Sửa">
+                <i class="fa fa-edit"></i><span class="hidden-sm">Edit</span>
+            </a>
+        }
+    </td>
+</tr>

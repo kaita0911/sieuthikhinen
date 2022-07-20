@@ -1,0 +1,182 @@
+﻿@using VCMS.MVC4.Data
+@using VCMS.MVC4.Web
+@using System.Data.Entity;
+@{
+    var db = new DataContext();
+    var categorytype = db.CategoryTypes.Include(a => a.CategoryTypeDetail).Where(a => a.NoneType).ToList();
+    var articleType = (ViewBag.ArticleType as ArticleType);
+}
+<nav>
+    <ul id="menu-accordion" class="accordion">
+        <li>
+            <a href="@Url.Action("Index", "Home", new { area="Admin"})">
+                <i class="fa fa-home fa-lg fa-fw"></i> @SiteConfig.SiteInfo.WebsiteDetail[SiteConfig.LanguageId].Name
+            </a>
+        </li>
+        @if (Roles.IsUserInRole("Super Administrators"))
+        {
+            <li>
+                <a><i class="fa fa-thumb-tack fa-lg fa-fw"></i> <span class="menu-item-parent">Widget</span></a>
+                <ul>
+                    <li>@Html.ActionLink("Danh sách", "Index", "Widget")</li>
+                    @if (Roles.IsUserInRole("Super Administrators"))
+                    {
+                        <li>@Html.ActionLink("Danh sách Nhóm", "Group", "Widget")</li>
+                    }
+                </ul>
+            </li>
+            Html.RenderAction("Menu", "ArticleType");
+            <li>
+                <a><i class="fa fa-shopping-cart fa-lg fa-fw"></i> <span class="menu-item-parent">Quản lý giá</span></a>
+                <ul>
+                    <li>@Html.ActionLink("Quản lý Currency", "CurrencyList", "Price")</li>
+                    <li>@Html.ActionLink("Quản lý giảm giá", "Index", "Discount")</li>
+                </ul>
+            </li>
+            if (SiteConfig.CurrentUser.UserName == "admin" || SiteConfig.CurrentUser.UserName == "sa")
+            {
+                <li>
+                    <a><i class="fa fa-table fa-lg fa-fw"></i> <span class="menu-item-parent">Đơn hàng</span></a>
+                    <ul>
+                        <li>@Html.ActionLink("Danh sách", "Index", "Order")</li>
+                        <li>@Html.ActionLink("Cancelled", "Index", "Order", new { status = OrderStatus.CANCELLED }, null)</li>
+                    </ul>
+                </li>
+            }
+
+            if (categorytype.Count > 0)
+            {
+                <li>
+                    <a><i class="fa fa-list-alt"></i> <span class="menu-item-parent">Nhóm riêng</span></a>
+                    <ul>
+                        @foreach (var item in categorytype)
+                        {
+                            item.LanguageId = 1;
+                            if (!item.Code.Equals("SHIPPINGTIME", StringComparison.Ordinal))
+                            {
+                                <li><a href="@Url.Action("ListByCateType", "Category", new { id = item.Id })" title="">@item.Name</a></li>
+                            }
+                            else
+                            {
+                                <li><a href="@Url.Action("ListByCateType", "Category", new { id = item.Id })" title="">@item.Name</a></li>
+                            }
+                        }
+                    </ul>
+                </li>
+            }
+
+            <li>
+                <a><i class="fa fa-globe fa-lg fa-fw"></i> <span class="menu-item-parent">Quản lý thành viên</span></a>
+                <ul>
+                    <li><a href="@Url.Action("Index", "User", new { role = "Administrators" })" title="">Quản trị chung</a></li>
+                    <li><a href="@Url.Action("Index", "User", new { role = "Moderators" })" title="">Quyền đăng bài</a></li>
+                    <li><a href="@Url.Action("Index", "User", new { role = "Users" })" title="">Người dùng</a></li>
+                </ul>
+            </li>
+            <li>
+                <a><i class="fa fa-globe fa-lg fa-fw"></i> <span class="menu-item-parent">Thông tin website</span></a>
+                <ul>
+                    <li>@Html.ActionLink("Loại bài viết", "Index", "ArticleType")</li>
+                    <li>@Html.ActionLink("Quản lý menu", "Index", "Menu")</li>
+                    <li>@Html.ActionLink("Quản lý nhóm riêng", "ListCateType", "Category")</li>
+                    <li>@Html.ActionLink("Quản lý thuộc tính", "Index", "Property")</li>
+                    <li>@Html.ActionLink("Quản lý ngôn ngữ", "Index", "Language")</li>
+                    <li>@Html.ActionLink("Quản lý Locales", "Index", "Locale")</li>
+                    <li>@Html.ActionLink("Update Database", "UpdateDatabase", "Website")</li>
+                    <li>@Html.ActionLink("Cấu hình", "Index", "Website")</li>
+                    @*<li>@Html.ActionLink("Thống kê", "Online", "Website")</li>*@
+                </ul>
+            </li>
+        }
+        else if (Roles.IsUserInRole("Administrators"))
+        {
+            <li>
+                <a><i class="fa fa-thumb-tack fa-lg fa-fw"></i> <span class="menu-item-parent">Widget</span></a>
+                <ul>
+                    <li>@Html.ActionLink("Danh sách", "Index", "Widget")</li>
+                    @if (Roles.IsUserInRole("Super Administrators"))
+                    {
+                        <li>@Html.ActionLink("Danh sách Nhóm", "Group", "Widget")</li>
+                    }
+                </ul>
+            </li>
+            Html.RenderAction("Menu", "ArticleType");
+            @*if (SiteConfig.SiteInfo.HasShoppingCart)
+            {
+                <li>
+                    <a><i class="fa fa-shopping-cart fa-lg fa-fw"></i> <span class="menu-item-parent">Quản lý giá</span></a>
+                    <ul>
+                        <li>@Html.ActionLink("Quản lý Currency", "CurrencyList", "Price")</li>
+                        @if (SiteConfig.SiteInfo.HasDiscount)
+                        {
+                            <li>@Html.ActionLink("Quản lý giảm giá", "Index", "Discount")</li>
+                        }
+                    </ul>
+                </li>
+            }*@
+            if (SiteConfig.SiteInfo.HasOrder)
+            {
+                <li>
+                    <a><i class="fa fa-table fa-lg fa-fw"></i> <span class="menu-item-parent">Đơn hàng</span></a>
+                    <ul>
+                        <li>@Html.ActionLink("Danh sách", "Index", "Order")</li>
+                        @*<li>@Html.ActionLink("Cancelled", "Index", "Order", new { status = OrderStatus.CANCELLED }, null)</li>*@
+                    </ul>
+                </li>
+            }
+            if (categorytype.Count > 0)
+            {
+                <li>
+                    <a><i class="fa fa-list-alt"></i> <span class="menu-item-parent">Nhóm riêng</span></a>
+                    <ul>
+                        @foreach (var item in categorytype)
+                        {
+                            item.LanguageId = 1;
+                            if (!item.Code.Equals("SHIPPINGTIME", StringComparison.Ordinal))
+                            {
+                                <li><a href="@Url.Action("ListByCateType", "Category", new { id = item.Id })" title="">@item.Name</a></li>
+                            }
+                        }
+                    </ul>
+                </li>
+            }
+            if (SiteConfig.SiteInfo.HasUser)
+            {
+                <li>
+                    <a><i class="fa fa-user fa-lg fa-fw"></i> <span class="menu-item-parent">Quản lý thành viên</span></a>
+                    <ul>
+                        @*<li><a href="@Url.Action("Index", "User", new { role = "Administrators" })" title="">Quản trị chung</a></li>*@
+                        <li><a href="@Url.Action("Index", "User", new { role = "Moderators" })" title="">Quyền đăng bài</a></li>
+                        @*<li><a href="@Url.Action("Index", "User", new { role = "Users" })" title="">Người dùng</a></li>*@
+                    </ul>
+                </li>
+            }
+            <li>
+                <a><i class="fa fa-globe fa-lg fa-fw"></i> <span class="menu-item-parent">Thông tin website</span></a>
+                <ul>
+                    <li>@Html.ActionLink("Cấu hình", "Index", "Website")</li>
+                    <li>@Html.ActionLink("Thống kê", "Online", "Website")</li>
+                </ul>
+            </li>
+        }
+        else if (Roles.IsUserInRole("Moderators"))
+        {
+            Html.RenderAction("Menu", "ArticleType");
+        }
+    </ul>
+</nav>
+<span class="minifyme" data-action="minifyMenu"> <i class="fa fa-arrow-circle-left hit"></i> </span>
+<script type="text/javascript">
+    $(function () {
+        $("#menu-accordion").dcAccordion({
+            eventType: 'click',
+            autoClose: true,
+            saveState: true,
+            disableLink: true,
+            showCount: false,
+            speed: 'fast',
+            skin: 'demo'
+        });
+        $("#menu-accordion a[href*='@Request.Path']").addClass('selected');
+    })
+</script>

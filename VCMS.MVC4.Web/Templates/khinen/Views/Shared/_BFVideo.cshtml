@@ -1,0 +1,34 @@
+﻿@using System.Data.Entity;
+@using (DataContext db = new DataContext())
+{
+    var list = Article.GetByTypeCode("VIDEO", SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 3, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.DESCENDING).List;
+    <div class="bf-box bf-video">
+        <h2 class="heading"><a href="/video.html">Video clip</a></h2>
+        @if (list.Count > 0)
+        {
+            int i = 0;
+            foreach (var item in list)
+            {
+                var url = item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("URL", StringComparison.OrdinalIgnoreCase));
+                <div class="content">
+                    @if (i == 0)
+                    {
+                        <div class="top">
+                            <iframe width="100%" height="218" src="@url.Value.Replace("watch?v=", "embed/")" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="other-item">
+                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                               @item.ArticleName
+                            </a>
+                        </div>
+                    }
+
+                </div>
+                    i++;
+            }
+        }
+    </div>
+}

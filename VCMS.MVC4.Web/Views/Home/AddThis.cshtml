@@ -1,0 +1,28 @@
+﻿
+<script type="text/javascript"> 
+   
+    var ga = document.createElement('script'); ga.type = 'text/javascript';
+    ga.async = true;
+    ga.src = "http://s7.addthis.com/js/300/addthis_widget.js#pubid=xa-51e3b356061a8676";
+    
+
+
+    ga.onreadystatechange = function () { addthis_loaded(); }
+    ga.onload = addthis_loaded;
+
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    function addthis_loaded() {
+        if (addthis!='undefined') {
+            addthis.layers({
+                'theme': 'light',
+                'share': {
+                    'position': 'right',
+                    'numPreferredServices': 6,
+                    'services': 'facebook,twitter,blogger,linkedin,google_plusone,more'
+                }
+
+            });
+        }
+    }
+</script>
+

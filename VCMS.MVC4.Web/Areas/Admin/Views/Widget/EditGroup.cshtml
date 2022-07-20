@@ -1,0 +1,42 @@
+﻿@using VCMS.MVC4.Web
+@using VCMS.MVC4.Data
+@model VCMS.MVC4.Data.WidgetGroup
+
+@{
+    Layout = "";
+}
+
+<div class="modal-dialog">
+    <div class="form no-boder-radius">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title" id="myModalLabel">Language<span id="success"></span></h4>
+        </div>
+        @using (Ajax.BeginForm("EditGroup", "Widget", new AjaxOptions { HttpMethod = "post", OnSuccess = "Success" }))
+        {
+            @Html.ValidationSummary(true)
+
+            <fieldset class="modal-body">
+                @Html.HiddenFor(model => model.Id)
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.Code)
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.Code)
+                    @Html.ValidationMessageFor(model => model.Code)
+                </div>
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.Name)
+                </div>
+                <div class="editor-label mg-bottom-10">
+                    @Html.EditorFor(model => model.Name)
+                    @Html.ValidationMessageFor(model => model.Name)
+                </div>
+            </fieldset>
+            <div class="modal-footer">
+                <button type="button" class="btn delete popup" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save changes</button>
+            </div>
+        }
+    </div>
+</div>

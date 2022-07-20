@@ -1,0 +1,76 @@
+﻿@using VCMS.MVC4.Web
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage" style="background:#FFF">
+<head>
+    <meta charset="utf-8" />
+    <title>@SiteConfig.SiteInfo.WebsiteDetail[SiteConfig.LanguageId].Title</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="keywords" content="@ViewBag.Keywords" />
+    <meta name="description" content="@ViewBag.Description" />
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @RenderSection("styles", required: false)
+    @Scripts.Render("~/bundles/jquery")
+    <style>
+        section#top-down
+        {
+            display:none;
+        }
+    </style>
+
+</head>
+<body style="margin:0 auto; text-align:center">
+
+    @RenderBody()
+    <img src="~/Content/baotri.png" class="img-responsive" style="display: inline-block;position: absolute;
+		  left: 50%;
+		  top: 50%;
+		  transform: translate(-50%, -50%);"/>
+
+    @RenderSection("scripts", required: false)
+    @Scripts.Render("~/bundles/circle")
+    @Scripts.Render("~/bundles/scrollable")
+    @Scripts.Render("http://stats.viennam.com/site/log")
+    <script>
+        $(function () {
+            $("form input").each(function () { $(this).data("pl", $(this).attr("placeholder")) });
+            $("form input").focus(function () {
+
+                $(this).attr("placeholder", "");
+            }).blur(function () {
+                $(this).attr("placeholder", $(this).data("pl"));
+            });
+
+            $(document).on("click","a", function (e) {
+                var url = $(this).attr('href');
+                $.ajax({
+                    url: url + "?X-Requested-With=XMLHttpRequest",
+                    success: function (data) {
+                        history.pushState({ url: url }, "title", url);
+                        //$(".ajax-box").addClass("bounceOutRight");
+                        testAnim("bounceOutRight");
+                        
+                        var wait = window.setTimeout(function () {
+                            $("#ajax-box").html(data);
+                            testAnim("bounceInLeft");
+                        },
+                500
+            );
+                        
+                        //testAnim("bounceInLeft");
+
+                    }
+                });
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            })
+        })
+        function testAnim(x) {
+            $('#ajax-box').removeClass().addClass(x);
+
+        }
+    </script>
+</body>
+</html>

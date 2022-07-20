@@ -1,0 +1,51 @@
+﻿@model Widget
+@{
+    int id = 1;
+    var article = Article.GetByType((int)Model.ArticleTypeId, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection, Model.Includes);
+    if (article.List.Count > 0)
+    {
+        var art = article.List.FirstOrDefault();
+        <div class="box-home box-home-photo2">
+            <div class="container">
+                <h2 class="heading">
+                    <span>@Model.Title</span>
+                </h2>
+                <div class="content lightbox" data-plugin-options='{"delegate": "a.zoom", "gallery": {"enabled": true}}'>
+                    <div class="row">
+                        <div class="col-md-6">
+                            @if (art != null)
+                            {
+                                id = art.Id;
+                                <div class="l-item">
+                                    <a class="banner-cubic-7 zoom" href="@Url.Content(art.ImageUrl)?height=700&Watermark=@SiteConfig.Watermark" title="@art.ArticleName">
+                                        <figure>
+                                            @Html.Image(art.ImageUrl, new ImageOptions { Width = 570, Height = 460, Mode = ImageMode.crop, Lazy = false }, new { alt = art.ArticleName, @class = "owl" })
+                                        </figure>
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                        <div class="col-md-6">
+                            <div class="row">
+                                @foreach (var item in article.List.Where(a => a.Id != id))
+                                {
+                                    <div class="col-md-6">
+                                        <div class="r-item">
+                                            <a class="banner-cubic-6 zoom" href="@Url.Content(item.ImageUrl)?height=700&Watermark=@SiteConfig.Watermark" title="@item.ArticleName">
+                                                <figure>
+                                                    @Html.Image(item.ImageUrl, new ImageOptions { Width = 267, Height = 217, Mode = ImageMode.crop, Lazy = false }, new { alt = item.ArticleName, @class = "owl" })
+                                                </figure>
+                                            </a>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+

@@ -1,0 +1,58 @@
+﻿@model ArticleResult
+@if (Model.List.Count > 0)
+{
+    var i = 1;
+    var type = Model.List.FirstOrDefault().ArticleType;
+    <h2 class="title"><a href="#">Sản phẩm liên quan</a></h2>
+    <div class="content-background">
+        <div class="row">
+            @foreach (var item in Model.List)
+            {
+                <div class="col-sm-3 col-xs-3 col-xs-6">
+                    <div class=" box-block box-product  box-project">
+                        <figure>
+                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                @Html.Image(item.ImageUrl, new ImageOptions { Width = 256, Height = 215, Watermark = SiteConfig.Watermark, Mode = ImageMode.pad }, new { alt = item.ArticleName })
+                            </a>
+                            @*@if (type.ShowIconFly && item.ImageUrl != null)
+                            {
+                                <a class="zoom lightbox" href="@Url.Content(item.ImageUrl)" data-plugin-options="{type:image;}" title="@item.ArticleName">
+                                    <i class="fa fa-search-plus"></i>
+                                </a>
+                                <a class="zoom" href="@Url.Action("Contact", "Home", new { id = item.Id })">
+                                    @Html.Locale("contact")
+                                </a>
+                            }*@
+                        </figure>
+                        <div class="meta">
+                            <div class="clearfix"></div>
+                            <div class="action">
+                                @if (item.Price > 0)
+                                {
+                                    <a href="@Url.Action("AddToCart", "ShoppingCart", new { id = item.Id })" class="cart @(item.Price > 0 ? "addToCart" : "")">
+                                        Thêm vào giỏ <i class="fa fa-shopping-cart"></i>
+                                    </a>
+                                }
+                            </div>
+                            <h3>
+                                <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.ArticleTypeDetail[SiteConfig.LanguageId].UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">@item.ArticleName</a>
+                            </h3>
+                            <div class="price-all">
+                                @if (item.DiscountPrice > 0)
+                                {
+                                    <span class="price">@Html.DiscountPrice(item.ItemPrice)</span>
+                                    <span class="price-old">@Html.Price(item.ItemPrice)</span>
+                                }
+                                else
+                                {
+                                    <span class="price">@Html.Price(item.ItemPrice)</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                            i++;
+            }
+        </div>
+    </div>
+}

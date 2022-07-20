@@ -1,0 +1,61 @@
+﻿@using System.Data.Entity;
+@using (DataContext db = new DataContext())
+{
+    var lst = Article.GetByTypeCode("NEWS", SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 2, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.DESCENDING).List;
+
+    <div class="box-home bf-news items bf-box">
+        <h2 class="heading">
+            <span>@Html.Locale("news")</span>
+        </h2>
+        <div class="content">
+            <div class="row">
+                @foreach (var art in lst)
+                {
+                    <div class="items">
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            @if (art.ImageUrl != null)
+                            {
+                                <figure>
+                                    <a class="banner-cubic-2" href="@Url.Action("Detail", "Article", new { id = art.Id, code = art.ArticleType.UrlFriendly, title = art.UrlFriendly })" title="@art.ArticleName">
+                                        @Html.Image(art.ImageUrl, new ImageOptions { Width = 372, Height = 228, Mode = ImageMode.crop, Lazy = false }, new { alt = art.ArticleName })
+                                    </a>
+                                </figure>
+                            }
+                            <div class="name">
+                                <a href="@Url.Action("Detail", "Article", new { id = art.Id, code = art.ArticleType.UrlFriendly, title = art.UrlFriendly })" title="@art.ArticleName">
+                                    @art.ArticleName
+                                </a>
+                            </div>
+                            <div class="sdesc">
+                                @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(art.ShortDescription, 20))
+                            </div>
+                            @*<div class="detail">
+        <a href="@Url.Action("Detail", "Article", new { id = art.Id, code = art.ArticleType.UrlFriendly, title = art.UrlFriendly })" title="@art.ArticleName">
+            Xem tiếp
+        </a>
+    </div>*@
+                        </div>
+
+
+                    </div>
+                    @*<ul>
+        @foreach (var item in lst.Skip(1).Take(3))
+        {
+            <li>
+                <a href="@Url.Action("Detail", "Article", new { id=item.Id, code=item.ArticleType.UrlFriendly,title = item.UrlFriendly})">@item.ArticleName</a>
+            </li>
+        }
+    </ul>*@
+                }
+
+            </div>
+            <div class="view-all">
+                <a href="/tin-tuc.html">@Html.Locale("view_all")</a>
+            </div>
+        </div>
+    </div>
+
+}
+
+
+

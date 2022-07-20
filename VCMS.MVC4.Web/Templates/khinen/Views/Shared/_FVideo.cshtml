@@ -1,0 +1,32 @@
+﻿@using System.Data.Entity;
+@using (DataContext db = new DataContext())
+{
+    var type = ArticleType.GetByCode("VIDEO", SiteConfig.SiteId, SiteConfig.LanguageId);
+    var article = Article.GetByTypeCode("VIDEO", SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 1, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING).List;
+    if (article.Count > 0)
+    {
+        <div class="box-footer f-video">
+            <h2 class="heading">Video</h2>
+            <div class="content">
+                <ul>
+                    @foreach (var item in article)
+                    {
+                        var url = item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("URL", StringComparison.OrdinalIgnoreCase));
+                        <li>
+                            <iframe width="100%" height="140" src="@url.Value.Replace("watch?v=", "embed/")" frameborder="0" allowfullscreen></iframe>
+                        </li>
+                    }
+                </ul>
+                <div class="view-all">
+                    <a href="@Url.Action("Index", "ArticleType", new { code = type.UrlFriendly })">
+                        @Html.Locale("view_more")
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+
+}
+
+
+

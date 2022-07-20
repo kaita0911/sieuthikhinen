@@ -1,0 +1,61 @@
+﻿@model Widget
+@{
+    //var welcome = Article.GetByTypeCode("WELCOME", SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 1, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.DESCENDING, ArticleIncludeFlags.ARTICLE_TYPE | ArticleIncludeFlags.ARTICLE_DETAIL).List.FirstOrDefault();
+    //var aboutus = Article.GetByTypeCode("ABOUTUS", SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 1, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.DESCENDING, ArticleIncludeFlags.ARTICLE_TYPE | ArticleIncludeFlags.ARTICLE_DETAIL).List.FirstOrDefault();
+    var article = Article.GetByType((int)Model.ArticleTypeId, SiteConfig.SiteId, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection);
+}
+@if (article.List.Count > 0)
+{
+    <div id="banner" class="banner">
+        <div class="item">
+            <div class="camera_wrap camera_emboss" id="camera_wrap" data-plugin-options='{"height": "57.8%","loader": false,"thumbnails": @(Model.Thumbnail ? "true" : "false"),"hover": true,"opacityOnGrid": false,"overlayer": false,"pagination": @(Model.Pagination ? "true" : "false"),"playPause": @(Model.PlayPause ? "true" : "false"),"navigation": @(Model.Navigation?"true":"false"),"autoAdvance":@(Model.AutoPlay ? "true" : "false"),"hover":@(Model.HoverStop?"true":"false")}'>
+                @foreach (var item in article.List)
+                {
+                    var url = item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("URL", StringComparison.OrdinalIgnoreCase));
+                    if (item.ImageUrl != null)
+                    {
+                        <div data-thumb="@Url.Content(item.ImageUrl)?width=100&height=50&mode=crop" data-src="@Url.Content(item.ImageUrl)?width=1600&height=780&mode=crop">
+                        </div>
+                    }
+                    else
+                    {
+                        <div data-thumb="@SiteConfig.Image("banner.jpg?width=100&height=50&mode=crop")" data-src="@SiteConfig.Image("banner.jpg?width=870&height=385&mode=crop")"></div>
+                    }
+                }
+            </div>
+        </div>
+        <div class="container">
+            <div class="slogan-1 ">
+                @Html.Image(SiteConfig.Image("slogan-1.png"), new ImageOptions { Width = 514, Height = 69, Lazy = false }, new { alt = SiteConfig.SiteInfo.Title })
+            </div>
+            <div class="hotline">
+                <span>@Html.Locale("hotline"): </span>@Html.Phone(SiteConfig.SiteInfo.Hotline)
+            </div>
+            @*<div class="welcome hidden-sm hidden-xs">
+                @if (welcome != null)
+                {
+                    <span>
+                        @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(welcome.ShortDescription, 50))
+                    </span>
+                }
+            </div>*@
+            @*<div class="slogan-2 hidden-sm hidden-xs">
+                    @Html.Image(SiteConfig.Image("slogan-2.png"), new ImageOptions { Width = 692, Height = 35, Lazy = false }, new { alt = SiteConfig.SiteInfo.Title })
+                </div>*@
+            @*<div class="about-us scroll-pane scroll autohide">
+                @if (aboutus != null)
+                {
+                    <figure>
+                        <a href="/gioi-thieu.html">
+                            @Html.Image(SiteConfig.Image("icon-about-us.png"), new ImageOptions { Width = 284, Height = 96, Lazy = false }, new { alt = SiteConfig.SiteInfo.Title })
+                        </a>
+                    </figure>
+                    <div class="content">
+                        @Html.Raw(aboutus.ShortDescription)
+                    </div>
+                }
+            </div>*@
+        </div>
+    </div>
+}
+

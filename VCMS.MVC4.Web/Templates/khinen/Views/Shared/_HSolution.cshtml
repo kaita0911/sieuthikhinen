@@ -1,0 +1,52 @@
+﻿@using System.Data.Entity;
+@using (DataContext db = new DataContext())
+{
+    var art_left = Article.GetByTypeCode("SOLUTION", SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.NEW, 1, 4, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING);
+    var art_right = Article.GetByTypeCode("SOLUTION", SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.HOT, 1, 3, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING);
+    <div class="h-solution">
+        <div class="container">
+            <div class="left">
+                <h2 class="heading">Giải pháp</h2>
+                <div class="content">
+                    @foreach (var item in art_left.List)
+                    {
+                        <h3 class="item">
+                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                                @item.ArticleName
+                            </a>
+                        </h3>
+                    }
+                    <div class="view-all">
+                        <a href="/giai-phap.html">Xem tất cả</a>
+                    </div>
+                </div>
+            </div>
+            <div class="right hidden-sm hidden-xs">
+                @foreach (var item in art_right.List)
+                {
+                    <div class="item">
+                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                        {
+                            <figure class="effect-apollo">
+                                <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                                    @Html.Image(item.ImageUrl, new ImageOptions { Width = 256, Height = 310, Mode = ImageMode.crop }, new { alt = item.ArticleName })
+                                </a>
+                                <figcaption>
+                                    <h3>
+                                        <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                                            @item.ArticleName
+                                        </a>
+                                    </h3>
+                                </figcaption>
+                            </figure>
+                        }
+                        
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+
+

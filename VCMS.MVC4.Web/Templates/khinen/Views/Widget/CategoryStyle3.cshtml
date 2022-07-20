@@ -1,0 +1,65 @@
+﻿@model Widget
+@{
+    var category = Category.GetTree(Category.GetByType((int)Model.ArticleTypeId, SiteConfig.LanguageId)).Where(a => a.Level == 0).ToList();
+    if (category.Count > 0)
+    {
+        string path = "";
+        <div class="box-category category-tiki">
+            <ul>
+                @foreach (var item in category)
+                {
+                    <li>
+                        <a class="level-1" href="@Url.Action("Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="">
+                            @if (item.ImageUrl != null)
+                            {
+                                var str = item.ImageUrl.Split('/');
+                                if (str.Length <= 1)
+                                {
+                                    path = "/UserUpload/Category/";
+                                }
+                                else
+                                {
+                                    path = "";
+                                }
+                                <span class="img">
+                                    <img src="@Url.Content(path + item.ImageUrl)?width=25&height=25" alt="@item.CategoryName" />
+                                </span>
+                            }
+                            <span class="name">
+                                @item.CategoryName
+                            </span>
+                            @if (item.ChildrenCount > 0)
+                            {
+                                <span class="fa fa-angle-right"></span>
+                            }
+                        </a>
+                        @if (item.ChildrenCount > 0)
+                        {
+                            <ul class="uitem-@item.Id sub-level">
+                                @foreach (var sub in item.Children)
+                                {
+                                    <li class="level-2">
+                                        <a class="a-level-2" href="@Url.Action("Detail", "Category", new { id = sub.Id, code = sub.ArticleType.UrlFriendly, title = sub.UrlFriendly })" title="">
+                                            @sub.CategoryName
+                                        </a>
+                                        <ul class="uitem-@sub.Id sub-level2">
+                                            @foreach (var sub2 in sub.Children)
+                                            {
+                                                <li class="level-3">
+                                                    <a class="a-level-3" href="@Url.Action("Detail", "Category", new { id = sub2.Id, code = sub2.ArticleType.UrlFriendly, title = sub2.UrlFriendly })" title="">
+                                                        @sub2.CategoryName
+                                                    </a>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+}
+

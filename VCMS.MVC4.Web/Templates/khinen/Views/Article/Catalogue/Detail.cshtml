@@ -1,0 +1,75 @@
+﻿
+@model VCMS.MVC4.Data.Article
+@{
+    var type = ViewBag.Type as ArticleType;
+}
+@using (DataContext db = new DataContext())
+{
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 font-default">
+            <div class="row">
+                <div class="catalogue-d" itemscope itemtype="http://schema.org/Product">
+                    <div class="col-lg-12 col-md-12 col-sm-6 col-xs-12">
+                        @if (Model.ImageList.Count > 0)
+                        {
+                            <div class="content">
+                                <div class="row">
+                                    @foreach (var item in Model.ImageList)
+                                    {
+                                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 ">
+                                            <div class="image">
+                                                <a href="@Url.Content("~/UserUpload/Article/")@item.FileName?width=700" class="html5lightbox" title="@Model.ArticleName" data-group="amazingcarousel-1">
+
+                                                    <img src="@Url.Content("~/UserUpload/Article/")@item.FileName?height=135" alt="@Model.ArticleName" title="@Model.ArticleName" />
+                                                </a>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="tag">
+                            @if (Model.SEOKeywords != null && Model.SEOKeywords != "")
+                            {
+                                <span class="ctn">Tags:</span>
+
+                                foreach (var item in Model.SEOKeywords.Split(','))
+                                {
+                                    <span class="lbl" itemprop="keywords"><i class="fa fa-tag"></i> @item</span>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @if (type.HasAttachment)
+            {
+                <div class="attachment">
+                    @if (type.HasAttachment && Model.Attachments.Count > 0)
+                    {
+                        var j = 1;
+                        foreach (var aitem in Model.Attachments)
+                        {
+                            <div class="box-download">
+                                <a download="@aitem.OriginalFileName" href="@aitem.FileName" class="d-detail">
+                                    <i class="fa fa-cloud-download"></i>File đính kèm @j
+                                </a>
+                            </div>
+                            j++;
+                        }
+                    }
+                </div>
+            }
+            <div class="clearfix"></div>
+            <div class="a-share">
+                @if (type.ShowShareArticle)
+                {
+                    @Html.Partial("_ShareArticle")
+                }
+            </div>
+        </div>
+    </div>
+}

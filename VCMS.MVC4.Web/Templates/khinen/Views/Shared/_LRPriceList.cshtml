@@ -1,0 +1,18 @@
+﻿@{
+    var art = Article.GetByType(16, SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 1, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING).List.FirstOrDefault();
+}
+<div class="box-sidebar-2 box-price-list hidden-sm hidden-xs">
+    <h2 class="heading">@Html.Locale("download_pricelist")</h2>
+    <div class="content center">
+        <a href="@(SiteConfig.LanguageId == 1?"/bang-gia.html":"pricelist.html")" title="@Html.Locale("download_pricelist")">
+            @if (art != null)
+            {
+                @Html.Image(art.ImageUrl, new ImageOptions { Width = 230, Height = 174 }, new { alt = Html.Locale("download_pricelist") })
+            }
+            else
+            {
+                @Html.Image(SiteConfig.Image("price-list.png"), new ImageOptions { Width = 230, Height = 174 }, new { alt = Html.Locale("download_pricelist") })
+            }     
+        </a>
+    </div>
+</div>

@@ -1,0 +1,21 @@
+﻿@using (DataContext db = new DataContext())
+{
+    var helpfull = Article.GetByTypeCode("CONSULTING", SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 5, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.DESCENDING, ArticleIncludeFlags.ARTICLE_TYPE);
+    if (helpfull.List.Count > 0)
+    {
+        <div id="category-type">
+            <h2 class="title-footer">
+                @Html.Locale("helpfull")
+            </h2>
+            <ul class="category">
+                @foreach (var item in helpfull.List)
+                {
+                    <li>
+                        <a href="@Url.Action("Detail", "Article", new { id=item.Id,code=item.ArticleType.UrlFriendly,title=Unichar.UnicodeStrings.UrlString(item.ArticleName)})"><span>@item.ArticleName</span></a>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+}
+

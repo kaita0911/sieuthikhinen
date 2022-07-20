@@ -1,0 +1,38 @@
+﻿@using (DataContext db = new DataContext())
+{
+    var customers = db.Articles.Include("ArticleDetail").Include("PropertyValues.Property").OrderBy(a=>a.SortOrder)
+        .Where(a => a.ArticleType.Code.Equals("CUSTOMER", StringComparison.OrdinalIgnoreCase)).ToList();
+    customers.ForEach(delegate(Article c) { c.LanguageId = SiteConfig.LanguageId; });
+    var i = 0;
+    <a class="prev browse left"></a>
+    <div class="customer-slide scrollable" >
+         
+        <ul id="slide" class="items">
+            @foreach (var item in customers)
+            {
+                
+                var url = item.PropertyValues.FirstOrDefault(pv => pv.Property.Code.Equals("Website", StringComparison.OrdinalIgnoreCase));
+                <text>
+                <li class="slide-item">
+                    <a href="@url.Value">
+                        <img src="@Url.Content("~/UserUpload/Article/")@item.ImageUrl?height=87" alt="@item.ArticleName"/></a>
+                </li>
+                </text>
+            }
+        </ul>
+    </div>
+    <a class="next browse left"></a>
+    <script>
+        $(function () {
+            $("#slide").carouFredSel({
+                prev: 'a.prev',
+                next: 'a.next',
+                items: 5,
+                scroll: {
+                    items: 2,
+                    duration: 1000
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,80 @@
+﻿@model ArticleResult
+@if (Model.List.Count > 0)
+{
+    var i = 1;
+    var type = Model.List.FirstOrDefault().ArticleType;
+    <h2 class="title">@Html.Locale("other_article")</h2>
+    <div class="box-products-home">
+        <div class="content-background">
+            <div class="row">
+                @foreach (var item in Model.List)
+                {   <center>
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                        <div class="box-block box-product">
+                            <figure class="list-product">
+                                <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                                    @Html.Image(item.ImageUrl, new ImageOptions { Width = 375, Height = 230, Watermark = SiteConfig.Watermark, Mode = ImageMode.pad, Lazy = false }, new { alt = item.ArticleName })
+                                </a>
+                            </figure>
+                            <div class="meta">
+                                @if (type.ShowDescription)
+                                {
+                                    <a class="ov" href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                                    </a>
+                                }
+                                <h3>
+                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title =item.UrlFriendly })" title="@item.ArticleName">@item.ArticleName</a>
+                                </h3>
+                                @*<div class="price-all">
+                                        @if (item.Price > 0)
+                                        {
+                                            if (item.DiscountPrice > 0)
+                                            {
+                                                <span class="price">@Html.DiscountPrice(item.ItemPrice)</span>
+                                                <span class="price-old">@Html.Price(item.ItemPrice)</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="price">@Html.Price(item.ItemPrice)</span>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span class="price">LIÊN HỆ</span>
+                                        }
+
+                                    </div>*@
+                                <div class="action pull-right">
+                                    @*@if (item.Price > 0)
+                                        {
+                                            <a href="@Url.Action("AddToCart", "ShoppingCart", new { id = item.Id })" class="cart">
+                                                @Html.Locale("cart_checkout")
+                                            </a>
+                                        }
+                                        else
+                                        {*@
+                                    @*<a href="@Url.Action("Contact", "Home", new { id=item.Id})" class="cart">@Html.Locale("contact")</a>*@
+                                    @*}*@
+
+                                </div>
+
+                                @*@if (type.ShowActionLink)
+                                    {
+                                        <div class="action">
+                                            <a href="@Url.Action("Contact", "Home", new { id=item.Id})" class="cart">@Html.Locale("sdt")</a>
+
+                                        </div>
+
+                                    }*@
+                            </div>
+                        </div>
+
+                    </div>
+                </center>
+                                i++;
+                }
+            </div>
+        </div>
+    </div>
+
+}

@@ -1,0 +1,29 @@
+﻿
+<div class="box-sidebar lr-online">
+    @*lr-box*@
+    <h2 class="heading">
+        @Html.Locale("statistical_visit")
+    </h2>
+    <div class="content">
+        <div class="item online">
+            <span class="lbl">@Html.Locale("online"):</span><span class="ctn" id="online">2</span>
+        </div>
+        <div class="item this-week">
+            <span class="lbl">@Html.Locale("online_thisweek"):</span><span class="ctn" id="this_week">2</span>
+        </div>
+        <div class="item this-month">
+            <span class="lbl">@Html.Locale("online_thismonth"):</span><span class="ctn" id="this_month">10</span>
+        </div>
+        <div class="item total">
+            <span class="lbl">@Html.Locale("total"):</span><span class="ctn" id="total">4567</span>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $("#online").html(onlineLog.Online);
+        $("#this_week").html(onlineLog.ThisWeek);
+        $("#this_month").html(onlineLog.ThisMonth);
+        $("#total").html(String(onlineLog.Total).replace(/(.)(?=(\d{3})+$)/g, '$1.'));
+    });
+</script>

@@ -1,0 +1,43 @@
+﻿@model Widget
+@{
+    var type = ArticleType.GetById((int)Model.ArticleTypeId, SiteConfig.SiteId, SiteConfig.LanguageId);
+    var lst = Article.GetByType((int)Model.ArticleTypeId, SiteConfig.SiteId, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection);
+    <div class="box-comment-home">
+        <div class="container">
+            <h2 class="heading">
+                <span class="color-1">@Model.Title</span>
+                @*<span class="color-2"></span>*@
+            </h2>
+            <div class="content">
+                <div class="owl-carousel is-active" data-plugin-options='{"items": 1, "singleItem": true, "autoPlay": true, "navigation": true, "pagination": false,"slideSpeed":1200,"addClassActive":true,"itemsDesktop": [1199, 1],"itemsDesktopSmall": [991, 1],"itemsTablet": [768, 1],"itemsMobile": [479, 1]}'>
+                    @foreach (var item in lst.List)
+                    {
+                        var job = item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("JOB", StringComparison.OrdinalIgnoreCase));
+                        <div class="item">
+                            <div class="desc">
+                                @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, 50))
+                            </div>
+                            <h4>
+                                <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">@item.ArticleName</a>
+                            </h4>
+                            <div class="job">
+                                <span>@job.Value</span>
+                            </div>
+                            <figure>
+                                <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                                    @Html.Image(item.ImageUrl, new ImageOptions { Width = 100, Height = 100, Mode = ImageMode.crop, Lazy = false }, new { alt = item.ArticleName })
+                                </a>
+                            </figure>
+                        </div>
+                    }
+                </div>
+                <div class="view-all">
+                    <a href="@Url.Action("Index", "ArticleType", new { code = type.UrlFriendly })">
+                        @Html.Locale("view_more")
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+

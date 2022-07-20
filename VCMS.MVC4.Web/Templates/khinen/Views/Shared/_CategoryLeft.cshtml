@@ -1,0 +1,26 @@
+﻿@using System.Data.Entity;
+@using (DataContext db = new DataContext())
+{
+    var id = ViewBag.TypeId;
+    if (id != null)
+    {
+        var type = Category.GetByType((int)id, SiteConfig.SiteId, SiteConfig.LanguageId);
+        var menu = Category.GetTree(type).Where(a => a.Level == 0).ToList();
+        if (menu.Count() > 0)
+        {
+            <div id="category-type">
+                <h2 class="heading main">
+                    <span>@Html.Locale("categorynews")</span>
+                </h2>
+                <ul class="category">
+                    @foreach (var item in menu)
+                    {
+                        <li>
+                            <a href="@Url.Action("Detail", "Category", new { id=item.Id,code=item.ArticleType.UrlFriendly,title=Unichar.UnicodeStrings.UrlString(item.CategoryName)})"><span>@item.CategoryName</span></a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+    }
+}

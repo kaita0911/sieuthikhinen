@@ -1,0 +1,70 @@
+﻿@using (DataContext db = new DataContext())
+{
+    var articleType = ArticleType.GetIdByCode("SUPPORT");
+    if (articleType != null)
+    {
+        var art = Article.GetByType(articleType, SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 50, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING);
+        <div class="sup-box visible-lg">
+            <div class="sup-box-header" id="support">
+                <span class="@SiteConfig.LanguageCode"></span>
+            </div>
+            <div class="sup-box-content" id="support_bound">
+                <div class="hotline-sup">
+                    <div class="lbl"><span>Hotline</span></div>
+                    <div class="ctn">
+                        <span>@SiteConfig.SiteInfo.Hotline</span>
+                    </div>
+                </div>
+                <div class="cateitem">
+                    @foreach (var item in art.List)
+                    {
+                        var phone = item.PropertyValues.FirstOrDefault(pv => pv.Property.Code.Equals("Phone", StringComparison.OrdinalIgnoreCase));
+                        var skype = item.PropertyValues.FirstOrDefault(pv => pv.Property.Code.Equals("Skype", StringComparison.OrdinalIgnoreCase));
+                        var yahoo = item.PropertyValues.FirstOrDefault(pv => pv.Property.Code.Equals("Yahoo", StringComparison.OrdinalIgnoreCase));
+                        <div class="support-item">
+                            <div class="support-name">
+                                <span>
+                                    @item.ArticleDetail[SiteConfig.LanguageId].ArticleName
+                                </span>
+                            </div>
+                            <div class="support-ctn">
+                                <span>@phone.Value &nbsp;</span>
+                                @if (!string.IsNullOrEmpty(skype.Value))
+                                {
+                                    <a href="skype:@skype.Value?chat">
+                                        <img src="@Url.Content("~/Content/images/skype.png")" />&nbsp;
+                                    </a>
+                                }
+                                @if (!string.IsNullOrEmpty(yahoo.Value))
+                                {
+                                    <a href="ymsgr:sendIM?@yahoo.Value">
+                                        <img src="http://opi.yahoo.com/online?u=@yahoo.Value&m=g&t=1" />
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+                @*}*@
+
+            </div>
+        </div>
+    }
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#slider").css({ "z-index": "1" });
+
+        $("#support_bound").fadeOut();
+
+        $("#support").mouseenter(function () {
+            $("#support_bound").fadeIn();
+        });
+
+        $("#support_bound").mouseleave(function () {
+            $("#support_bound").fadeOut();
+        });
+    });
+</script>
+

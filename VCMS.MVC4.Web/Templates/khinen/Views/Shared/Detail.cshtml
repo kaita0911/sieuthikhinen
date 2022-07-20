@@ -1,0 +1,279 @@
+﻿@model VCMS.MVC4.Data.Article
+@{
+    int i = 1;
+    int j = 1;
+    var type = ViewBag.Type as ArticleType;
+    var category = ViewBag.Category as Category;
+    var other_list = Article.GetByCategory(category.Id, SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 10, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING).List;
+}
+<div class="article content-background">
+    <div id="product-tab">
+        @*<div class="heading">
+            <h2 class="pull-left">@Model.ArticleName</h2>
+            @if (Model.ArticleFiles.Count > 0)
+            {
+            var file = Model.ArticleFiles.Where(af => af.FileType == ArticleFileType.CONTENT).FirstOrDefault();
+            if (file != null)
+            {
+            <a class="pull-right" href="@file.FileName" target="_blank">@Html.Locale("price_list")</a>
+            }
+            }
+        </div>*@
+
+        <div class="content">
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#detail-1" aria-controls="detail-1" role="tab" data-toggle="tab">@Html.Locale("generality")</a></li>
+                <li role="presentation"><a href="#detail-2" aria-controls="detail-2" role="tab" data-toggle="tab">@Html.Locale("document_download")</a></li>
+                <li role="presentation"><a href="/home/contact/@Model.Id" target="_blank">@Html.Locale("support")</a></li>
+                <li role="presentation"><a href="#detail-4" aria-controls="detail-4" role="tab" data-toggle="tab">@Html.Locale("add_to_cart")</a></li>
+                @if (Model.ArticleFiles.Count > 0)
+                {
+                var file = Model.ArticleFiles.Where(af => af.FileType == ArticleFileType.CONTENT).FirstOrDefault();
+                if (file != null)
+                {
+                <li role="presentation">
+                    <a class="pull-right" href="@file.FileName" target="_blank">@Html.Locale("price_list")</a>
+                </li>
+                }
+                }
+            </ul>
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane fade in active" id="detail-1">
+                    <div class="row">
+                        <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                            <div class="row">
+                                <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
+                                    <div class="image-article">
+                                        <a href="@Url.Content(Model.ImageUrl)" class="lightbox" data-plugin-options="{type:image;}">
+                                            <img src="@Url.Content(Model.ImageUrl)?width=381&height=324&mode=crop&Watermark=@SiteConfig.Watermark" id="zoom_03" data-zoom-image="@Url.Content(Model.ImageUrl)" class="width-full" />
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
+                                    <div class="description short" itemprop="description">
+                                        @Html.Raw(Model.ShortDescription)
+                                    </div>
+                                    @if (type.ShowShareArticle)
+                                    {
+                                    <div class="row">
+                                        @Html.Partial("_ShareArticle")
+                                    </div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="description full" itemprop="description">
+                                @Html.Raw(Model.Description)
+                            </div>
+                            @if (!string.IsNullOrWhiteSpace(Model.SEOKeywords))
+                            {
+                            <div class="tags">
+                                <strong>Tags:</strong>
+                                @foreach (var item in Model.SEOKeywords.Split(','))
+                                {
+                                <a href="@Url.Action(" tag", "Home" , new { keyword=item.Replace(" ", " -") })" target="_blank" itemprop="keywords">
+                                    <span><i class="fa fa-tags"></i> @item</span>
+                                </a>
+                                }
+                            </div>
+                            }
+
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                            @if (other_list.Count > 0)
+                            {
+                            <div class="other-product">
+                                <h3 class="op-heading">
+                                    @Html.Locale("other_product")
+                                </h3>
+                                <div class="op-content">
+
+                                    @foreach (var item in other_list.Where(a => a.Id != Model.Id))
+                                    {
+                                    <div class="op-item">
+                                        <figure>
+                                            <a href="@Url.Action(" detail", "Article" , new { id=item.Id, code=item.ArticleType.UrlFriendly, title=Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                                <img src="@Url.Content(item.ImageUrl)?width=150&height=150&mode=crop&Watermark=@SiteConfig.Watermark" />
+                                            </a>
+                                        </figure>
+                                        <h4>
+                                            <a href="@Url.Action(" detail", "Article" , new { id=item.Id, code=item.ArticleType.UrlFriendly, title=Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                                @item.ArticleName
+                                            </a>
+                                        </h4>
+
+                                    </div>
+                                    }
+
+                                </div>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane fade in" id="detail-2">
+                    <div class="file-attach">
+                        @if (Model.ArticleFiles.Where(af => af.FileType == ArticleFileType.ATTACHMENT).Count() > 0)
+                        {
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="sort-order">@Html.Locale("sort_order")</th>
+                                    <th class="name">@Html.Locale("file_name")</th>
+                                    <th class="size">@Html.Locale("size")</th>
+                                    <th class="extension">@Html.Locale("extension")</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.ArticleFiles.Where(af => af.FileType == ArticleFileType.ATTACHMENT))
+                                {
+                                var exarr = item.OriginalFileName.Split('.');
+                                <tr>
+                                    <td>@i</td>
+                                    <td>
+                                        <a href="@item.FileName" title="@Html.Locale(" click_to_download")" target="_blank">
+                                            @item.Title
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="@item.FileName" title="@Html.Locale(" click_to_download")" target="_blank">
+                                            @item.FileSize.ToString("#,###") bytes
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="@item.FileName" title="@Html.Locale(" click_to_download")" target="_blank">
+                                            @if (exarr.Length > 0)
+                                            {
+                                            <span>.@exarr[1].ToString()</span>
+                                            }
+                                        </a>
+                                    </td>
+                                </tr>
+
+                                i++;
+                                }
+                            </tbody>
+                        </table>
+                        }
+                        else
+                        {
+                        <strong>@Html.Locale("not_info")</strong>
+                        }
+
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane fade in padding-15" id="detail-3">
+                    <div class="row">
+                        <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12 sm-box-contact">
+                            @{
+                            var article = Article.GetByType(11, SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 5, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING);
+                            foreach (var item in article.List)
+                            {
+                            var phone = item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("PHONE", StringComparison.OrdinalIgnoreCase));
+                            <p class="info">
+                                @item.ArticleName:
+                                <a href="tel:@phone.Value">@phone.Value</a>
+                            </p>
+                            }
+                            }
+                        </div>
+                        <div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
+                            @using (Ajax.BeginForm("ContactAjax", null, new AjaxOptions
+                            {
+                            HttpMethod = "POST",
+                            OnBegin = "loading" ,
+                            OnSuccess = "saved"
+                            }, new {id = "article-form", enctype = "multipart/form-data" }))
+                            {
+                            var m = new ContactModel();
+                            <div class="row">
+                                <div class="text1 col-md-6 col-sm-6">
+                                    <span>@Html.Locale("contact_name"):</span>
+                                    @Html.EditorFor(model => m.Name)
+                                </div>
+                                <div class="text1 col-md-6 col-sm-6">
+                                    <span>Email:</span>
+                                    @Html.EditorFor(model => m.Email)
+                                </div>
+                                <div class="text1 col-xs-12">
+                                    <span>@Html.Locale("Điện thoại"):</span>
+                                    @Html.EditorFor(model => m.Phone)
+                                </div>
+                                <div class="text1 col-md-12 col-xs-12">
+                                    <span>@Html.Locale("contact_subject"):</span>
+                                    @Html.EditorFor(model => m.Subject)
+                                </div>
+                                <div class="context-c1 col-md-12 col-xs-12">
+                                    <span>@Html.Locale("contact_body"):</span>
+                                    @Html.TextAreaFor(model => m.Body)
+                                </div>
+
+                            </div>
+                            <div class="contact-submit">
+                                <button type="submit" class="bt-submit" id=""><i class="vns-genius"></i> @Html.Locale("contact_sent")</button>
+                                <button type="button" class="bt-clear"><i class="vns-refresh-2"></i> @Html.Locale("contact_cancel")</button>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane fade in" id="detail-4">
+                    <div class="file-attach">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="sort-order">@Html.Locale("code")</th>
+                                    <th class="name">@Html.Locale("product_name")</th>
+                                    <th class="size">@Html.Locale("unit")</th>
+                                    <th class="extension">@Html.Locale("price")</th>
+                                    <th class="extension">@Html.Locale("order")</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in other_list)
+                                {
+                                var unit = item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("UNIT", StringComparison.OrdinalIgnoreCase));
+                                var code = item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("CODE", StringComparison.OrdinalIgnoreCase));
+                                <tr>
+                                    <td>@(!string.IsNullOrEmpty(code.Value) ? code.Value : item.Id.ToString())</td>
+                                    <td>
+                                        <a href="#" class="cart addToCart" data-submit="@Url.Action(" addtocart", "ShoppingCart" , new { id=item.Id})" data-id="@item.Id" data-load="@Url.Action(" cartlist","shoppingcart")">
+                                            @item.ArticleName
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="#" class="cart addToCart" data-submit="@Url.Action(" addtocart", "ShoppingCart" , new { id=item.Id})" data-id="@item.Id" data-load="@Url.Action(" cartlist","shoppingcart")">
+                                            @unit.Value
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="#" class="cart addToCart" data-submit="@Url.Action(" addtocart", "ShoppingCart" , new { id=item.Id})" data-id="@item.Id" data-load="@Url.Action(" cartlist","shoppingcart")">
+                                            @if (item.DiscountPrice > 0)
+                                            {
+                                            <span class="price">@Html.DiscountPrice(item.ItemPrice)</span>
+                                            <span class="price-old">@Html.Price(item.ItemPrice)</span>
+                                            }
+                                            else
+                                            {
+                                            <span class="price">@Html.Price(item.ItemPrice)</span>
+                                            }
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="#" class="cart addToCart" data-submit="@Url.Action(" addtocart", "ShoppingCart" , new { id=item.Id})" data-id="@item.Id" data-load="@Url.Action(" cartlist","shoppingcart")">
+                                            <i class="fa fa-shopping-cart"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+

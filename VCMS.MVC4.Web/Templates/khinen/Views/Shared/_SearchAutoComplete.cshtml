@@ -1,0 +1,62 @@
+﻿@using (Html.BeginForm("Search", "Home", FormMethod.Get))
+{
+    <div class="auto-search">
+        <input id="search_auto" type="text" name="keyword" class="txt-search" placeholder="@Html.Locale("search_enterkey")" value="@ViewBag.SearchKeyword" />
+        <button type="submit" class="bt-search"></button>
+        <input name="pageSize" type="hidden" value="21" />
+        <input name="pageIndex" type="hidden" value="1" />
+        <div class="search-result">
+            <div id="img-loading" title="Đang xử lý" style="display: none" class="img-loading">
+                <img src="@Url.Content("~/Content/Images/loading.gif")" />
+            </div>
+            <div class="content">
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(function () {
+        $('#search_auto').keyup(function () {
+            var name = $(this).val();
+            if(name == "")
+            {
+                $('.search-result').hide();
+                return false;
+            }
+        });
+        $('#search_auto').autocomplete({
+            source: function (request, response) {
+                $('.search-result').show();
+                $('#img-loading').show();
+
+                $.ajax({
+                    url: '@Url.Action("Autocomplete", "Home")',
+                    dataType: 'json',
+                    contentType: 'application/json, charset=utf-8',
+                    data: {
+                        keyword: $("#search_auto").val().trim()
+                    },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+
+                            $('.search-result .content').html("");
+                            $('.search-result .content').append(item);
+                            $("#img-loading").hide();
+
+                        }));
+                    },
+                    error: function (xhr, status, error) {
+                        alert(error);
+                    }
+                });
+            },
+            //select: function (event, ui) {
+            //    $('#search_auto').val(ui.item.label);
+            //    return false;
+            //},
+
+            minLength: 2
+
+        })
+    });
+</script>

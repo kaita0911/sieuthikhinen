@@ -1,0 +1,58 @@
+﻿@model ArticleResult
+@{
+    if (Model.List.Count > 0)
+    {
+        var type = ViewBag.Type != null ? ViewBag.Type as ArticleType : ArticleType.GetById(Model.List.FirstOrDefault().ArticleType.Id, SiteConfig.SiteId, SiteConfig.LanguageId);
+        <h1 class="title">@(ViewBag.Title != null ? ViewBag.Title : type.Name)</h1>
+        <div class="row box-video">
+            @foreach (var item in Model.List)
+            {
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <article class="items">
+                        <div class="row">
+                            <div class="col-lg-4 col-md-4 col-xs-6">
+                                @if (type.ShowImageInList)
+                                {
+                                    <figure>
+                                        <a class="banner-cubic-7" href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.ArticleTypeDetail[SiteConfig.LanguageId].UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                            @Html.Image(item.ImageUrl, new ImageOptions { Width = 300, Height = 200, Mode = ImageMode.crop }, new { alt = item.ArticleName })
+                                        </a>
+                                    </figure>
+                                }
+                            </div>
+                            <div class="col-lg-8 col-md-8 col-xs-6">
+                                <div class="meta">
+                                    <h3><a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.ArticleTypeDetail[SiteConfig.LanguageId].UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">@item.ArticleName</a></h3>
+                                    @if (type.ShowDateTime)
+                                    {
+                                        <span class="date">
+                                            <i class="fa fa-calendar"></i>
+                                            @item.Day
+                                        </span>
+                                    }
+                                    @if (type.ShowDescription)
+                                    {
+                                        <div class="description hidden-sm">@Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, 20))</div>
+                                    }
+                                    @if (type.ShowActionLink)
+                                    {
+                                        <div class="action">
+                                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.ArticleTypeDetail[SiteConfig.LanguageId].UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title=""><i class="fa fa-video-camera"></i> @Html.Locale("view_detail")</a>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </article>
+                </div>
+            }
+        </div>
+        @Html.Pager(new PagerOptions { VisibleItemCount = 5, ItemCount = Model.TotalItemCount, PageSize = Model.PageSize }, null)
+    }
+    else
+    {
+        <strong>@Html.Locale("article_null")</strong>
+    }
+}

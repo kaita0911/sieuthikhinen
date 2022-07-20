@@ -1,0 +1,568 @@
+﻿<script src="~/Content/Plugin/jquery.elevatezoom.js"></script>
+<script src="~/Content/Plugin/jquery.fancybox_new.js"></script>
+<link rel="stylesheet" href="~/Content/fancybox.css" />
+@model VCMS.MVC4.Data.Article
+
+@using System.Data.Entity;
+@{
+    /**/
+
+    var db = new DataContext();
+    var type = ViewBag.Type as ArticleType;
+    var articled = ViewBag.Aricle as Article;
+    var category = ViewBag.Category as Category;
+    var timecho = (List<Article>)ViewBag.Timecho;
+    var brandType = ViewBag.Brand;
+    var groupsxqg = ViewBag.Groupsxqg;
+    //var prviewed = ViewData["RecentProductList"] as List<Project.Models.RecentProduct>
+
+    //var lst_comment = Comment.ViewByArticle(Model.Id, 1, 10);
+    var masp = Model["CODE"];
+    var motathem = Model["DESSP"];
+    //var brandType = db.ArticleTypes.FirstOrDefault(a => a.Code.Equals("BRAND", StringComparison.OrdinalIgnoreCase));
+    //var brandType = db.ArticleTypes.Include(a => a.ArticleTypeDetail).FirstOrDefault(a => a.Code.Equals("BRAND", StringComparison.OrdinalIgnoreCase));
+    //var groupsxqg = db.ArticleTypes.Include(a => a.ArticleTypeDetail).FirstOrDefault(a => a.Code.Equals("GROUPPRODUCT", StringComparison.OrdinalIgnoreCase));
+    //var timecho = Article.GetByTypeCode("TIMECHO", SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 10, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING,ArticleIncludeFlags.ARTICLE_DETAIL).List;
+    string urlcurrent = HttpContext.Current.Request.Url.AbsoluteUri;
+
+    <article class="box-article-detail box-product-detail" itemscope itemtype="http://schema.org/Product">
+        <div class="row">
+            @if (type.ShowImage)
+            {
+                <div class="col-sm-5 col-xs-12">
+                    <figure class="f-pr-image-zoom">
+                        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                        {
+                            <div class="zoomWrapper">
+                                <img id="img_01" itemprop="image" src="@Url.Content(Model.ImageUrl.ToLower())?height=470&mode=pad&Watermark=@SiteConfig.Watermark" data-zoom-image="@Url.Content(Model.ImageUrl.ToLower())?Watermark=@SiteConfig.Watermark&height=470" class="img-responsive" alt="@masp" />
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="zoomWrapper">
+                                <img id="img_01" itemprop="image" src="~/Content/images/no-images.jpg" class="img-responsive" alt="@Model.ArticleName" />
+                            </div>
+                        }
+
+
+                    </figure>
+
+                    @if (Model.ImageList.Count > 0)
+                    {
+                        <div id="slidezoompage" class="more-image">
+
+                            @*<div id="owlpDetail" class="owl-panel">
+                                    <button class="btn ctrl-left prev"><i class="fa fa-angle-left"></i></button>
+                                    <button class="btn ctrl-right next"><i class="fa fa-angle-right"></i></button>
+                                </div>*@
+                            <div id="owlDetail" class="owl-carousel" data-plugin-options='{"items": 5, "singleItem": false, "autoPlay": false, "navigation": true, "pagination": false,"slideSpeed":400,"addClassActive":true,"itemsDesktop": [1199, 5],"itemsDesktopSmall": [991, 4],"itemsTablet": [768, 3],"itemsMobile": [479, 3]}' data-snap-ignore="true">
+                                @foreach (var item in Model.ImageList)
+                                {
+                                    <div class="item-img">
+                                        <a href="javascript:void(0)" data-zoom-image="@Url.Content(item.FileName)?Watermark=@SiteConfig.Watermark" data-image="@Url.Content(item.FileName)?height=470&mode=pad&Watermark=@SiteConfig.Watermark" title="@item.FileName">
+
+                                            <img src="@Url.Content(item.FileName.ToLower())?Watermark=@SiteConfig.Watermark" alt="@item.FileName" />
+                                        </a>
+                                    </div>
+                                }
+                            </div>
+
+                        </div>
+                    }
+                </div>
+                @*@Html.Widget("ProductZoomImage")*@
+            }
+            <div class="@(type.ShowImage ? " col-sm-7" : "" ) col-xs-12">
+                <h1 class="title" itemprop="name">
+                    @Model.ArticleName
+                </h1>
+
+                @*<div class="description short" itemprop="description">
+                        @Html.Raw(Model.ShortDescription)
+                    </div>*@
+
+                <div class="bg-pir">
+                    <p>Mã sản phẩm: <a href="@urlcurrent" title="@masp"><span itemprop="sku">@masp</span></a></p>
+                    @if (Model.Categories.Where(a => a.ArticleTypeId == brandType.Id).Count() > 0)
+                    {
+                        var brandList = Model.Categories.Where(a => a.ArticleTypeId == brandType.Id).ToList();
+                        var brandproduct = brandList.Skip(brandList.Count - 1).FirstOrDefault();
+                        <p class="thuonghieu">
+                            Nhà sản xuất: <span itemprop="brand" itemtype="https://schema.org/Brand" itemscope>
+                                @brandproduct.CategoryName
+                                <meta itemprop="name" content="@brandproduct.CategoryName" />
+                            </span>
+                        </p>
+                    }
+                    @if (Model.Categories.Where(a => a.ArticleTypeId == groupsxqg.Id).Count() > 0)
+                    {
+                        var GroupsxList = Model.Categories.Where(a => a.ArticleTypeId == groupsxqg.Id).ToList();
+                        var groupsxpr = GroupsxList.Skip(GroupsxList.Count - 1).FirstOrDefault();
+                        <p class="thuonghieu">
+                            Xuất xứ: <span itemprop="countryOfOrigin">@groupsxpr.CategoryName</span>
+                        </p>
+                    }
+                    @if (type.HasPrice)
+                    {
+                        <div class="price-detail" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+                            <a itemprop="url" href="@urlcurrent" class="hide">
+                                @Model.ArticleName
+                            </a>
+                            @if (Model.Price > 0)
+                            {
+                                var stringpr = "0.00";
+                                if (Model.ItemPrice != null)
+                                {
+                                    stringpr = Model.ItemPrice.Value.ToString();
+                                }
+                                //var stringsss = stringpr.Replace(",", ".").Remove(stringpr.Length - 1);
+                                var stringsss = stringpr.Replace(",", ".");
+                                if (Model.DiscountPrice > 0)
+                                {
+                                    <p class="price-old">Giá cũ: <span>@Html.Price(Model.ItemPrice)</span></p>
+                                    <p class="price">Giá: <span itemprop="price" content="@stringsss">@Html.DiscountPrice(Model.ItemPrice)</span></p>
+                                }
+                                else
+                                {
+
+
+                                    <p class="price">Giá: <span itemprop="price" content="@stringsss">@Html.Price(Model.ItemPrice)</span></p>
+                                }
+                            }
+                            else
+                            {
+                                @*<a href="@Url.Action(" QuickContact", "Home" , new { id=Model.Id })" class="lightbox contact" data-toggle="tooltip" data-placement="top" data-plugin-options='{"type":"iframe"}'><span>@Html.Locale("contact")</span></a>*@
+                                <p>
+                                    <a class="contact" href="@Url.Action(" Contact", "Home" , new { id=Model.Id })"><span itemprop="price" content="0.00">@Html.Locale("contact")</span></a>
+                                </p>
+                            }
+                            <meta itemprop="priceCurrency" content="VND" />
+                            @*<meta itemprop="priceValidUntil" content="2125-05-10" />*@
+                        </div>
+                    }
+                    @if (type.HasNumberProduct)
+                    {
+
+                        if (Model.Number <= 1)
+                        {
+                            <link itemprop="availability" href="http://schema.org/PreOrder">
+                            var tie = timecho.FirstOrDefault(a => a.Id == Model.timeId);
+                            if (tie != null)
+                            {
+                                <p class="stinhtrang" itemprop="availability">
+                                    Thời gian giao hàng: @tie.ArticleName
+                                </p>
+                            }
+
+
+                        }
+                        else
+                        {
+                            <p class="number">Còn <span>@Model.Number</span> sản phẩm</p>
+                        }
+                    }
+                </div>
+
+
+                @*<form action="/ShoppingCart/AddToCart" method="post" class="form-order">
+                        @Html.Hidden("id", Model.Id)
+                        <p>Số lượng @Html.DropDownList("num", Enumerable.Range(1, 50).Select(i => new SelectListItem { Value = i.ToString(), Text = i.ToString() }), "1")</p>
+                        <button type="submit" class="bt-carted muanhanh mua" id="addcarted"><i class="fa fa-shopping-cart"></i> Mua ngay</button>
+                        <button type="submit" class="bt-carted addcart them hidden-sm hidden-xs" id="addcarted"><i class="fa fa-shopping-cart"></i> Thêm vào giỏ hàng</button>
+                        <button type="submit" class="bt-carted addcart them hidden-lg hidden-md" id="addcarted"><i class="fa fa-shopping-cart"></i> Giỏ hàng</button>
+
+                    </form>
+                    <script>
+                            $(".muanhanh").click(function () {
+                                $(this).closest("form").attr("action", "/ShoppingCart/AddToCartAjax");
+                            });
+                            $(".addcart").click(function () {
+                                $(this).closest("form").attr("action", "/ShoppingCart/AddToCart");
+                            });*@
+
+
+
+                @*<div class="quantity">
+                        <input class="number-cart" name="num" type="text" value="1" />
+                    </div>
+                    <div class="action">
+                        <a href="@Url.Action("AddToCart", "ShoppingCart", new { id = Model.Id })" class="cart" rel="nofollow">
+                            <i class="fa fa-shopping-cart"></i>@Html.Locale("add_to_cart")
+                        </a>
+                    </div>*@
+
+
+                @using (Html.BeginForm("AddToCartAjax", "ShoppingCart", FormMethod.Post))
+                {
+                    @Html.Hidden("id", Model.Id)
+                    //<input type="hidden" id="ProductID" value="@Model.Id" />
+
+                    <div class="form-order page-detail">
+                        <p>Số lượng @Html.DropDownList("num", Enumerable.Range(1, 50).Select(i => new SelectListItem { Value = i.ToString(), Text = i.ToString() }), "1")</p>
+
+                        <button type="button" class="bt-carted muanhanh mua hidden-xs" value="" id="AddtoBasket"><i class="fa fa-shopping-cart"></i>Thêm vào giỏ hàng</button>
+
+                        <button type="button" class="bt-carted muanhanh mua hidden-lg hidden-md" id="AddtoBasketMb"><i class="fa fa-shopping-cart"></i> Giỏ hàng</button>
+                        <button type="submit" class="bt-carted addcart them hidden-sm" id="addcarted"><i class="fa fa-shopping-cart"></i> Mua ngay</button>
+                    </div>
+
+
+                }
+
+
+                <div class="support-hotline">Hỗ trợ khách hàng : @Html.Phone(SiteConfig.SiteInfo.Hotline)</div>
+                <!-- ShareThis BEGIN -->
+                <div class="sharethis-inline-share-buttons"></div>
+                <!-- ShareThis END -->
+                @*else
+                    {
+                        <div class="action">
+                            <a href="@Url.Action("Contact", "Home", new { id= Model.Id })" class="" rel="nofollow"><i class="fa fa-shopping-cart"></i>Liên hệ</a>
+                        </div>
+                    }*@
+
+                @if (type.HasAttachment)
+                {
+                    <div class="attachment">
+                        @if (type.HasAttachment && Model.Attachments.Count > 0)
+                        {
+                            var j = 1;
+                            foreach (var aitem in Model.Attachments)
+                            {
+                                <div class="box-download">
+                                    <a download="@aitem.OriginalFileName" href="@aitem.FileName" class="d-detail">
+                                        <i class="fa fa-cloud-download"></i>File đính kèm @j
+                                    </a>
+                                </div>
+                                j++;
+                            }
+                        }
+                    </div>
+                }
+                @if (type.ShowShareArticle)
+                {
+                    @Html.Partial("_ShareArticle")
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.SEOKeywords))
+                {
+                    <div class="tags">
+                        <strong>Tags:</strong>
+                        @foreach (var item in Model.SEOKeywords.Split(','))
+                        {
+                            <a href="@Url.Action("Tag", "Home", new { keyword =  Unichar.UnicodeStrings.LatinToAscii(item).Replace("/","-").Replace(" ","-").ToLower() })" target="_blank" itemprop="keywords">
+                                <span><i class="fa fa-tags"></i> @item</span>
+                            </a>
+                            @*<a href="@Url.Action("Tag", "Home", new { keyword = item.Replace("/","_2f_").Replace("*","_3f_") })" target="_blank" itemprop="keywords">
+                                    <span><i class="fa fa-tags"></i> @item</span>
+                                </a>*@
+                            //var itemUrl = Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly.Replace("/", "-"), title = Unichar.UnicodeStrings.UrlString(item.ArticleName) });
+
+                            @*<span><i class="fa fa-tags"></i> @item</span>*@
+
+                        }
+                    </div>
+                }
+            </div>
+            <div class="col-lg-12 col-md-12">
+                @if (type.ShowComment)
+                {
+                    <div class="clearfix"></div>
+                    @Html.Partial("_Comment")
+
+                    @*if (lst_comment.ItemCount > 0)
+                        {
+                            @Html.Partial("_ViewRating", lst_comment)
+                        }
+                        <div class="rating-article" id="id_write_comment">
+                            @Html.Partial("_Rating", new Comment { ArticleId = Model.Id })
+                        </div>*@
+
+                    @*@Html.Partial("CommentFB")*@
+                    @*<div class="load-iframe" data-iframe-load="@Url.Action(" iframeload", "Home" , new { view="_CommentFB" })"></div>*@
+                }
+            </div>
+
+            <div class="col-lg-12 col-md-12 tab-detail">
+                <div class="heading">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs pull-left" role="tablist">
+                        @*<li role="presentation" class="active left">
+                                <a href="#detail-0" aria-controls="detail-0" role="tab" data-toggle="tab">Chi tiết</a>
+                            </li>*@
+                        @*<li role="presentation" class="left">
+                                <a href="#detail-3" aria-controls="detail-3" role="tab" data-toggle="tab">Hình ảnh</a>
+                            </li>
+                            <li role="presentation" class="left">
+                                <a href="#detail-1" aria-controls="detail-1" role="tab" data-toggle="tab">Thông số kỹ thuật</a>
+                            </li>*@
+                        @*<li role="presentation" class="left">
+                                <a href="#detail-2" aria-controls="detail-2" role="tab" data-toggle="tab">@Html.Locale("attach_file")</a>
+                            </li>*@
+                    </ul>
+                    <!-- Tab panes -->
+                </div>
+                <div class="tab-content">
+                    @*@{
+                        var manual = Model.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("MANUAL", StringComparison.OrdinalIgnoreCase) && a.LanguageId == SiteConfig.LanguageId);
+                        var promtion = Model.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("PROMOTIONINFO", StringComparison.OrdinalIgnoreCase) && a.LanguageId == SiteConfig.LanguageId);
+                        }*@
+                    <div role="tabpanel" class="tab-pane fade in active" id="detail-0">
+                        <div class="description" itemprop="description">
+                            @Html.Raw(Model.Description)
+                            <script>
+                                var all_links = document.querySelectorAll(".description a");
+
+                                for (var i = 0; i < all_links.length; i++) {
+                                    all_links[i].removeAttribute("href");
+                                }
+                            </script>
+                            <div class="concate">
+
+                                @if (Model.Categories.Where(a => a.ArticleTypeId == 2).Count() > 0)
+                                {
+                                    if (Model.Categories.Where(a => a.ArticleTypeId == 2).Count() == 1)
+                                    {
+                                        @Html.Image(SiteConfig.Image("rightct.png"), new ImageOptions { Width = 46, Height = 20, Lazy = false }, new { alt = "hotline" })
+
+                                        <span>Xem thêm các sản phẩm của</span>
+                                        var catList = Model.Categories.Where(a => a.ArticleTypeId == 2).ToList();
+
+                                        var listcate = catList.Skip(catList.Count - 1).FirstOrDefault();
+                                        string catid = "ac" + listcate.Id + ".html";
+                                        <a target="_blank" href="./@Unichar.UnicodeStrings.UrlString(listcate.CategoryName)-@catid" title="@listcate.CategoryName">
+                                            @listcate.CategoryName
+                                        </a>
+                                        <span>tại đây</span>
+                                    }
+                                    else
+                                    {
+                                        @Html.Image(SiteConfig.Image("rightct.png"), new ImageOptions { Width = 46, Height = 20, Lazy = false }, new { alt = "hotline" })
+
+                                        <span>Xem thêm các sản phẩm của</span>
+                                        var catList = Model.Categories.Where(a => a.ArticleTypeId == 2 && a.ParentId != null).ToList();
+                                        var listcate = catList.Skip(catList.Count - 1).FirstOrDefault();
+                                        string catid = "ac" + listcate.Id + ".html";
+                                        <a target="_blank" href="./@Unichar.UnicodeStrings.UrlString(listcate.CategoryName).ToLower()-@catid" title="@listcate.CategoryName">
+                                            @listcate.CategoryName
+                                        </a>
+                                        <span>tại đây</span>
+                                    }
+
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade in" id="detail-3">
+                        @if (Model.ImageList.Count > 0)
+                        {
+                            <ul class="img-list lightbox" data-plugin-options='{"delegate": "a.zoom", "gallery": {"enabled": true}}'>
+                                @foreach (var item in Model.ImageList)
+                                {
+                                    <li>
+                                        <a class="zoom banner-cubic-7" href="@Url.Content(item.FileName)?width=800&Watermark=@SiteConfig.Watermark" title="">
+                                            @Html.Image(item.FileName, new ImageOptions { Width = 100, Height = 100, Mode = ImageMode.crop }, new { alt = Model.ArticleName, @class = "owl" })
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </div>
+
+                    <div role="tabpanel" class="tab-pane fade in" id="detail-2">
+                        @if (Model.Attachments.Count > 0)
+                        {
+                            <table class="attachment">
+                                <thead>
+                                    <tr>
+                                        <th class="name" style="width: 50%">@Html.Locale("title")</th>
+                                        <th class="date-time">@Html.Locale("file_type")</th>
+                                        <th class="size">@Html.Locale("size")</th>
+                                        <th class="download" style="text-align:right">@Html.Locale("download")</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.Attachments)
+                                    {
+                                        double dl = (item.FileSize / 1024f) / 1024f;
+                                        <tr>
+                                            <td>
+                                                <a href="@item.FileName" title="" target="_blank">
+                                                    @item.Title
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a href="" target="_blank" class="file-icon @System.IO.Path.GetExtension(item.FileName).Substring(1).ToLower()"></a>
+                                            </td>
+                                            <td>
+                                                @dl.ToString("0.00") MB
+                                            </td>
+                                            <td style="text-align:right">
+                                                <a href="@item.FileName" title="@Html.Locale("click_to_download")" target="_blank" class="fa fa-download">
+                                                    @Html.Locale("download")
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12 col-md-12" style="margin-top:10px;">
+                <div class="tab-content bgblue">
+                    @Html.Partial("_FSupplier")
+                </div>
+            </div>
+
+
+        </div>
+    </article>
+    @Html.Action("Other", "Article", new { id = Model.Id, typeid = Model.ArticleTypeId, categoryId = category != null ? category.Id : 0, pageSize = 24, includeFlags = ArticleIncludeFlags.ARTICLE_DETAIL | ArticleIncludeFlags.ARTICLE_TYPE | ArticleIncludeFlags.PRICES | ArticleIncludeFlags.PROPERTIES })
+
+    if (Request.Cookies["article"] != null)
+    {
+
+        int[] Ids = Request.Cookies["article"].Value.Split(new char[] { ',' }).Select(s => int.Parse(s)).ToArray();
+
+        var counted = db.Articles.Include(a => a.ArticleDetail).Include(a => a.ArticleType.ArticleTypeDetail).Include(a => a.PropertyValues.Select(pv => pv.Property)).Include(a => a.Prices.Select(c => c.Currency))
+            .Where(a => Ids.Contains(a.Id)).ToList();
+        <div class="product-list-common box-other-product other-common">
+            <h2 class="title"><span>Sản phẩm đã xem</span></h2>
+            <div class="row10">
+                <div class="owl-carousel" data-plugin-options='{"items": 5, "singleItem": false, "autoPlay":true, "navigation": true, "pagination": false,"slideSpeed":400,"addClassActive":true,"itemsDesktop": [1199, 5],"itemsDesktopSmall": [991, 4],"itemsTablet": [768, 2],"itemsMobile": [479, 2]}' data-snap-ignore="true">
+                    @foreach (var item in counted)
+                    {
+                        var code = item["CODE"];
+                        <div class="items">
+                            <figure>
+                                <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly.ToLower() })" title="@item.ArticleName" data-tooltip="sticky-@item.Id">
+                                    @Html.Image(item.ImageUrl != null ? item.ImageUrl.ToLower() : item.ImageUrl, new ImageOptions { Width = 167, Height = 167, Watermark = SiteConfig.Watermark, Mode = ImageMode.pad, Lazy = false }, new { alt = code != null ? code : item.ArticleName })
+                                </a>
+                                @*<figcaption>
+                                        <p>
+
+                                            <a class="quickview" href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="Xem chi tiết">
+                                                <i class="fa fa-search-plus"></i>
+                                            </a>
+
+                                            <a href="@Url.Action("AddToCart", "ShoppingCart", new { id = item.Id })" class="addcart cart @(item.Price > 0 ? "addToCart" : "")" title="Cho vào giỏ hàng" rel="nofollow">
+                                                <i class="fa fa-shopping-cart"></i>
+                                            </a>
+                                        </p>
+                                    </figcaption>*@
+                            </figure>
+                            <div class="meta">
+                                <h3>
+                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly.ToLower() })" title="@item.ArticleName">@item.ArticleName</a>
+                                </h3>
+                                <div class="code"><label class="hidden-xs">Mã số:</label>@code</div>
+                                @if (type.HasPrice)
+                                {
+                                    <div class="price-all">
+                                        @if (item.DiscountPrice > 0)
+                                        {
+
+                                            <span class="price">@Html.DiscountPrice(item.ItemPrice)</span>
+                                            <span class="price-old">@Html.Price(item.ItemPrice)</span>
+
+                                        }
+                                        else
+                                        {
+                                            <a href="@Url.Action("Contact", "Home", new { id = item.Id })">
+                                                <span class="price">@Html.Price(item.ItemPrice)</span>
+                                            </a>
+                                        }
+                                    </div>
+                                }
+                                <form action="/ShoppingCart/AddToCart" method="post" class="form-order">
+                                    @*@Html.Hidden("id", item.Id)*@
+                                    <input type="hidden" name="id" id="view_@item.Id" value="@item.Id">
+                                    <div class="quantitynum">
+                                        <input name="num" type="number" id="view_num_@item.Id" min="1" max="100" value="1" />
+                                    </div>
+                                    @*<p>Số lượng @Html.DropDownList("num", Enumerable.Range(1, 50).Select(j => new SelectListItem { Value = j.ToString(), Text = j.ToString() }), "1")</p>*@
+                                    <button type="submit" class="bt-carted cartedngoai"> Mua ngay</button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+    }
+    if (Request.IsAuthenticated && (Roles.IsUserInRole("Super Administrators") || Roles.IsUserInRole("Administrators")))
+    {
+        <div class="edit-admin">
+            <a href="@Url.Action("Edit", "Article", new { id = Model.Id, area = "Admin" })" target="_blank"><i class="fa fa-edit"></i> @Html.Locale("view_admin")</a>
+        </div>
+    }
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+
+
+        $("#img_01").elevateZoom(
+            {
+                gallery: 'slidezoompage',
+                cursor: 'pointer',
+                galleryActiveClass: 'active',
+                imageCrossfade: true,
+                scrollZoom: true,
+                easing: true
+            });
+
+        $("#img_01").bind("click", function (e) {
+            var ez = $('#img_01').data('elevateZoom');
+            $.fancybox(ez.getGalleryList());
+            var src = $(this).find('img').attr('src');
+            $('#img_01').attr('src', src);
+
+            return false;
+        });
+        $("#slidezoompage a").bind("click", function (e) {
+            var src = $(this).find('img').attr('src');
+            $('#img_01').attr('src', src);
+
+            return false;
+        });
+    });
+
+</script>
+<script>
+    jQuery('<div class="quantity-nav"><div class="quantity-button quantity-up">+</div><div class="quantity-button quantity-down">-</div></div>').insertAfter('.quantitynum input');
+    jQuery('.quantitynum').each(function () {
+        var spinner = jQuery(this),
+            input = spinner.find('input[type="number"]'),
+            btnUp = spinner.find('.quantity-up'),
+            btnDown = spinner.find('.quantity-down'),
+            min = input.attr('min'),
+            max = input.attr('max');
+
+        btnUp.click(function () {
+            var oldValue = parseFloat(input.val());
+            if (oldValue >= max) {
+                var newVal = oldValue;
+            } else {
+                var newVal = oldValue + 1;
+            }
+            spinner.find("input").val(newVal);
+            spinner.find("input").trigger("change");
+        });
+
+        btnDown.click(function () {
+            var oldValue = parseFloat(input.val());
+            if (oldValue <= min) {
+                var newVal = oldValue;
+            } else {
+                var newVal = oldValue - 1;
+            }
+            spinner.find("input").val(newVal);
+            spinner.find("input").trigger("change");
+        });
+
+    });
+</script>

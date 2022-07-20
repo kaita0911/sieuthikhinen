@@ -1,0 +1,57 @@
+﻿@model ArticleResult
+@{
+    var db = new DataContext();
+    var desc = db.ArticleTypeDetails.FirstOrDefault(a => a.ArticleType.Code == "LIBRARY" && a.LanguageId == SiteConfig.LanguageId);
+    ViewBag.Code = "library";
+    ViewBag.TypeId = desc.ArticleTypeId;
+    var lstCate = Category.GetByType(desc.ArticleTypeId, SiteConfig.SiteId, SiteConfig.LanguageId);
+
+    <div class="new-cate library-cate article">
+        @foreach (var itemCate in lstCate)
+        {
+            var lstArt = Article.GetByCategory(itemCate.Id, SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 4, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.DESCENDING);
+            <div class="item-cate">
+                <div class="cate-name">
+                    <div class="pull-left">
+                        @Html.ActionLink(itemCate.CategoryName, "Detail", "Category", new { id = itemCate.Id, code = itemCate.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(itemCate.CategoryName) }, null)
+                    </div>
+                    @*<div class="pull-right view-all">
+                            @Html.ActionLink("Xem tất cả", "Detail", "Category", new { id = itemCate.Id, code = itemCate.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(itemCate.CategoryName) }, null)
+                        </div>*@
+                </div>
+                <div class="cate-content">
+                    <div class="row">
+                        @foreach (var item in lstArt.List)
+                        {
+                            <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6">
+                                <div class="item-library">
+                                    <div class="image">
+                                        <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                                            @if (item.ImageUrl != null)
+                                            {
+                                                <img src="@Url.Content("~/UserUpload/Article/")@item.ImageUrl?width=337" alt="@item.ArticleName" />
+                                            }
+                                            else
+                                            {
+                                                <img src="@Url.Content("~/Templates/"+ SiteConfig.SiteCode +"/Content/images/no-news.jpg")?width=337" alt="@item.ArticleName" />
+                                            }
+                                        </a>
+                                    </div>
+                                    <div class="ctn">
+                                        <h3 class="li-name">
+                                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                                                <span>@item.ArticleName</span>
+                                            </a>
+                                        </h3>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+
+}

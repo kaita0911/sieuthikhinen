@@ -1,0 +1,31 @@
+﻿@model Widget
+@{
+    var article = Article.GetByType((int)Model.ArticleTypeId, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection, Model.Includes);
+    if (article.List.Count > 0)
+    {
+        <div class="col-md-6">
+            <div class="box-home-promotion box-home-2">
+                <h2 class="heading">
+                    <a href="/khuyen-mai.html">
+                        <span>@Model.Title</span>
+                    </a>
+                </h2>
+                <div class="content">
+                    <div class="owl-carousel" data-plugin-options='{"items": 1, "singleItem": true, "autoPlay": true, "navigation": true, "pagination": true,"slideSpeed":400,"addClassActive":true,"itemsDesktop": [1199, 1],"itemsDesktopSmall": [991, 1],"itemsTablet": [768, 1],"itemsMobile": [479, 1]}' data-snap-ignore="true">
+                        @foreach (var item in article.List)
+                        {
+                            <div class="item">
+                                <figure>
+                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })">
+                                        @Html.Image(item.ImageUrl, new ImageOptions { Width = 570, Height = 321, Mode = ImageMode.crop }, new { alt = item.ArticleName, @class = "owl" })
+                                    </a>
+                                </figure>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    }
+}

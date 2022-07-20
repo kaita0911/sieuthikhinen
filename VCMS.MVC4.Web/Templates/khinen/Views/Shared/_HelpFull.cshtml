@@ -1,0 +1,17 @@
+﻿@model List<Article>
+@{
+   
+<ul>
+    @foreach (var art in Model)
+    {
+        <li>
+            <figure>
+                <a class="banner-cubic-2" href="@Url.Action("Detail", "Article", new { id = art.Id, code = art.ArticleType.UrlFriendly, title = art.UrlFriendly })" title="@art.ArticleName">
+                    @Html.Image(art.ImageUrl, new ImageOptions { Width = 1170, Height = 230, Mode = ImageMode.crop, Lazy = false }, new { alt = art.ArticleName })
+                </a>
+            </figure>
+        </li>
+    }
+</ul>
+}
+

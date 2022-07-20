@@ -1,0 +1,115 @@
+﻿@model Widget
+@{
+    var type = ArticleType.GetById((int)Model.ArticleTypeId, SiteConfig.LanguageId);
+    var cates = Category.GetByType(type.Id, SiteConfig.LanguageId, 0, CategoryFlags.NEW, 0).OrderBy(c => c.SortOrder).ToList();
+    var articles = Article.GetByCategories(cates.Select(c => c.Id).ToArray(), SiteConfig.LanguageId, Model.Attribute, Model.Number, Model.SortOrder, Model.SortDirection, Model.Includes);
+
+    if (cates.Count > 0)
+    {
+        var itemrow = 8;
+        <div class="box-home box-product-slider one-item">
+            @*<div class="container">*@
+            @foreach (var citem in cates)
+            {
+                var i = 0;
+                var article = articles.Where(a => a.CurrentCategory.Id == citem.Id);
+                <h2 class="heading">
+                    <a href="@Url.Action("Index", "ArticleType", new { code = type.UrlFriendly })">
+                        <span>@citem.CategoryName</span>
+                    </a>
+                    @*@Html.Partial("_AddLink")*@
+                </h2>
+                <div class="content">
+                    <div class="owl-carousel" data-plugin-options='{"items": 1, "singleItem": true, "autoPlay":false, "navigation": true, "pagination": false,"slideSpeed":400,"addClassActive":true,"itemsDesktop": [1199, 4],"itemsDesktopSmall": [991, 4],"itemsTablet": [768, 2],"itemsMobile": [479, 1]}' data-snap-ignore="true">
+                        @foreach (var item in article)
+                        {
+                            if (i % itemrow == 0)
+                            {
+                                @:<div class="items row">
+                                }
+                                <div class="col-md-3">
+                                    <div class="box-block box-product">
+                                        @if (!Model.HiddenImage)
+                                        {
+                                            @*class="effect-hera"*@
+                                            <figure>
+                                                <a class="banner-cubic-1" href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                                                    @Html.Image(item.ImageUrl, new ImageOptions { Width = 310, Height = 310, Watermark = SiteConfig.Watermark, Mode = ImageMode.crop, Lazy = false }, new { alt = item.ArticleName })
+                                                </a>
+                                                <figcaption>
+                                                    <p>
+                                                        @*<a href="@Url.Action("QuickView", "Article", new { id = item.Id })" class="lightbox" data-placement="top" data-plugin-options='{"type":"iframe"}' title="Xem nhanh">
+                                                            <i class="fa fa-search-plus"></i>
+                                                        </a>*@
+                                                        <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="Xem chi tiết">
+                                                            <i class="fa fa-eye"></i>
+                                                        </a>
+                                                        @*<a href="/home/contact/@item.Id" title="Liên hệ sản phẩm">
+                                                            <i class="fa fa-phone"></i>
+                                                        </a>*@
+                                                        <a href="@Url.Action("AddToCart", "ShoppingCart", new { id = item.Id })" class="cart" title="Cho vào giỏ hàng">
+                                                            <i class="fa fa-shopping-cart"></i>
+                                                        </a>
+                                                    </p>
+                                                </figcaption>
+                                                @*<div class="detail">
+                                                    <div class="border">
+                                                        <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })">
+                                                            Xem
+                                                        </a>
+                                                    </div>
+                                                </div>*@
+                                            </figure>
+                                        }
+                                        <div class="meta">
+                                            <div class="clearfix"></div>
+                                            <h3>
+                                                <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">@item.ArticleName</a>
+                                            </h3>
+                                            @if (Model.ShowDescription)
+                                            {
+                                                <div class="s-desc">
+                                                    @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, 20))
+                                                </div>
+                                            }
+                                            <div class="price-all pull-left">
+                                                @if (item.DiscountPrice > 0)
+                                                {
+                                                    <span class="price-old">Giá công ty: @Html.Price(item.ItemPrice)</span>
+                                                    <span class="price">Giá KM: @Html.DiscountPrice(item.ItemPrice)</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="price">@Html.Locale("price"): @Html.Price(item.ItemPrice)</span>
+                                                }
+                                            </div>
+                                            @*<div class="action pull-right">
+                                                @if (item.Price > 0)
+                                                {
+                                                    <a href="@Url.Action("AddToCart", "ShoppingCart", new { id = item.Id })" class="cart" rel="nofollow">
+                                                        @Html.Locale("cart_checkout")
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="@Url.Action("Contact", "Home", new { id=item.Id})" class="cart" rel="nofollow">@Html.Locale("contact")</a>
+                                                }
+                                            </div>*@
+                                        </div>
+                                    </div>
+                                </div>
+                                if (i++ % itemrow == itemrow - 1 || i == article.Count())
+                                {
+                                @:</div>
+                            }
+                        }
+                    </div>
+                    @*<div class="view-all">
+                            <a href="@Url.Action("Index", "ArticleType", new { code = type.UrlFriendly })">@Html.Locale("view_more")</a>
+                        </div>*@
+                </div>
+            }
+            @*</div>*@
+        </div>
+    }
+}

@@ -1,0 +1,70 @@
+﻿@model VCMS.MVC4.Data.Article
+@{
+    Layout = "~/Templates/" + SiteConfig.SiteInfo.Code + "/Views/Shared/_LayoutQuickView.cshtml";
+    <article class="article article-detail product-detail" itemscope itemtype="http://schema.org/Article">
+        <h1 class="title" style="display:none">
+            <a>@Model.ArticleName</a>
+        </h1>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                <div class="image-article">
+                    <figure>
+                        <a href="@Url.Content(Model.ImageUrl)" class="" data-plugin-options="{type:image;}">
+                            <img src="@Url.Content(Model.ImageUrl)?width=300&height=215&mode=pad&Watermark=@SiteConfig.Watermark" id="zoom_03" data-zoom-image="@Url.Content(Model.ImageUrl)" />
+                        </a>
+                    </figure>
+                </div>
+                @*@if (Model.ImageList.Count > 0)
+                {
+                    <div id="gallery_01" class="more-image">
+                        <div class="owl-carousel is-active" data-plugin-options='{"items": 4, "singleItem": false, "autoPlay": false, "navigation": true, "pagination": false,"slideSpeed":800,"addClassActive":true,"itemsDesktop": [1199, 4],"itemsDesktopSmall": [991, 3],"itemsTablet": [768, 3],"itemsMobile": [479, 1]}'>
+                            @foreach (var item in Model.ImageList)
+                            {
+                                <div class="item-img">
+                                    <a data-zoom-image="@Url.Content(item.FileName)?Watermark=@SiteConfig.Watermark" data-image="@Url.Content(item.FileName)?width=381&height=324&mode=crop&Watermark=@SiteConfig.Watermark" data-update="" class="elevatezoom-gallery" href="@Url.Content(item.FileName)?width=418&height=421&mode=crop&Watermark=@SiteConfig.Watermark" title="">
+                                        @Html.Image(item.FileName, new ImageOptions { Width = 99, Height = 100 }, new { alt = Model.ArticleName, @class = "owl" })
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }*@
+            </div>
+            @*@Html.Widget("ProductZoomImage")*@
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                <h2 class="title" itemprop="name">
+                    @Model.ArticleName
+                </h2>
+                <div class="description short" itemprop="description">
+                    @Html.Raw(Model.ShortDescription)
+                </div>
+
+                <div class="price-all">
+
+                    @if (Model.DiscountPrice > 0)
+                    {
+                        <span class="price">@Html.DiscountPrice(Model.ItemPrice)</span>
+                        <span class="price-old">@Html.Price(Model.ItemPrice)</span>
+                    }
+                    else
+                    {
+                        <span class="price">Giá: @Html.Price(Model.ItemPrice)</span>
+                    }
+                </div>
+                <div class="action">
+                    <a href="@Url.Action("AddToCart", "ShoppingCart", new { id = Model.Id })" class="cart @(Model.Price > 0 ? "addToCart" : "")" target="_parent">
+                        <i class="fa fa-shopping-cart"></i> <span>Đặt hàng</span>
+                    </a>
+                </div>
+                <div class="view-detail">
+                    <label> hoặc </label> <a target="_parent" href="@Url.Action("Detail", "Article", new { id = Model.Id, code = Model.ArticleType.ArticleTypeDetail[SiteConfig.LanguageId].UrlFriendly, title = Model.UrlFriendly })" title="@Model.ArticleName">Xem chi tiết</a>
+                </div>
+                @Html.Partial("_ShareArticle")
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </article>
+
+}
+
+

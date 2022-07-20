@@ -1,0 +1,17 @@
+﻿@using System.Data.Entity;
+@{
+    ViewBag.Title = SiteConfig.SiteInfo.Title;
+    Layout = "_LayoutHome.cshtml";
+    ViewBag.Keywords = SiteConfig.SiteInfo.WebsiteDetail[SiteConfig.LanguageId].SEOKeywords;
+    ViewBag.Desciption = SiteConfig.SiteInfo.WebsiteDetail[SiteConfig.LanguageId].SEODescription;
+    var slider2 = (List<Article>)ViewBag.Slider2;
+    var fadv = (List<Article>)ViewBag.FAdv;
+    var homecate = (List<Category>)ViewBag.HomeCate;
+    //var helpfull = (List<Article>)ViewBag.Helpfull;
+}
+<h1 style="display: none">@SiteConfig.SiteInfo.WebsiteDetail[SiteConfig.LanguageId].Title</h1>
+
+@Html.Partial("Slider2", slider2)
+@Html.Partial("_FAdv", fadv)
+@Html.Partial("HomeCate", homecate)
+@*@Html.Partial("_HelpFull", helpfull)*@

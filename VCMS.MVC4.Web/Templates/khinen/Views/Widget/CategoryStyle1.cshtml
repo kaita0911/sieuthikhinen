@@ -1,0 +1,107 @@
+﻿@model Widget
+@{
+    string code = "";
+    var tile = Model.Title;
+    int typeid = (int)Model.ArticleTypeId;
+    if (ViewContext.RouteData.Values["code"] != null)
+    {
+        code = ViewContext.RouteData.Values["code"].ToString().ToLower();
+    }
+
+    var category = Category.GetTree(Category.GetByType(typeid, SiteConfig.LanguageId)).Where(a => a.Level == 0).ToList();
+    if (category.Count > 0)
+    {
+        //string path = "";
+        <div class="box-siderbar box-category">
+            @*<h2 class="heading">
+                    <a>@tile</a>
+                </h2>*@
+            <ul id="accordion" class="category-accordion category-menu list-group accordion category-sidebar">
+                @foreach (var item in category)
+                {
+                    <li class="list-group-item accordion-group first">
+                        <a href="@Url.Action("Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="" class="lv-1">
+                            @*<i class="fa fa-yelp"></i>*@
+                            @*@if (item.ImageUrl != null)
+                                {
+                                    var str = item.ImageUrl.Split('/');
+                                    if (str.Length <= 1)
+                                    {
+                                        path = "/UserUpload/Category/";
+                                    }
+                                    else
+                                    {
+                                        path = "";
+                                    }
+                                    <span class="img">
+                                        <img src="@Url.Content(path + item.ImageUrl)?width=25&height=25" alt="@item.CategoryName" />
+                                    </span>
+                                }*@
+                            <span class="name">
+                                @item.CategoryName
+                            </span>
+                        </a>
+                        @if (item.ChildrenCount > 0)
+                        {
+                            <ul>
+                                @foreach (var sub in item.Children)
+                                {
+                                    <li class="list-group-item">
+                                        <a href="@Url.Action("Detail", "Category", new { id = sub.Id, code = sub.ArticleType.UrlFriendly, title = sub.UrlFriendly })" title="">
+                                            @*<i class="fa fa-caret-right"></i>*@
+                                            @*@if (sub.ImageUrl != null)
+                                                {
+                                                    var str = sub.ImageUrl.Split('/');
+                                                    if (str.Length <= 1)
+                                                    {
+                                                        path = "/UserUpload/Category/";
+                                                    }
+                                                    else
+                                                    {
+                                                        path = "";
+                                                    }
+                                                    <img src="@Url.Content(path + sub.ImageUrl)?width=35&height=35" alt="@sub.CategoryName" />
+                                                }*@
+                                            @sub.CategoryName
+                                        </a>
+                                        @if (sub.ChildrenCount > 0)
+                                        {
+                                            @*<a class="fa fa-plus sh-item iitem-@sub.Id" onclick="toggleByClass('@sub.Id');">></a>*@
+                                            @*sh-snap-menu sub-menu uitem-@sub.Id*@
+                                            @Html.Partial("_SubmenuLR", sub)
+                                        }
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+
+
+}
+<script>
+    $(function () {
+        $(".box-category li:has(ul.sub-level)").hover(
+            function () {
+                $(this).children("ul.sub-level").show();
+            },
+            function () {
+                $(this).children("ul.sub-level").hide();
+            }
+        );
+    });
+    //$('.list-group-item ul.sh-snap-menu').show();
+    //$('.list-group-item .sh-item').toggleClass('fa-minus');
+    //function toggleByClass(className) {
+
+    //    $('.sh-snap-menu').not('.uitem-' + className).hide();
+    //    $('.sh-item').not('.iitem-' + className).removeClass('fa-minus');
+
+    //    $('.iitem-' + className).toggleClass('fa-minus');
+    //    $(".uitem-" + className).toggle();
+
+    //}
+</script>

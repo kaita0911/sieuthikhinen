@@ -1,0 +1,99 @@
+﻿@model CheckOutNoLoginModel
+@{
+    ViewBag.Title = Html.Locale("cart_checkout").ToHtmlString();
+    ViewBag.Breadcrumb = new BreadcrumbModel { Items = new List<BreadcrumbItem> { new BreadcrumbItem { Text = Html.Locale("cart_checkout").ToHtmlString(), Url = null, IsLast = true } } };
+    ViewBag.code = "shopcart";
+    Layout = "_Layout.cshtml";
+}
+
+<div class="article cart-detail">
+    <h1 class="title">Thông tin đặt hàng</h1>
+    @using (Html.BeginForm())
+    {
+    <div class="row checkout">
+
+        <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+            <div class="bg_cartinfo">
+                @Html.Partial("_CartInfo", SiteConfig.ShoppingCart)
+            </div>
+
+        </div>
+        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
+            <div class="bg-info-tt">
+                <h2 class="heading main-heading">Thông tin thanh toán</h2>
+                <div class="editor">
+                    <label>@Html.Locale("Họ và tên")</label>
+                    @Html.EditorFor(model => model.FullName)
+                </div>
+                <div class="editor">
+                    <label>Email</label>
+                    @Html.EditorFor(model => model.Email)
+                </div>
+                <div class="editor">
+                    <label>@Html.Locale("Điện thoại")</label>
+                    @Html.EditorFor(model => model.Phone)
+                </div>
+                @*<div class="editor">
+                    <label>@Html.Locale("Điện thoại khác")</label>
+                    @Html.EditorFor(model => model.Phone2)
+                </div>*@
+                <div class="editor">
+                    <label>@Html.Locale("Địa chỉ")</label>
+                    @Html.EditorFor(model => model.Address)
+                </div>
+                @*<div class="editor">
+                    <label>@Html.Label("Địa chỉ khác")</label>
+                    @Html.EditorFor(model => model.Address2)
+                </div>*@
+                <div class="editor">
+                    <label>@Html.Label("Ghi chú")</label>
+                    @Html.TextAreaFor(model => model.Notes)
+                </div>
+                <div class="bt-carts">
+                    <div class="xuathoadon">
+                        <label class="check-hd">
+                            Thông tin xuất hóa đơn
+                            <input type="checkbox">
+                            <span class="checkmark_hd"></span>
+                        </label>
+                        <div class="box_hoadon">
+                            <div class="editor">
+                                <label>Tên công ty</label>
+                                @Html.EditorFor(model => model.Company)
+                            </div>
+                            <div class="editor">
+                                <label>Địa chỉ</label>
+                                @Html.EditorFor(model => model.Address2)
+                            </div>
+                            <div class="editor">
+                                <label>Mã số thuế</label>
+                                @Html.EditorFor(model => model.Fax)
+                            </div>
+                        </div>
+
+                    </div>
+                    <input type="submit" value="@Html.Locale("cart_checkout")" class="btn btn-continue" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    }
+</div>
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script>
+        $(".site-info #cart .content").remove();
+    </script>
+    <script>
+        $(document).ready(function () {
+            $(".checkmark_hd").click(function () {
+                $(".box_hoadon").slideToggle();
+            });
+        });
+    </script>
+}
+
+

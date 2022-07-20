@@ -1,0 +1,29 @@
+﻿<div class="box-footer f-online">
+    <h2 class="heading">@Html.Locale("statistical_access")</h2>
+    <div class="content">
+        <div class="item">
+            <span class="lbl">@Html.Locale("online"):</span>
+            <span class="ctn" id="ol">49</span>
+        </div>
+        <div class="item">
+            <span class="lbl">@Html.Locale("this_week"):</span>
+            <span class="ctn" id="tw">20</span>
+        </div>
+        <div class="item">
+            <span class="lbl">@Html.Locale("this_month"):</span>
+            <span class="ctn" id="tm">49</span>
+        </div>
+        <div class="item total">
+            <span class="lbl">@Html.Locale("total"):</span>
+            <span class="ctn" id="tl">192.157</span>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $("#ol").html(onlineLog.Online);
+        $("#tw").html(onlineLog.ThisWeek);
+        $("#tm").html(onlineLog.ThisMonth);
+        $("#tl").html(onlineLog.Total);
+    });
+</script>

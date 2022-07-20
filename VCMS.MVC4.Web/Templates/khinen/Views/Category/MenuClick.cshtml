@@ -1,0 +1,43 @@
+﻿<link rel="stylesheet" href="~/Templates/@SiteConfig.SiteCode/Content/dcaccordion/dcaccordion.css" />
+<link rel="stylesheet" href="~/Templates/@SiteConfig.SiteCode/Content/dcaccordion/grey.css" />
+
+@model ICollection<Category>
+@{
+    Layout = null;
+    var level0 = Model.Where(c => c.Level == 0).ToList();
+    int i = 0;
+}
+<div class="menu-cate">
+    <div class="header"><span>@Resources.VCMS.category</span></div>
+    <div class="content">
+        <div class="grey">
+            <ul id="menu-accordion" class="accordion">
+                @foreach (var item in level0)
+                {
+                    <li>
+                        <a class="cate-name @(level0.Count - 1 == i ? "cate-name-last" : "")">@item.CategoryName</a>
+                        @Html.Partial("_SubmenuClick", item)
+                    </li>
+                    i++;
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/bundles/dcaccordion")
+@*<script type="text/javascript">
+    $(function () {
+        $("#menu-accordion").dcAccordion({
+            eventType: 'click',
+            autoClose: false,
+            saveState: true,
+            disableLink: true,
+            showCount: false,
+            speed: 'fast',
+            skin: 'demo'
+        });
+
+        $("#menu-accordion a[href*='@Request.Path']").addClass('selected');
+    })
+</script>*@
+

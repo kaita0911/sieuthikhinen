@@ -1,0 +1,123 @@
+﻿@model OrderSearchResult
+@{
+    Layout = "_Layout.cshtml";
+    ViewBag.Title = "Đơn hàng của tôi";
+    ViewBag.Breadcrumb = new BreadcrumbModel { Items = new List<BreadcrumbItem> { new BreadcrumbItem { Text = ViewBag.Title, Url = null, IsLast = true } } };
+}
+<div class="my-order">
+    <div class="search-order">
+        @using (Html.BeginForm("MyOrder", "ShoppingCart", FormMethod.Get))
+        {
+            <input id="myform_phone" type="text" name="phoneNumber" class="txt-search" placeholder="Nhập số điện thoại" value="@ViewBag.SearchKeyword" />
+            <button type="submit" class="bt-search">Tìm đơn hàng</button>
+            <input name="pageSize" type="hidden" value="16" />
+            <input name="pageIndex" type="hidden" value="1" />
+            <p id="phone_error" class="error an">Không đúng định dạng. Vui lòng nhập lại !</p>
+        }
+    </div>
+    @if (Model.ItemCount > 0)  
+    {
+        <h2 class="heading">
+            Danh sách đơn hàng
+        </h2>
+        <div class="content listdonghang">
+            <table class="table">
+                <thead class="header">
+                    <tr>
+                        <th class="img">Mã đơn hàng</th>
+                        <th class="width-200">Tên khách hàng</th>
+                        <th class="text-center">Trạng thái</th>
+                        <th class="text-center">Số lượng</th>
+                        @*<th class="amount text-right">Đơn giá</th>*@
+                        <th class="amount text-right">Tổng tiền</th>
+                        <th class="text-center">Ngày đặt hàng</th>
+                        @*<th class="action">Chi tiết</th>*@
+                    </tr>
+                </thead>
+                <tbody class="items">
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr class="item">
+                            <td class="img">
+                                <span>@item.OrderNumber</span>
+                            </td>
+                            <td>
+                                @(item.Customer != null ? item.Customer.DisplayName : item.FullName)
+                            </td>
+                            <td class="text-center bold">
+                                @if (item.Status == OrderStatus.PENDING)
+                                {
+                                    <span>Đang chờ xử lý</span>
+                                }
+                                else if (item.Status == OrderStatus.VIEW)
+                                {
+                                    <span>Đã tiếp nhận</span>
+                                }
+                                else if (item.Status == OrderStatus.PAID)
+                                {
+                                    <span>Đã thanh toán tiền</span>
+                                }
+                                else if (item.Status == OrderStatus.SHIPPED)
+                                {
+                                    <span>Đã giao hàng thành công</span>
+                                }
+                                else if (item.Status == OrderStatus.SUCCESS)
+                                {
+                                    <span>Đã toàn tất</span>
+                                }
+                                else if (item.Status == OrderStatus.CANCELLED)
+                                {
+                                    <span>Đã hủy</span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                @item.TotalQty.ToString("#,##0")
+                            </td>
+                            @*<td class="text-right">
+                                    @Html.Amount(item.TotalAmount)
+                                </td>*@
+                            <td class="text-right">
+                                @Html.Amount(item.TotalAmount + item.AmountShipping)
+                            </td>
+                            <td class="nowarp text-center">
+                                @item.DateCreated.ToString("dd/MM/yyyy HH:mm")
+                            </td>
+                            @*<td class="action nowarp">
+                                    <a href="@Url.Action("MyOrder", "ShoppingCart", new { id = item.Id })" class="edit-link" ><i class="fa fa-edit"></i><span class="hidden-xs hidden-sm">Xem</span></a>
+                                </td>*@
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            @Html.Pager(new PagerOptions { ItemCount = Model.ItemCount, PageSize = 20 }, null)
+        </div>
+    }
+    else if (!string.IsNullOrEmpty(ViewBag.SearchKeyword))
+    {
+        <p>Số điện thoại chưa có trên hệ thống hoặc dữ liệu đơn hàng không tồn tại</p>
+    }
+</div>
+
+<script type="text/javascript">
+    function validatePhoneNumber(input_str) {
+        var re = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+
+        return re.test(input_str);
+    }
+    $(".my-order .bt-search").click(function () {
+        var _phone = document.getElementById('myform_phone').value;
+       
+        if (!validatePhoneNumber(_phone)) {
+            document.getElementById('phone_error').classList.remove('an');
+            return false;
+        } else {
+            document.getElementById('phone_error').classList.add('an');
+            return true;
+        }
+
+    });
+  
+   
+</script>
+
+

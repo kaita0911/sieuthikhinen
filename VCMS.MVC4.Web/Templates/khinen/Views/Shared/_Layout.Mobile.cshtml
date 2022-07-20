@@ -1,0 +1,117 @@
+﻿@using VCMS.MVC4.Web
+<!DOCTYPE html>
+<html lang="vi" itemscope itemtype="http://schema.org/WebPage" class="desktop">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title - @SiteConfig.SiteInfo.WebsiteDetail[SiteConfig.LanguageId].Title</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="keywords" content="@ViewBag.Keywords" />
+    <meta name="description" content="@ViewBag.Description" />
+
+    <meta itemprop="image" content="@ViewBag.Image">
+    <meta itemprop="description" content="@ViewBag.Description" />
+    <meta itemprop="keywords" content="@ViewBag.Keywords" />
+
+    <meta property="og:site_name" content="@SiteConfig.SiteInfo.Title">
+    <meta property="og:title" content="@ViewBag.Title" />
+    <meta property="og:type" content="article" />
+    <meta property="og:description" content="@ViewBag.Description" />
+    <meta property="og:url" content="//@Request.Url.Host@HttpContext.Current.Request.Url.PathAndQuery" />
+    <meta property="og:image" content="@ViewBag.Image" />
+
+    <meta name="twitter:title" content="@ViewBag.Title" />
+    <meta name="twitter:domain" content="//@Request.Url.Host" />
+    <meta name="twitter:image:src" content="@ViewBag.Image">
+    <meta name="twitter:description" content="@ViewBag.Description" />
+
+    @if (!string.IsNullOrWhiteSpace(SiteConfig.SiteInfo.FaceBookApp))
+    {
+        <meta property="fb:app_id" content="@SiteConfig.SiteInfo.FaceBookApp" />
+    }
+    @if (!string.IsNullOrWhiteSpace(SiteConfig.SiteInfo.FaceBookAdmin))
+    {
+        <meta property="fb:admins" content="@SiteConfig.SiteInfo.FaceBookAdmin" />
+    }
+    @Html.Canonical(SiteConfig.SiteInfo.DefaultDomain)
+    <script>
+        //<![CDATA[
+        var message = encodeURIComponent('@ViewBag.Title');
+        var sharing_url = "@HttpContext.Current.Request.Url.AbsoluteUri";
+        //]]>
+    </script>
+    @Styles.Render(string.Format("~/templates/{0}/Content/{1}", SiteConfig.SiteInfo.Code, SiteConfig.SiteInfo.Skin))
+    @RenderSection("styles", required: false)
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/Pager")
+    @Html.Setting("goana")
+</head>
+<body class="smoothscroll dual-sidebar @SiteConfig.SiteInfo.Skin language-@SiteConfig.LanguageId">
+    @Html.Setting("body_script")
+    @Html.AjaxPartial("_HeaderFix")
+    <div id="page">
+
+        <div class="container">@Html.Breadcrumb()</div>
+        <section id="columns" class="columns-home">
+            <div class="container">
+                @RenderBody()
+            </div>
+        </section>
+        <div class="clearfix"></div>
+
+        @Html.Partial("Footer")
+        @Html.AjaxPartial("_Copyright")
+    </div>
+    <section id="sys-notification" style="opacity: 0;"></section>
+  
+    @Html.Partial("_Call")
+    @*@Html.Setting("CHATONLINE")*@
+    @Html.Partial("_LRSocial")
+    @Html.Partial("_SnapLeftRight")
+    @Scripts.Render("~/bundles/Slider")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/vcms")
+    <!--[if lt IE 9]>
+    @Scripts.Render("~/bundles/Fixie")
+          <![endif]-->
+
+    @RenderSection("scripts", required: false)
+
+    @*<script type="text/javascript" src="//stats.viennam.com/site/log/@SiteConfig.SiteInfo.DefaultDomain"></script>*@
+    <div id="message" style="display:none;">Đã thêm vào giỏ hàng</div>
+    <script type="text/javascript">
+        $(document).ready(function () {
+           
+
+            $("#AddtoBasketMb").click(function () {
+                var productid = $("#id").val();
+                var numqua = $("#num option:selected").val();
+                if (numqua == 0) {
+                    alert("Vui lòng chọn số lượng");
+                }
+                else {
+                    $.ajax({
+                        url: "/ShoppingCart/AddToCartAjax",
+                        type: "POST",
+                        //dataType: "json",
+                        data: { id: productid },
+                        success: function (data) {
+                            $("#message").fadeIn();
+                            $("#message").delay(2000).fadeOut();
+                        },
+                        error: function () {
+                            alert('error');
+                        }
+                    });
+                }
+                
+            });
+        });
+
+        $(".addcart").click(function () {
+            $(this).closest("form").attr("action", "/ShoppingCart/AddToCart");
+        });
+    </script>
+</body>
+</html>

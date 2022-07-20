@@ -1,0 +1,20 @@
+﻿@using System.Data.Entity;
+@using (DataContext db = new DataContext())
+{
+    if (!string.IsNullOrWhiteSpace(SiteConfig.SiteInfo.WebsiteDetail[SiteConfig.LanguageId].SEOKeywords))
+    {
+        <div id="tag">
+            <h2 class="heading main">
+                <span>@Html.Locale("keywork")</span>
+            </h2>
+            <div class="box-content">
+                @foreach (var item in SiteConfig.SiteInfo.WebsiteDetail[SiteConfig.LanguageId].SEOKeywords.Split(','))
+                {
+                    <a href="@Url.Action("SearchTag", "Home", new {keyword=item })">
+                        <span>@item</span>
+                    </a>
+                }
+            </div>
+        </div>
+    }
+}

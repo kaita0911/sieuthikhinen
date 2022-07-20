@@ -1,0 +1,66 @@
+﻿@using (DataContext db = new DataContext())
+{
+    int id = ArticleType.GetIdByCode("SUPPORT");
+    if (id > 0)
+    {
+        var lst = Article.GetByType(id, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 1, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING);
+        <div class="lr-box lr-support">
+            @*<h2 class="heading">
+                    Hỗ trợ trực tuyến
+                </h2>*@<div class="lbl"></div>
+            <div class="content">
+                @*<div class="hotline">
+                        <div class="h-header"><span></span></div>
+                        <div class="h-ctn"><span>@SiteConfig.SiteInfo.Hotline</span></div>
+                    </div>*@
+                @foreach (var item in lst.List)
+                {
+                    var skype = item.PropertyValues.FirstOrDefault(pv => pv.Property.Code.Equals("SKYPE", StringComparison.OrdinalIgnoreCase));
+                    var zalo = item.PropertyValues.FirstOrDefault(pv => pv.Property.Code.Equals("ZALO", StringComparison.OrdinalIgnoreCase));
+                    var viber = item.PropertyValues.FirstOrDefault(pv => pv.Property.Code.Equals("VIBER", StringComparison.OrdinalIgnoreCase));
+                    var yahoo = item.PropertyValues.FirstOrDefault(pv => pv.Property.Code.Equals("YAHOO", StringComparison.OrdinalIgnoreCase));
+                    var phone = item.PropertyValues.FirstOrDefault(pv => pv.Property.Code.Equals("PHONE", StringComparison.OrdinalIgnoreCase));
+                    <div class="items">
+                        <div class="sk-za-vib">
+                            @if (!string.IsNullOrWhiteSpace(viber.Value))
+                            {
+                                <span class="viber" title="@viber.Value"> / Viber</span>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(zalo.Value))
+                            {
+                                <span class="zalo" title="@zalo.Value"> Zalo</span>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(skype.Value))
+                            {
+                                <a href="skype:@skype.Value?chat" class="skype" title="@skype.Value">
+                                    Skype /
+                                </a>
+                            }
+                        </div>
+                        @*<div class="name-nick">
+                                <label>Hotline:</label>
+                                <h3 class="name">
+                                    @Html.Phone(phone.Value)<span>(@item.ArticleName)</span>
+                                </h3>
+                                <div class="nick">
+                                        @if (!string.IsNullOrEmpty(yahoo.Value))
+                                        {
+                                            <a href="ymsgr:sendIM?@yahoo.Value">
+                                                <img src="http://opi.yahoo.com/online?u=@yahoo.Value&m=g&t=1" />
+                                            </a>
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(skype.Value))
+                                        {
+                                            <a href="skype:@skype.Value?chat" class="skype" title="@skype.Value">
+                                                @Html.Image(SiteConfig.Image("skype.png"), new ImageOptions { Width = 125, Height = 154, Lazy = false }, new { alt = skype.Value })<span class="skype">Skype</span>&nbsp; &nbsp;
+                                            </a>
+                                        }
+                                    </div>
+                            </div>*@
+                    </div>
+                }
+            </div>
+        </div>
+    }
+}
+

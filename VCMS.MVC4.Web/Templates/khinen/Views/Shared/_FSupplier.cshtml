@@ -1,0 +1,61 @@
+﻿@*<link rel="stylesheet" type="text/css" href="~/Templates/@SiteConfig.SiteCode/content/jquery-marquee/jquery.simplyscroll.css">
+    <script src="~/Templates/@SiteConfig.SiteCode/content/jquery-marquee/jquery.simplyscroll.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".f-supplier .slider").simplyScroll({ pauseOnHover: true });
+            $(".items").mouseover(function () {
+                var id = $(this).children().children().attr("id");
+            });
+
+            $(".items").mouseout(function () {
+                var id = $(this).children().children().attr("id");
+                $(this).children().children().animate({ 'opacity': '1' }, 100000);
+            });
+        });
+    </script>*@
+
+@using System.Data.Entity;
+@using (DataContext db = new DataContext())
+{
+    var articleType = db.ArticleTypes.FirstOrDefault(t => t.Code == "THONGTINCHUNG");
+    if (articleType != null)
+    {
+        var art = Article.GetByType(articleType.Id, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 1, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.DESCENDING);
+
+        foreach (var item in art.List)
+        {
+            @Html.Raw(item.ShortDescription)
+        }
+
+        @*<div class="clearfix">
+            </div>
+            <a id="supplier_prev" href="#"></a>
+            <a id="supplier_next" href="#"></a>*@
+
+    }
+}
+
+@*<script type="text/javascript">
+        $(document).ready(function () {
+
+            $(".f-supplier .slider").carouFredSel({
+                circular: true,
+                infinite: true,
+                auto: true,
+                scroll: {
+                    items: 1,
+                    pauseOnHover: true,
+                    effect: "easeOutBounce",
+                    duration: 1
+                },
+                prev: {
+                    button: "#supplier_prev",
+                    key: "left"
+                },
+                next: {
+                    button: "#supplier_next",
+                    key: "right"
+                }
+            });
+        });
+    </script>*@

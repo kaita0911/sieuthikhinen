@@ -1,0 +1,23 @@
+﻿@*<a href="javascript:void(0);" id="scroll" title="Scroll to Top" style="display: none;">Top<span></span></a>
+    <script type='text/javascript'>
+        $(document).ready(function () {
+            $(window).scroll(function () {
+                if ($(this).scrollTop() > 200) {
+                    $('#scroll').fadeIn();
+                } else {
+                    $('#scroll').fadeOut();
+                }
+            });
+            $('#scroll').click(function () {
+                $("html, body").animate({ scrollTop: 0 }, 600);
+                return false;
+            });
+        });
+    </script>*@
+<section id="top-down">
+    <a class="btn-top" href="javascript:;" data-toggle="tooltip" data-placement="top">
+        @Html.Image(SiteConfig.Image("btn-top.png"), new ImageOptions { Width = 51, Height = 51, Lazy = false }, new { alt = "btn-top" })
+
+    </a>
+    @*<a class="btn-down" href="javascript:;" data-toggle="tooltip" data-placement="top" title=""><span>DOWN</span><i class="fa fa-caret-down" aria-hidden="true"></i></a>*@
+</section>

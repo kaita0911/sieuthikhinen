@@ -1,0 +1,18 @@
+﻿@using System.Data.Entity;
+@using (DataContext db = new DataContext())
+{
+    var art = Article.GetByTypeCode("COMPANY", SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 1, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING, ArticleIncludeFlags.ARTICLE_DETAIL | ArticleIncludeFlags.ARTICLE_TYPE | ArticleIncludeFlags.ARTICLE_DETAIL).List.FirstOrDefault();
+    if (art != null)
+    {
+       <div class="f-info">
+           @*<h3 class="header">
+               Thông tin hữu ích
+           </h3>*@
+           <div class="content">
+               <span>
+                   @art.ArticleName
+               </span>
+           </div>
+        </div>
+    }
+}

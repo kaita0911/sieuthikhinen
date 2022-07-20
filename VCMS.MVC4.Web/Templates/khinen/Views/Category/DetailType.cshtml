@@ -1,0 +1,124 @@
+﻿@model Category
+@{
+    ViewBag.Title = Model.CategoryName;
+    ViewBag.Keywords = Model.CategoryDetail[SiteConfig.LanguageId].SEOKeywords;
+    ViewBag.Description = Model.CategoryDetail[SiteConfig.LanguageId].SEODescription;
+    ViewBag.DateCreate = Model.DateCreated;
+    ViewBag.DateUpdate = Model.DateUpdated;
+    if (Model.ArticleType != null)
+    {
+        Model.ArticleType.LanguageId = SiteConfig.LanguageId;
+        List<Category> categoryList = new List<Category>();
+        categoryList.Add(Model);
+        using (DataContext db = new DataContext())
+        {
+            var categories = db.Categories.Include(c => c.CategoryDetail).Include(a => a.ArticleType.ArticleTypeDetail).FirstOrDefault(c => c.Id == Model.ParentId);
+            while (categories != null)
+            {
+                categoryList.Add(categories);
+                categories = db.Categories.Include(c => c.CategoryDetail).Include(a => a.ArticleType.ArticleTypeDetail).FirstOrDefault(c => c.Id == categories.ParentId);
+            }
+            if (categoryList.Count > 0)
+            {
+                List<BreadcrumbItem> listBre = new List<BreadcrumbItem>();
+
+                var i = 1;
+                foreach (var item in categoryList.AsEnumerable().Reverse())
+                {
+                    BreadcrumbItem bre = new BreadcrumbItem();
+                    bre = new BreadcrumbItem { Url = Url.Action("DetailType", "Category", new { id = item.Id, title = Unichar.UnicodeStrings.UrlString(item.CategoryName) }), Text = item.CategoryName };
+                    if (i == 2)
+                    {
+                        bre.IsLast = true;
+                    }
+                    listBre.Add(bre);
+                    if (i == 2)
+                    {
+                        break;
+                    }
+                    i++;
+                }
+                ViewBag.Breadcrumb = new BreadcrumbModel
+                {
+                    Items = listBre
+                };
+            }
+        }
+    }
+
+    string viewName = null;
+    var articleType = Model.ArticleType;
+    if (articleType != null)
+    {
+        if (File.Exists(Server.MapPath("~/Templates/" + SiteConfig.SiteInfo.Code + "/Views/Article/" + articleType.Code + "/_List.cshtml")))
+        {
+            viewName = articleType.Code + "/_List.cshtml";
+        }
+
+    }
+    //var pageSize = 3;
+    var pageSize = 20;
+    if (articleType!=null && articleType.Code.Equals("NEWS", StringComparison.OrdinalIgnoreCase))
+    {
+        pageSize = 10;
+    }
+    if (articleType != null && articleType.Code.Equals("PRODUCT", StringComparison.OrdinalIgnoreCase))
+    {
+        pageSize = 40;
+    }
+    if (Request["pageSize"] != null)
+    {
+        int.TryParse(Request["pageSize"], out pageSize);
+    }
+
+    var pageIndex = 1;
+    if (Request["pageIndex"] != null)
+    {
+        int.TryParse(Request["pageIndex"], out pageIndex);
+    }
+
+    ArticleSortOrder sortOrder = ArticleSortOrder.SORT_ORDER;
+    VCMS.MVC4.Data.SortDirection direction = VCMS.MVC4.Data.SortDirection.DESCENDING;
+    ArticleFlags flag = ArticleFlags.ACTIVE;
+
+    if (Request["sortorder"] != null)
+    {
+        sortOrder = (ArticleSortOrder)Enum.Parse(typeof(ArticleSortOrder), Request["sortorder"]);
+    }
+    if (Request["sortdirection"] != null)
+    {
+        direction = (VCMS.MVC4.Data.SortDirection)Enum.Parse(typeof(VCMS.MVC4.Data.SortDirection), Request["sortdirection"]);
+    }
+    if (Request["flag"] != null)
+    {
+        if (Request["flag"] == "all")
+        {
+            flag = ArticleFlags.ACTIVE;
+        }
+        else
+        {
+            flag = (ArticleFlags)Enum.Parse(typeof(ArticleFlags), Request["flag"]);
+        }
+    }
+    var ids = ViewBag.ListId as int[];
+    var list = Article.GetByCategory(Model.Id, SiteConfig.SiteId, SiteConfig.LanguageId, flags: flag, pageIndex: pageIndex, pageSize: pageSize, sortOrder: sortOrder, direction: direction);
+    //if (ids != null)
+    //{
+    //    list = Article.GetByMultipleCategory(ids, SiteConfig.SiteId, SiteConfig.LanguageId, flags: flag, pageIndex: pageIndex, pageSize: pageSize, sortOrder: sortOrder, direction: direction);
+    //}
+}
+@using System.Data.Entity
+@using (VCMS.MVC4.Data.DataContext db = new VCMS.MVC4.Data.DataContext())
+{
+    var itemCount = Article.CountByCategory(Model.Id, SiteConfig.SiteId, SiteConfig.LanguageId);
+    ViewBag.Count = itemCount;
+    if (viewName != null)
+    {
+        @Html.Partial("~/Templates/" + SiteConfig.SiteInfo.Code + "/Views/Article/" + viewName, list)
+    }
+    else
+    {
+        @Html.Partial("~/Templates/" + SiteConfig.SiteInfo.Code + "/Views/Article/_ListTet.cshtml", list)
+    }
+    @*@Html.Pager(new PagerOptions { VisibleItemCount = 5, ItemCount = itemCount, PageSize = pageSize }, null)*@
+}

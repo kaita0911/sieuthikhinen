@@ -1,0 +1,110 @@
+/* content */
+
+@import url(http://fonts.googleapis.com/css?family=Open+Sans);
+
+#amazingcarousel-adv .amazingcarousel-image {
+    position: relative;
+    padding: 0px;
+}
+
+    #amazingcarousel-adv .amazingcarousel-image img {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        border: 0;
+        margin: 0;
+        padding: 0;
+        -moz-border-radius: 0px;
+        -webkit-border-radius: 0px;
+        border-radius: 0px;
+        -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+        -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    }
+
+#amazingcarousel-adv .amazingcarousel-text {
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    text-align: center;
+    width: 100%;
+    display: none;
+}
+
+#amazingcarousel-adv .amazingcarousel-image:hover div.amazingcarousel-text {
+    display: block;
+}
+
+#amazingcarousel-adv .amazingcarousel-text:hover {
+    display: block;
+}
+
+#amazingcarousel-adv .amazingcarousel-text-bg {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: #333333;
+    opacity: 0.5;
+    filter: alpha(opacity=50);
+}
+
+#amazingcarousel-adv .amazingcarousel-title {
+    position: relative;
+    font: 14px 'Open Sans', sans-serif;
+    color: #ffffff;
+    text-align: center;
+    width: 100%;
+    padding: 10px 0px;
+}
+
+/* carousel */
+
+#amazingcarousel-container-1 {
+    padding: 32px 0px;
+}
+
+#amazingcarousel-adv .amazingcarousel-list-container {
+    padding: 0;
+}
+
+/* item */
+
+#amazingcarousel-adv .amazingcarousel-item-container {
+    text-align: center;
+    padding-bottom: 5px;
+    background-color: #fff;
+    /*border: 1px solid #ddd;
+	-moz-box-shadow: 0px 0px 5px 1px rgba(96, 96, 96, 0.1);
+	-webkit-box-shadow: 0px 0px 5px 1px rgba(96, 96, 96, 0.1);
+	box-shadow: 0px 0px 5px 1px rgba(96, 96, 96, 0.1);*/
+}
+
+/* arrows */
+
+#amazingcarousel-adv .amazingcarousel-prev {
+    left: 50%;
+    top: 1px;
+    opacity: .5;
+    background: url(arrows-32-32-4.png) 84% 19% no-repeat !important;
+}
+
+#amazingcarousel-adv .amazingcarousel-next {
+    left: 50%;
+    bottom: 8px;
+    opacity: .5;
+    background: url(arrows-32-32-4.png) 84% 80% no-repeat !important;
+}
+
+/* navigation bullets */
+
+#amazingcarousel-adv .amazingcarousel-nav {
+    position: absolute;
+    top: 0%;
+    left: 100%;
+}
+
+#amazingcarousel-adv .amazingcarousel-bullet-wrapper {
+    margin: 16px;
+}

@@ -1,0 +1,6 @@
+﻿@model ArticleType
+@{
+    ViewBag.Title = Model.Name;
+    ViewBag.Breadcrumb = new BreadcrumbModel { Items = new List<BreadcrumbItem> { new BreadcrumbItem { Text = Model.Name, Url = null, IsLast = true } } };
+}
+@Html.Action("ViewByType", "Article", new { typeId = Model.Id, viewPath = "Recruitment/_List", pageSize = 10, includeFlags = ArticleIncludeFlags.ARTICLE_TYPE | ArticleIncludeFlags.ARTICLE_DETAIL })

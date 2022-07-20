@@ -1,0 +1,68 @@
+﻿@model ContactProductModel
+@{
+    Layout = null;
+}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Thông tin liên hệ đăng ký tư vấn</title>
+</head>
+<body>
+    <div style="width: 100%; display: table; line-height: 20px; margin: 10px 0px; padding: 0px;
+        border: 1px solid #e1e1e1;">
+        <div style="width: 98%; background-color: #666666; color: #ffffff; text-align: left;
+            font-weight: bold; line-height: 25px; margin: 3px 0px 10px 0px; padding: 0px 0px 0px 15px;">
+            <label>
+                Thông tin liên hệ đăng ký tư vấn
+            </label>
+        </div>
+        <div style="float: left; width: 30%; text-align: right; vertical-align: top; min-height: 30px;">
+            <label>
+                Họ và tên:
+            </label>
+        </div>
+        <div style="float: left; padding: 0px 0px 0px 10px; width: 65%; text-align: left;
+            min-height: 30px;">
+            @Model.Name
+        </div>
+       
+        
+        <div style="float: left; width: 30%; text-align: right; vertical-align: top; min-height: 30px;">
+            <label>
+                Điện thoại:
+            </label>
+        </div>
+        <div style="float: left; padding: 0px 0px 0px 10px; width: 65%; text-align: left;
+            min-height: 30px;">
+            @Model.Phone
+        </div>
+        <div style="float: left; width: 30%; text-align: right; vertical-align: top; min-height: 30px;">
+            <label>
+                Email:
+            </label>
+        </div>
+        <div style="float: left; padding: 0px 0px 0px 10px; width: 65%; text-align: left;
+            min-height: 30px;">
+            @Model.Email
+        </div>
+
+        
+        <div style="float: left; width: 30%; text-align: right; vertical-align: top; min-height: 30px;">
+            <label>
+                Nội dung:
+            </label>
+        </div>
+        <div style="float: left; padding: 0px 0px 0px 10px; width: 65%; text-align: left;
+            min-height: 30px;">
+            <fieldset>
+                <legend>
+                    <label>
+                        Nội dung liên hệ
+                    </label>
+                </legend>
+                <span>@Model.Body</span>
+            </fieldset>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,41 @@
+﻿@using (DataContext db = new DataContext())
+{
+    var articleType = db.ArticleTypes.FirstOrDefault(a => a.Code == "HEALTH");
+    if (articleType != null)
+    {
+        var health = Article.GetByType(articleType.Id, SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.HOT, 1, 6, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.DESCENDING);
+        if (health.List.Count > 0)
+        {
+            <div class="advertising-home">
+                @foreach (var item in health.List)
+                {
+                    <div class="box-block adv-home">
+                        <div class="image">
+                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                @if (item.ImageUrl != null)
+                                {
+                                    <img src="@Url.Content("~/UserUpload/Article/")@item.ImageUrl?width=325" class="width-full" alt="@item.ArticleName" />
+                                }
+                                else
+                                {
+                                    <img src="@Url.Content("~/Templates/LavaViet/Content/images/no-health.jpg")?width=325" class="width-full" alt="@item.ArticleName" />
+                                }
+
+                            </a>
+                        </div>
+                        <div class="box-meta">
+                            <h3 class="name">
+                                <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                    <span>@item.ArticleName</span>
+                                </a>
+                            </h3>
+                            <div class="description visible-sm visible-xs hidden-480">
+                                @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, 60))
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    }
+}

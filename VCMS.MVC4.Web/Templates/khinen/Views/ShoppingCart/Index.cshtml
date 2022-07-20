@@ -1,0 +1,146 @@
+﻿@model VCMS.MVC4.Data.Cart
+@using System.Data.Entity;
+@{
+    var db = new DataContext();
+    var type = ViewBag.Type as ArticleType;
+    //var categoryed = ViewBag.Category as Category;
+    ViewBag.Title = Html.Locale("cart").ToHtmlString();
+    ViewBag.Breadcrumb = new BreadcrumbModel { Items = new List<BreadcrumbItem> { new BreadcrumbItem { Text = Html.Locale("cart").ToHtmlString(), Url = null, IsLast = true } } };
+    decimal total = 0;
+    //decimal totaltam = 0;
+    //decimal totalvat = 0;
+    int qty = 0;
+    //Layout = "_Layout.cshtml";
+    //var brandType = db.ArticleTypes.Include(a => a.ArticleTypeDetail).FirstOrDefault(a => a.Code.Equals("BRAND", StringComparison.OrdinalIgnoreCase));
+    //var timecho = Article.GetByTypeCode("TIMECHO", SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 10, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING,ArticleIncludeFlags.ARTICLE_DETAIL);
+    var timecho = (List<Article>)ViewBag.Timecho;
+
+
+    <div class="article article-list product-list">
+        <h1 class="title-cart">@Html.Locale("cart")</h1>
+        @*@if (ViewBag.Error == 1)
+            {
+                <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> @Html.Locale("cart_error_warning") <button type="button" class="close" data-dismiss="alert">&times;</button></div>
+            }*@
+        <div class="row">
+            @if (Model.Items.Count > 0)
+            {
+                using (Html.BeginForm("Update", "ShoppingCart"))
+                {
+
+                    <div class="col-md-8 col-sm-8 col-xs-12">
+                        <div class="pav-shop-cart">
+                            @foreach (var item in Model.Items)
+                            {
+                                if (item.Article.Number >= item.Quantity || item.Article.Number == 0 || item.Article.Number == null)
+                                {
+                                    <div class="item-cart">
+                                        <div class="img">
+                                            @Html.Image(item.Article.ImageUrl, new ImageOptions { Width = 100, Height = 100 }, new { alt = item.Article.ArticleName })
+                                        </div>
+                                        <div class="info-item-cart">
+                                            <h3>
+                                                <a href="@Url.Action("Detail", "Article", new { id = item.Article.Id, code = Unichar.UnicodeStrings.UrlString(item.Article.ArticleType.UrlFriendly), title = Unichar.UnicodeStrings.UrlString(item.Article.ArticleName).ToLower() })" title="@item.Article.ArticleName" target="_blank">
+                                                    @item.Article.ArticleName
+                                                </a>
+                                            </h3>
+                                            <p class="qty">Số lượng  @Html.TextBox("qty_" + item.Id.ToString(), item.Quantity, new { @class = "form-control input-qty", @size = "3", @type = "number", @min = "1" })</p>
+
+                                            <a class="delete" href="@Url.Action("DeleteItem", "ShoppingCart", new { id = item.Article.Id })"><i class="fa fa-close"></i></a>
+                                            @*<p>Đơn giá: <span class="numprice">@Html.Amount(item.UnitPrice)</span></p>*@
+                                            <p class="ttinh">@Html.Amount(item.Amount)</p>
+                                            @if (item.Article.Number == 0 || item.Article.Number == null)
+                                            {
+                                                var tie = timecho.FirstOrDefault(a => a.Id == item.Article.timeId);
+                                                if (tie != null)
+                                                {
+                                                    <p class="status">
+                                                        Thời gian giao hàng: <span>@tie.ArticleName</span>
+                                                    </p>
+                                                }
+                                                
+
+                                            }
+                                            else
+                                            {
+                                                <p class="status">Tình trạng: <span>Có sẵn</span></p>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    var tie = timecho.FirstOrDefault(a => a.Id == item.Article.timeId);
+                                    <div class="item-cart">
+                                        <div class="img">
+                                            @Html.Image(item.Article.ImageUrl, new ImageOptions { Width = 100, Height = 100 }, new { alt = item.Article.ArticleName })
+                                        </div>
+                                        <div class="info-item-cart">
+                                            <h3>
+                                                <a href="@Url.Action("Detail", "Article", new { id = item.Article.Id, code = Unichar.UnicodeStrings.UrlString(item.Article.ArticleType.UrlFriendly), title = Unichar.UnicodeStrings.UrlString(item.Article.ArticleName).ToLower() })" title="@item.Article.ArticleName" target="_blank">
+                                                    @item.Article.ArticleName
+                                                </a>
+                                            </h3>
+                                            <p class="qty">Số lượng  @Html.TextBox("qty_" + item.Id.ToString(), item.Article.Number != null ? item.Article.Number : 0, new { @class = "form-control input-qty", @size = "3", @type = "number", @min = "1" })</p>
+                                            <a class="delete" href="@Url.Action("DeleteItem", "ShoppingCart", new { id = item.Article.Id })"><i class="fa fa-close"></i></a>
+                                            @*<p>Đơn giá: <span class="numprice">@Html.Amount(item.UnitPrice)</span></p>*@
+                                            <p class="ttinh">@Html.Amount(item.UnitPrice * (item.Article.Number != null ? (int)item.Article.Number : 0))</p>
+                                            <p class="status">Tình trạng: <span>Có sẵn</span></p>
+
+                                        </div>
+                                    </div>
+                                    <div class="item-cart ede">
+
+                                        <div class="img">
+                                            @Html.Image(item.Article.ImageUrl, new ImageOptions { Width = 100, Height = 100 }, new { alt = item.Article.ArticleName })
+                                        </div>
+                                        <div class="info-item-cart">
+                                            <h3>
+                                                <a href="@Url.Action("Detail", "Article", new { id = item.Article.Id, code = Unichar.UnicodeStrings.UrlString(item.Article.ArticleType.UrlFriendly), title = Unichar.UnicodeStrings.UrlString(item.Article.ArticleName).ToLower() })" title="@item.Article.ArticleName" target="_blank">
+                                                    @item.Article.ArticleName
+                                                </a>
+                                            </h3>
+
+                                            <p class="qty">Số lượng  @Html.TextBox("qtya_" + item.Id.ToString(), item.Quantity - (item.Article.Number != null ? item.Article.Number : 0), new { @class = "form-control input-qty", @size = "3", @type = "text", @min = "1", @readonly = "true" })</p>
+                                            @*<p>Đơn giá: <span class="numprice">@Html.Amount(item.UnitPrice)</span></p>*@
+                                            <p class="ttinh">@Html.Amount((item.Quantity - (item.Article.Number != null ? (int)item.Article.Number : 0)) * item.UnitPrice)</p>
+                                            
+                                            @if (tie != null)
+                                            {
+                                            <p class="status">
+                                                Thời gian giao hàng: <span>@tie.ArticleName</span>
+                                            </p>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+
+                                total = total + item.Amount;
+                                qty += item.Quantity;
+                            }
+                        </div>
+
+
+                    </div>
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        <div class="bg-right-form">
+                            <p>Số lượng <span>@qty</span></p>
+                            <p>Tạm tính <span class="totaltinh">@Html.Amount(total)</span></p>
+                            <div class="bt-carts">
+                                <a href="/" title="@Html.Locale("cart_continue")" class="btn btn-continue">@Html.Locale("cart_continue")</a>
+                                <button class="btn btn-continue" type="submit">@Html.Locale("cart_update")</button>
+                                <a href="@Url.Action("CheckOut", "ShoppingCart")" title="@Html.Locale("cart_checkout")" class="btn btn-checkout">@Html.Locale("cart_checkout")</a>
+                            </div>
+                        </div>
+                    </div>
+
+                }
+            }
+        </div>
+    </div>
+}
+@Scripts.Render("~/Scripts/vns.vcms.js")
+<script type="text/javascript">
+    $("#check-all").checkAll("input[type='checkbox']");
+    $(".site-info #cart .content").remove();
+</script>

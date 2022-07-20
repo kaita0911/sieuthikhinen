@@ -1,0 +1,165 @@
+﻿@model object
+@{
+    var item = (CheckOutNoLoginModel)Model;
+    Layout = null;
+    var i = 1;
+}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Đơn đặt hàng</title>
+</head>
+<body>
+    <div style="padding:5px">
+        <table border="1" style="border:1px solid #ccc; border-collapse:collapse; width:100%; float:right" cellpadding="2">
+            <thead>
+                <tr style="background:#eee">
+                    <th colspan="2">Thông tin người mua hàng</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Tên</td>
+                    <td style="font-weight:700">@(item.FullName)</td>
+                </tr>
+                <tr>
+                    <td>Địa chỉ</td>
+                    <td style="font-weight:700">@string.Format("{0}", item.Address)</td>
+                </tr>
+                @if (!string.IsNullOrWhiteSpace(item.Address2))
+                {
+                    <tr>
+                        <td>Địa chỉ khác</td>
+                        <td style="font-weight:700">@string.Format("{0}", item.Address2)</td>
+                    </tr>
+                }
+                <tr>
+                    <td>Điện thoại</td>
+                    <td style="font-weight:700">@item.Phone</td>
+                </tr>
+                @if (!string.IsNullOrWhiteSpace(item.Phone2))
+                {
+                    <tr>
+                        <td>Điện thoại khác</td>
+                        <td style="font-weight:700">@item.Phone2</td>
+                    </tr>
+                }
+                <tr>
+                    <td>Email</td>
+                    <td style="font-weight:700">@item.Email</td>
+                </tr>
+                <tr>
+                    <td>Ghi chú</td>
+                    <td style="font-weight:700">@item.Notes</td>
+                </tr>
+                <tr>
+                    <td>Thông tin hóa đơn</td>
+                    <td>
+                        <p>@item.Company</p>
+                        <p>@item.Address2</p>
+                        <p>@item.Fax</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table border="1" style="border: 1px solid #ccc; border-collapse: collapse; width: 100%; float: left" cellpadding="2">
+            <thead>
+                <tr style="background:#eee">
+                    <th colspan="2">Thông tin đơn hàng</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Mã đơn hàng</td>
+                    <td style="font-weight:700">@item.Order.OrderNumber</td>
+                </tr>
+                <tr>
+                    <td>Ngày đặt hàng</td>
+                    <td style="font-weight:700">@item.Order.DateCreated</td>
+                </tr>
+                <tr>
+                    <td>Số lượng</td>
+                    <td style="font-weight:700">@item.Order.TotalQty.ToString("#,##0")</td>
+                </tr>
+                <tr>
+                    <td>Số tiền</td>
+                    <td style="font-weight:700">@item.Order.TotalAmount.ToString("#,##0")đ</td>
+                </tr>
+                <tr>
+                    <td>VAT</td>
+                    <td style="font-weight:700">@item.Order.Ttt.ToString("#,##0")đ</td>
+                </tr>
+                <tr>
+                    <td>Tổng tiền</td>
+                    <td style="font-weight:700">@Html.Amount(item.Order.Ttt + item.Order.TotalAmount)</td>
+                </tr>
+            </tbody>
+        </table>
+
+
+        <br style="clear:both" />
+    </div>
+    <div style="padding:5px">
+        <table border="1" style="border:1px solid #ccc; border-collapse:collapse; width:100%" cellpadding="2">
+            <thead>
+                <tr style="background:#eee"><th colspan="5" style="text-align:center">Chi tiết đơn hàng</th></tr>
+                <tr>
+                    <th></th>
+                    <th>Sản phẩm</th>
+                    <th>Số lượng</th>
+                    <th style="text-align:right;">Đơn giá</th>
+                    <th style="text-align:right;">Thành tiền</th>
+                    <th style="text-align:right;">Tình trạng</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var line in item.Order.OrderLines)
+                {
+                    if (line.NumberPr >= line.Qty || line.NumberPr == 0)
+                    {
+                        <tr>
+                            <td style="text-align:center;">@(i++)</td>
+                            <td>@line.ProductName</td>
+                            <td style="text-align:center">@line.Qty</td>
+                            <td style="text-align:right">@line.UnitPrice.ToString("#,##0")đ</td>
+                            <td style="text-align: right">@line.Amount.ToString("#,##0")đ</td>
+                            @if (line.NumberPr == 0)
+                            {
+                                <td class="total text-right">Chờ @line.Thoigiancho</td>
+                            }
+                            else
+                            {
+                                <td class="total text-right">Có sẵn</td>
+                            }
+                        </tr>
+                    }
+                    else
+                    {
+                        var dus = line.Qty - line.NumberPr;
+                        var giasan = line.UnitPrice * (int)line.NumberPr;
+                        var giathieu = line.UnitPrice * (int)dus;
+                        <tr>
+                            <td style="text-align:center;">@(i++)</td>
+                            <td>@line.ProductName</td>
+                            <td style="text-align:center">@line.NumberPr</td>
+                            <td style="text-align:right">@line.UnitPrice.ToString("#,##0")đ</td>
+                            <td style="text-align: right">@giasan.ToString("#,##0")đ</td>
+                            <td style="text-align: right">Có sẵn</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:center;">@(i++)</td>
+                            <td>@line.ProductName</td>
+                            <td style="text-align:center">@dus</td>
+                            <td style="text-align:right">@line.UnitPrice.ToString("#,##0")đ</td>
+                            <td style="text-align: right">@giathieu.ToString("#,##0")đ</td>
+                            <td style="text-align: right">@line.Thoigiancho</td>
+                        </tr>
+                    }
+                    
+
+                }
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,10 @@
+﻿@model ICollection<VCMS.MVC4.Data.Article>
+@{
+    ArticleType at = (ArticleType)ViewBag.ArticleType;
+    ViewBag.Title = ViewBag.ArticleType.Name;
+    ViewBag.Breadcrumb = new BreadcrumbModel { Items = new List<BreadcrumbItem> { new BreadcrumbItem { Text = ViewBag.ArticleType.Name, Url = null, IsLast = true } } };
+}
+
+<h1>@ViewBag.ArticleType.Name</h1>
+@Html.Partial("~/Views/Article/Product/_List.cshtml", Model)
+@Html.Pager(new PagerOptions { VisibleItemCount = 15, ItemCount = ViewBag.ItemCount, PageSize = 20 }, null)

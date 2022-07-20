@@ -1,0 +1,94 @@
+﻿@using (DataContext db = new DataContext())
+{
+    var category = Category.GetTree(Category.GetByType(2, SiteConfig.LanguageId)).Where(a => a.Level == 0).ToList();
+    var brand = Category.GetByType(5, SiteConfig.LanguageId);
+    if (category.Count > 0)
+    {
+        <div class="box-sidebar box-category pagesp">
+            <h2 class="heading sidebar-heading">
+                Danh mục sản phẩm
+            </h2>
+            <ul class="category-sidebar">
+                @foreach (var item in category)
+                {
+                    <li>
+                        <a href="@Url.Action("Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.CategoryName).ToLower() })" title="@item.CategoryName">@item.CategoryName</a>
+                        @if (item.ChildrenCount > 0)
+                        {
+                            <ul class="sub-menu">
+                                @foreach (var sub in item.Children)
+                                {
+                                    <li class="level-1">
+                                        <a href="@Url.Action("Detail", "Category", new { id = sub.Id, code = sub.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(sub.CategoryName).ToLower() })" title="@sub.CategoryName">@sub.CategoryName</a>
+                                        @if (sub.ChildrenCount > 0)
+                                        {
+                                            <ul class="sub-level level-2">
+                                                @foreach (var ssub in sub.Children)
+                                                {
+                                                    <li>
+                                                        <a href="@Url.Action("Detail", "Category", new { id = ssub.Id, code = ssub.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(ssub.CategoryName).ToLower() })" title="@ssub.CategoryName">
+                                                            <span>@ssub.CategoryName</span>
+                                                        </a>
+                                                    </li>
+                                                }
+                                            </ul>
+                                            <i class="fa fa-caret-right"></i>
+                                        }
+                                    </li>
+                                }
+                            </ul>
+                            <i class="fa fa-caret-right"></i>
+                        }
+                    </li>
+                }
+            </ul>
+
+
+        </div>
+    }
+
+
+    if (brand.Count > 0)
+    {
+        <div class="box-siderbar box-brand rer">
+            <h2 class="heading">
+                SHOP BY BRAND
+            </h2>
+            <ul class="listbrand">
+                @foreach (var item in brand.OrderBy(c =>c.CategoryName))
+                {
+                    <li>
+                        <a href="@Url.Action("Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly.ToLower() })" title="@item.CategoryName">
+                            <input type="checkbox" />@item.CategoryName
+                            <span class="checkmark"></span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+
+}
+<script>
+    $(document).ready(function () {
+        var url = window.location;
+        var element = $('ul.listbrand li a').filter(function () {
+            return this.href == url || url.href.indexOf(this.href) == 0;
+        }).parent().addClass('active');
+        if (element.is('li')) {
+            element.addClass('active').parent().parent('li').addClass('active')
+        }
+    });
+</script>
+@*<script>
+        $(function () {
+            $(".box-category li:has(ul.sub-level)").hover(
+               function () {
+                   $(this).children("ul.sub-level").show();
+               },
+                 function () {
+                     $(this).children("ul.sub-level").hide();
+                 }
+            );
+        });
+    </script>*@

@@ -1,0 +1,93 @@
+﻿@model Widget
+
+@{
+    string code = "";
+    var tile = Model.Title;
+    if (ViewContext.RouteData.Values["code"] != null)
+    {
+        code = ViewContext.RouteData.Values["code"].ToString().ToLower();
+    }
+    var typeid = (int)Model.ArticleTypeId;
+    var category = Category.GetTree(Category.GetByType(typeid, SiteConfig.LanguageId)).Where(a => a.Level == 0).Take(Model.Number).ToList();
+}
+@*@if (code == "gioi-thieu")
+    {
+        var lst_aboutus = Article.GetByType(ArticleType.GetIdByCode("AboutUs"), SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 10, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING, ArticleIncludeFlags.ARTICLE_TYPE | ArticleIncludeFlags.ARTICLE_DETAIL);
+        <div class="box-category">
+            <h2 class="heading">
+                Giới thiệu
+            </h2>
+            <ul class="category-sidebar">
+                @foreach (var item in lst_aboutus.List)
+                {
+                    <li>
+                        <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                            @item.ArticleName
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    }*@
+@*else if (category.Count > 0)
+    {*@
+<div class="box-category">
+    @*<h2 class="heading">
+            @tile
+        </h2>*@
+    <ul class="category-sidebar">
+        @foreach (var item in category)
+        {
+            <li>
+                <a href="@Url.Action("Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.CategoryName) })" title="@item.CategoryName">
+                    @*<figure>
+                            @Html.Image(item.ImageUrl, new ImageOptions { Width = 23, Height = 23, Mode = ImageMode.crop, Lazy = false }, new { alt = item.CategoryName })
+                        </figure>*@
+                    @item.CategoryName
+                </a>
+                @if (item.ChildrenCount > 0)
+                {
+                    <ul class="sub-level level-2">
+                        @foreach (var sub in item.Children)
+                        {
+                            <li>
+                                <a href="@Url.Action("Detail", "Category", new { id = sub.Id, code = sub.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(sub.CategoryName) })">@sub.CategoryName</a>
+                                @if (sub.ChildrenCount > 0)
+                                {
+                                    <ul class="sub-level level-2">
+                                        @foreach (var ssub in sub.Children)
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("Detail", "Category", new { id = ssub.Id, title = Unichar.UnicodeStrings.UrlString(ssub.CategoryName) })">
+                                                    <span>@ssub.CategoryName</span>
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                            </li>
+                        }
+                    </ul>
+                }
+            </li>
+        }
+    </ul>
+    @*@if (Model.ShowViewAll)
+        {
+            <a href="@Url.Action("Index", "ArticleType", new { code = category.FirstOrDefault().ArticleType.UrlFriendly })" class="view-all hidden-xs hidden-md">@Html.Locale("view_more")</a>
+        }*@
+
+</div>
+@*}*@
+<script>
+    $(function () {
+        $(".box-category li:has(ul.sub-level)").hover(
+            function () {
+                $(this).children("ul.sub-level").show();
+            },
+            function () {
+                $(this).children("ul.sub-level").hide();
+            }
+        );
+    });
+</script>

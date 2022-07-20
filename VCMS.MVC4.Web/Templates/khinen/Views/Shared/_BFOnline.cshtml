@@ -1,0 +1,37 @@
+﻿<div class="bf-online bf-box">
+    <h2 class="heading">
+        <a>Lượt truy cập</a>
+    </h2>
+    <div class="content">
+        <div class="item">
+            <span class="lbl">@Html.Locale("online"):</span>
+            <span class="ctn" id="ol">49</span>
+        </div>
+        <div class="item">
+            <span class="lbl">@Html.Locale("thisweek"):</span>
+            <span class="ctn" id="tw">49</span>
+        </div>
+        <div class="item">
+            <span class="lbl">@Html.Locale("thismonth"):</span>
+            <span class="ctn" id="tm">49</span>
+        </div>
+        <div class="item">
+            <span class="lbl">@Html.Locale("thisyear"):</span>
+            <span class="ctn" id="ty">49</span>
+        </div>
+        <div class="total">
+            <span class="lbl">@Html.Locale("total"):</span>
+            <span class="ctn" id="tl">192.157</span>
+        </div>  
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#ol").html(onlineLog.Online);
+        $("#tw").html(String(onlineLog.ThisWeek).replace(/(.)(?=(\d{3})+$)/g, '$1.'));
+        $("#tm").html(String(onlineLog.ThisMonth).replace(/(.)(?=(\d{3})+$)/g, '$1.'));
+        $("#ty").html(String(onlineLog.ThisYear).replace(/(.)(?=(\d{3})+$)/g, '$1.'));
+        $("#tl").html(String(onlineLog.Total).replace(/(.)(?=(\d{3})+$)/g, '$1.'));
+    });
+</script>

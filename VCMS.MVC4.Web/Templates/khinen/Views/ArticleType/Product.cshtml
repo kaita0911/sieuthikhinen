@@ -1,0 +1,58 @@
+﻿@*@model ArticleType
+    @{
+        var title = Model.Name;
+        if (Request["flag"] != null)
+        {
+            title = Request["flag"].ToString();
+            if (title == "HOT")
+            {
+                title = Html.Locale("hot_product").ToString();
+            }
+            else if (title == "NEW")
+            {
+                title = Html.Locale("new_product").ToString();
+            }
+            else
+            {
+                title = Html.Locale("mostview_product").ToString();
+            }
+        }
+        else if (Request["isDiscount"] != null)
+        {
+            title = Html.Locale("discount_product").ToString();
+        }
+        ViewBag.Title = title;
+        ViewBag.Breadcrumb = new BreadcrumbModel { Items = new List<BreadcrumbItem> { new BreadcrumbItem { Text = title, Url = null, IsLast = true } } };
+    }
+    @if(Model.HasDescription)
+    {
+        @Html.Action("ViewByType", "Article", new { typeId = Model.Id, viewPath = "Product/_List", pageSize = 12, sortOrder = ArticleSortOrder.ARTICLE_NAME, direction = VCMS.MVC4.Data.SortDirection.ASCENDING, includeFlags = ArticleIncludeFlags.ARTICLE_TYPE | ArticleIncludeFlags.ARTICLE_DETAIL | ArticleIncludeFlags.PROPERTIES | ArticleIncludeFlags.PRICES })
+    }
+    else
+    {
+        @Html.Action("ViewByType", "Article", new { typeId = Model.Id, viewPath = "Product/_List", pageSize = 12, sortOrder = ArticleSortOrder.ARTICLE_NAME, direction = VCMS.MVC4.Data.SortDirection.ASCENDING })
+    }*@
+@model ArticleType
+@{
+    Layout = "~/Templates/" + SiteConfig.SiteCode + "/Views/Shared/_Layout2Column.cshtml";
+    ViewBag.Title = Model.Name;
+    ViewBag.Breadcrumb = new BreadcrumbModel { Items = new List<BreadcrumbItem> { new BreadcrumbItem { Text = Model.Name, Url = null, IsLast = true } } };
+    var flag = ArticleFlags.ACTIVE | ArticleFlags.INACTIVE;
+    //if (Request["status"] == "NEW")
+    //{
+    //    ViewBag.Title = "San pham moi";
+    //    flag = ArticleFlags.NEW;     
+    //}
+    if (Request["status"] == "HOT")
+    {
+        ViewBag.Title = "San pham nổi bật";
+        flag = ArticleFlags.HOT;
+    }
+    if (Request["status"] == "MOSTVIEW")
+    {
+        ViewBag.Title = "San pham ưa chuộng";
+        flag = ArticleFlags.MOSTVIEW;
+    }
+}
+
+@Html.Action("ViewByType", "Article", new { typeId = Model.Id, viewPath = "Product/_List", Flag = flag, pagesize = 36, sortOrder = ArticleSortOrder.SORT_ORDER, direction = VCMS.MVC4.Data.SortDirection.DESCENDING, includeflags = ArticleIncludeFlags.ARTICLE_TYPE | ArticleIncludeFlags.ARTICLE_DETAIL | ArticleIncludeFlags.PRICES | ArticleIncludeFlags.PROPERTIES })

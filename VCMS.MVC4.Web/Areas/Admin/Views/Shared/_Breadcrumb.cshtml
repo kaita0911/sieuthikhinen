@@ -1,0 +1,30 @@
+﻿@using VCMS.MVC4.Web.Models
+
+@{
+    var model = (BreadcrumbModel)ViewBag.Breadcrumb;
+    if (model == null)
+    {
+        model = new BreadcrumbModel();
+    }
+}
+
+<ul class="breadcrumb @(model.CssClass)">
+    @if (model.Items == null || model.Items.Count == 0) // no item, only home text renderred
+    {
+        <li class="first last"><span>Home</span></li>
+    }
+    else
+    {
+        foreach (var item in model.Items)
+        {
+            if (item.IsLast)
+            {
+                <li class="last"><span>@item.Text</span></li>
+            }
+            else
+            {
+                <li><a href="@item.Url">@item.Text</a></li>
+            }
+        }
+    }
+</ul>

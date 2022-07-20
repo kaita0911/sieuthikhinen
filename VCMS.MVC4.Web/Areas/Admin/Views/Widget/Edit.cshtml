@@ -1,0 +1,366 @@
+﻿@using VCMS.MVC4.Web
+@using VCMS.MVC4.Data
+@model VCMS.MVC4.Data.Widget
+
+@{
+    ViewBag.Title = "Edit Widget";
+    ViewBag.Breadcrumb = new BreadcrumbModel()
+    {
+        Items = new List<BreadcrumbItem>()
+        {
+            new BreadcrumbItem(){Url = Url.Action("Index","Home"), Text="Home", IsFirst = true},
+            new BreadcrumbItem(){Url = null, Text="Edit Widget", IsLast = true},
+        }
+    };
+
+    var group = ViewBag.Group as IEnumerable<SelectListItem>;
+    var type = ViewBag.ArticleType as IEnumerable<SelectListItem>;
+}
+<div class="form">
+    @using (Html.BeginForm("Edit", "Widget", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="toolbar">
+            <span class="button">
+                <button type="submit" class="btn save"><i class="fa fa-save"></i> Save</button>
+            </span>
+            <span class="btn back">
+                <a href="@Url.Action("Index", null, null)">
+                    <i class="fa fa-mail-reply"></i><span> Trở về</span>
+                </a>
+            </span>
+        </div>
+        <fieldset>
+            <legend class="title">Add Widget</legend>
+            @Html.ValidationSummary(true)
+            @if (Roles.IsUserInRole("Super Administrators"))
+            {
+                <div class="left width-70">
+                    <div id="tabs">
+                        <div class="clearfix"></div>
+                        <ul class="nav nav-tabs" role="tablist" id="myTab">
+                            @foreach (var l in SiteConfig.Languages)
+                            {
+                                <li><a href="#tabs-@l.Id" role="tab" data-toggle="tab">@l.DisplayName</a></li>
+                            }
+                        </ul>
+                        <div class="tab-content">
+                            <div class="editor-label">
+                                @Html.Label("Mã Widget")
+                            </div>
+                            <div class="editor-field">
+                                @Html.EditorFor(model => model.Code)
+                                @Html.ValidationMessageFor(model => model.Code)
+                            </div>
+                            @foreach (var l in SiteConfig.Languages)
+                            {
+                                <div id="tabs-@l.Id" class="tab-pane">
+                                    <div class="editor-label">
+                                        @Html.Label("Tiêu đề") <small>(Multiple languages)</small>
+                                    </div>
+                                    <div class="editor-label">
+                                        @Html.TextBoxFor(model => model.WidgetDetail[l.Id].Title, new { data_auto_copy = "true", @class = "url-source" })
+                                        @Html.ValidationMessageFor(model => model.WidgetDetail[l.Id].Title)
+                                    </div>
+                                    <div class="editor-label">
+                                        @Html.Label("Value") <small>(Multiple languages)</small>
+                                    </div>
+                                    <div class="editor-field">
+                                        @Html.TextAreaFor(model => model.WidgetDetail[l.Id].Value, new { @class = "fck" })
+                                    </div>
+                                </div>
+                            }
+                            <div class="editor-label">
+                                @Html.Label("Icon Font") <small>(<a href="@Url.Action("Awesome","Home")" target="_blank">Font Awesome</a>,<a href="@Url.Action("VnsFont","Home")" target="_blank">Viễn Nam</a>)</small>
+                            </div>
+                            <div class="editor-field">
+                                @*<input type="file" name="IconHeading" /><i data-label="Chọn file"></i>*@
+
+                                @Html.TextBoxFor(model => model.IconHeading)
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="article-list">
+                                <div class="editor-label ">
+                                    @Html.Label("Include")
+                                </div>
+                                <ul class="attribute-list">
+                                    <li>
+                                        <label class="checkbox">@Html.CheckBoxFor(model => model.IncludeArticleDetail)<i></i> Article Detail</label>
+                                    </li>
+                                    <li>
+                                        <label class="checkbox">@Html.CheckBoxFor(model => model.IncludeArticleType)<i></i> ArticleType</label>
+                                    </li>
+                                    <li>
+                                        <label class="checkbox">@Html.CheckBoxFor(model => model.IncludeCategory)<i></i> Category</label>
+                                    </li>
+                                    <li>
+                                        <label class="checkbox">@Html.CheckBoxFor(model => model.IncludeComment)<i></i> Comment</label>
+                                    </li>
+                                    <li>
+                                        <label class="checkbox">@Html.CheckBoxFor(model => model.IncludePrice)<i></i> Price</label>
+                                    </li>
+                                    <li>
+                                        <label class="checkbox">@Html.CheckBoxFor(model => model.IncludeDiscount)<i></i> Discount</label>
+                                    </li>
+                                    <li>
+                                        <label class="checkbox">@Html.CheckBoxFor(model => model.IncludeFile)<i></i> ArticleFile</label>
+                                    </li>
+                                    <li>
+                                        <label class="checkbox">@Html.CheckBoxFor(model => model.IncludeKeyword)<i></i> Keyword</label>
+                                    </li>
+                                    <li>
+                                        <label class="checkbox">@Html.CheckBoxFor(model => model.IncludeProperty)<i></i> Property</label>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="article-list" id="">
+                                <div class="editor-label ">
+                                    @Html.Label("Layout đặt biệt") <small>(Danh sách nhóm, tìm kiếm, ...)</small>
+                                </div>
+                                <ul class="attribute-list">
+                                    @foreach (var item in SiteConfig.WidgetView)
+                                    {
+                                        <li>
+                                            <label class="checkbox">
+                                                @Html.RadioButtonFor(model => model.WidgetView, item)<i></i> @item
+                                            </label>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                            <div class="article-list" id="widget-view-attr"></div>
+                            <ul class="attribute-list category-attr  margin-0 article-list" style="display:@(Model.WidgetView != null && (Model.WidgetView.Equals("Category", StringComparison.OrdinalIgnoreCase) || Model.WidgetView.Equals("CategoryHome", StringComparison.OrdinalIgnoreCase)) ? "" : "none")">
+                                <li>
+                                    <label class="checkbox">
+                                        @Html.CheckBoxFor(model => model.ShowSubMenu)<i></i> Hiển thị nhóm con
+                                    </label>
+                                </li>
+                            </ul>
+                        </div>
+                        <script>
+                            $(".nav-tabs li:first").addClass("active");
+                            $(".tab-content .tab-pane:first").addClass("active");
+                        </script>
+                    </div>
+                </div>
+                <div class="right width-29">
+                    <div class="editor-label">
+                        @Html.Label("Loại Wiget:") <small>(Mặc định: Danh sách bài viết)</small>
+                    </div>
+                    <div class="editor-field">
+                        <label class="checkbox">@Html.CheckBox("WidgetTypeCheckBox", Model.WidgetType == WidgetType.HTML ? true : false)<i></i> <strong>HTML Box</strong></label>
+                        <label class="radio hidden">@Html.RadioButtonFor(model => model.WidgetType, WidgetType.HTML)<i></i> <strong>HTML Box</strong></label>
+                        <label class="radio hidden">@Html.RadioButtonFor(model => model.WidgetType, WidgetType.ARTICLE)<i></i> <strong>Article List</strong></label>
+                    </div>
+                    <div class="editor-label">
+                        @Html.Label("Thứ tự")
+                    </div>
+                    <div class="editor-field">
+                        @Html.TextBoxFor(model => model.WidgetsortOrder, new { type = "number", @class = "form-control" })
+                    </div>
+                    @if (type.Count() > 0)
+                    {
+                        <div class="editor-label article-list">
+                            <label>Loại bài viết</label>
+                        </div>
+                        <div class="editor-field article-list">
+                            @Html.DropDownListFor(model => model.ArticleTypeId, type, new { @class = "form-control" })
+                        </div>
+                        <div class="editor-label article-list" id="attr-label">
+                            @Html.Label("Thuộc tính hiển thị") <small>(Acticve: Tất cả)</small>
+                        </div>
+                        <div class="editor-field radios article-list" id="attr-value"></div>
+                    }
+                    <div class="editor-label article-list">
+                        @Html.Label("Sắp xếp theo")
+                    </div>
+                    <div class="editor-field radios article-list">
+                        @Html.DropDownListFor(model => model.SortOrder, null, new { @class = "form-control" })
+                    </div>
+                    <div class="editor-label article-list">
+                        @Html.Label("Thứ tự sắp xếp")
+                    </div>
+                    <div class="editor-field radios article-list">
+                        @Html.DropDownListFor(model => model.SortDirection, null, new { @class = "form-control" })
+                    </div>
+                    <div class="editor-label article-list">
+                        @Html.Label("Số lượng hiển thị")
+                    </div>
+                    <div class="editor-field article-list">
+                        @Html.TextBoxFor(model => model.Number, new { @class = "form-control", @type = "number", min = "1", max = "30", value = "1" })
+                    </div>
+                    <div class="editor-label article-list">
+                        @Html.Label("Description Length") <small>(Chiều dài mô tả ngắn gọn nếu có)</small>
+                    </div>
+                    <div class="editor-field article-list">
+                        @Html.TextBoxFor(model => model.NumberText, new { @class = "form-control", @type = "number", min = "10", max = "50" })
+                    </div>
+                    @if (group.Count() > 0)
+                    {
+                        <div class="editor-label">
+                            @Html.Label("Nhóm") <small>(Lấy tất cả widget theo mã nhóm)</small>
+                        </div>
+                        <div class="editor-field">
+                            @Html.DropDownListFor(model => model.WidgetGroupId, group, " Chọn nhóm", new { @class = "form-control" })
+                        </div>
+                    }
+                    <div class="editor-label article-list">
+                        @Html.Label("Thuộc tính danh sách")
+                    </div>
+                    <div class="editor-field article-list">
+                        <ul class="">
+                            <li>
+                                <label class="checkbox">@Html.CheckBoxFor(model => model.ShowViewAll)<i></i> Hiển thị nút xem tất cả</label>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="left width-70">
+                    <div id="tabs">
+                        <div class="clearfix"></div>
+                        <ul class="nav nav-tabs" role="tablist" id="myTab">
+                            @foreach (var l in SiteConfig.Languages)
+                            {
+                                <li><a href="#tabs-@l.Id" role="tab" data-toggle="tab">@l.DisplayName</a></li>
+                            }
+                        </ul>
+                        <div class="tab-content">
+                            @foreach (var l in SiteConfig.Languages)
+                            {
+                                <div id="tabs-@l.Id" class="tab-pane">
+                                    <div class="editor-label" style="display:none">
+                                        @Html.TextBoxFor(model => model.WidgetDetail[l.Id].Title, new { data_auto_copy = "true", @class = "url-source" })
+                                        @Html.ValidationMessageFor(model => model.WidgetDetail[l.Id].Title)
+                                    </div>
+                                    <div class="editor-label">
+                                        @Html.Label("Value") <small>(Multiple languages)</small>
+                                    </div>
+                                    <div class="editor-field">
+                                        @Html.TextAreaFor(model => model.WidgetDetail[l.Id].Value, new { @class = "fck-small" })
+                                    </div>
+                                </div>
+                            }
+                            <div class="editor-label">
+                                @Html.Label("Icon Font") <small>(<a href="@Url.Action("Awesome","Home")" target="_blank">Font Awesome</a>,<a href="@Url.Action("VnsFont","Home")" target="_blank">Viễn Nam</a>)</small>
+                            </div>
+                            <div class="editor-field">
+                                @Html.TextBoxFor(model => model.IconHeading)
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <script>
+                            $(".nav-tabs li:first").addClass("active");
+                            $(".tab-content .tab-pane:first").addClass("active");
+                        </script>
+                    </div>
+                </div>
+                <div class="right width-29">
+                    <div class="editor-label">
+                        @Html.Label("Thứ tự")
+                    </div>
+                    <div class="editor-field">
+                        @Html.TextBoxFor(model => model.WidgetsortOrder, new { type = "number", @class = "form-control" })
+                    </div>
+                </div>
+            }
+
+            <div class="clearfix"></div>
+        </fieldset>
+        <div class="toolbar">
+            <span class="button">
+                <button type="submit" class="btn save"><i class="fa fa-save"></i> Save</button>
+            </span>
+            <span class="btn back">
+                <a href="@Url.Action("Index", null, null)">
+                    <i class="fa fa-mail-reply"></i><span> Trở về</span>
+                </a>
+            </span>
+        </div>
+    }
+</div>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/ckeditor")
+    <script>
+        $(document).ready(function () {
+            var _check = $("#WidgetTypeCheckBox");
+            var _html = $("#WidgetType[value=HTML]");
+            var _article = $("#WidgetType[value=ARTICLE]");
+            var _articleList = $(".article-list").not(".category-attr");
+            if (_check.is(":checked")) {
+                _html.prop("checked", true);
+                _article.prop("checked", false);
+                _articleList.css("display", "none");
+            }
+            else {
+                _html.prop("checked", false);
+                _article.prop("checked", true);
+                _articleList.removeAttr("style");
+            }
+        });
+        $(window).ready(function () {
+            if ($("#ArticleTypeId").length) {
+                $.ajax({
+                    url: '@Url.Action("Attribute", "Widget")',
+                    data: { id: $("#ArticleTypeId").val(),wid:'@Model.Id' },
+                    dataType: 'html',
+                    success: function (html) {
+                        $("#attr-value").html(html);
+                        $.ajax({
+                            url: '@Url.Action("View", "Widget")',
+                            data: { id: $("#ArticleTypeId").val(), wid: '@Model.Id' },
+                            dataType: 'html',
+                            success: function (htmlview) {
+                                $("#widget-view-attr").html(htmlview);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+        $(function () {
+            $("input[name=WidgetView]").on("change", function () {
+                $(".category-attr").hide();
+                var _this = $(this);
+                (_this.val() == "Category" || _this.val() == "CategoryHome") ? $(".category-attr").show() : $(".category-attr").hide(), $("#ShowSubMenu").prop("checked", false);
+            });
+            $("#WidgetTypeCheckBox").on("change", function () {
+                var _this = $(this);
+                var _html = $("#WidgetType[value=HTML]");
+                var _article = $("#WidgetType[value=ARTICLE]");
+                var _articleList = $(".article-list");
+                if (_this.is(":checked")) {
+                    _html.prop("checked", true);
+                    _article.prop("checked", false);
+                    _articleList.css("display", "none");
+                }
+                else {
+                    _html.prop("checked", false);
+                    _article.prop("checked", true);
+                    _articleList.removeAttr("style");
+                }
+            });
+            $("#ArticleTypeId").on("change", function () {
+                var _this = $(this);
+                $.ajax({
+                    url: '@Url.Action("Attribute", "Widget")',
+                    data: { id: _this.val() },
+                    dataType: 'html',
+                    success: function (html) {
+                        $("#attr-value").html(html);
+                        $.ajax({
+                            url: '@Url.Action("View", "Widget")',
+                            data: { id: _this.val(), wid: '@Model.Id', wid: '@Model.Id' },
+                            dataType: 'html',
+                            success: function (htmlview) {
+                                $("#widget-view-attr").html(htmlview);
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

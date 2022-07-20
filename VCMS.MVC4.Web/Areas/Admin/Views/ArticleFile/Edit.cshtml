@@ -1,0 +1,137 @@
+﻿@using VCMS.MVC4.Web
+@using VCMS.MVC4.Data
+@using System.Data.Entity;
+@model VCMS.MVC4.Data.ArticleFile
+
+<div class="form">
+    @using (Html.BeginForm(null, null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="toolbar">
+            <span class="button">
+                <button type="submit" class="btn save"><i class="fa fa-save"></i> Save</button>
+            </span>
+            <span class="btn back">
+                <a href="@Url.Action("Index", null, new { id = ViewContext.RouteData.Values["id"], fileType = Model.FileType })">
+                    <i class="fa fa-mail-reply"></i> <span>Trở về</span>
+                </a>
+            </span>
+        </div>
+        <div class="clear-fix">
+            <div>
+                <div id="tabs">
+                    <ul class="nav nav-tabs" role="tablist" id="myTab">
+                        @foreach (var l in SiteConfig.Languages)
+                        {
+                            <li><a href="#tabs-@l.Id" role="tab" data-toggle="tab">@l.DisplayName</a></li>
+                        }
+                    </ul>
+                    <div class="tab-content">
+                        @foreach (var l in SiteConfig.Languages)
+                        {
+                            <div id="tabs-@l.Id" class="tab-pane">
+                                <div class="editor-label">
+                                    @Html.Label("tiêu đề")
+                                </div>
+                                <div class="editor-field">
+                                    @Html.TextBoxFor(model => model.ArticleFileDetail[l.Id].Title, new { name = "txtName_" + l.Id.ToString(), data_auto_copy = "true", data_val = "true", data_val_required = "Tiêu đề không được để trống" })
+                                    @Html.ValidationMessageFor(model => model.ArticleFileDetail[l.Id].Title, "Tiêu đề không được trống")
+                                </div>
+                                <div style="display:none">@*@(Model.FileType == ArticleFileType.ATTACHMENT ? "block" : "none")*@
+                                    <div class="editor-label">
+                                        @Html.Label("Tiêu đề loại")
+                                    </div>
+                                    <div class="editor-field">
+                                        @Html.TextBoxFor(model => model.ArticleFileDetail[l.Id].Description, new { name = "txtDesc_" + l.Id.ToString() })
+                                    </div>
+                                </div>
+                                
+                                @*@if (Model.FileType == ArticleFileType.CONTENT)
+                                    {
+                                        <div class="editor-label full-desc">
+                                            @Html.Label("Nội dung")
+                                        </div>
+                                        <div class="editor-field margin-bottom-7">
+                                            @Html.TextAreaFor(model => model.ArticleFileDetail[l.Id].Description, new { @class = "fck-limit-width" })
+                                        </div>
+                                    }*@
+                            </div>
+                        }
+                    </div>
+                    <div class="editor-label" style="display:none">
+                        <label class="radio create">@Html.RadioButton("source", 0, true, new { @class = "float-left" })<i></i> Upload file</label>
+                    </div>
+                    <div class="editor-field file file-image article">
+                        <input type="hidden" id="Upload" name="Upload" />
+                        @if (Model.FileType == ArticleFileType.IMAGE)
+                        {
+                            @Html.TextBox("multiple_file", null, new { type = "file", data_val = "true", data_val_image = "Kiểu file hình ảnh không được phép", multiple = "multiple", id = "multiple_file" })<i data-label="Chọn file"></i>
+                            <span id="number">Không có tệp nào được chọn</span>
+                            @Html.ValidationMessage("file")
+                        }
+                        else
+                        {
+                            <i data-label="Chọn file"></i>
+                            @Html.TextBox("multiple_file", null, new { type = "file", data_val = "true", data_val_attach = "Kiểu file đính kèm không được phép", multiple = "multiple", id = "multiple_file" })
+                            <span id="number">Không có tệp nào được chọn</span>
+                            @Html.ValidationMessage("file")
+                        }
+                    </div>
+                    <div class="editor-label" style="display:none">
+                        <label class="radio create">@Html.RadioButton("source", 1, false, new { @class = "float-left" })<i></i> Link</label>
+                    </div>
+                    <div class="editor-field" style="display:none">
+                        @Html.TextBox("link", null, new { data_val = "true", data_val_url = "Link sai" })
+                        @Html.ValidationMessage("link")
+                    </div>
+                    @*@if (Model.FileType == ArticleFileType.CONTENT)
+                    {
+                        <div class="editor-label">
+                            @Html.Label("Thuộc tính")
+                        </div>
+                        <div class="editor-field">
+                            <ul>
+                                <li><label class="checkbox">@Html.CheckBoxFor(model => model.IsNew)<i></i> Đọc thử</label></li>
+                            </ul>
+                        </div>
+                    }*@
+                    <script>
+                        $(".nav-tabs li:first").addClass("active");
+                        $(".tab-content .tab-pane:first").addClass("active");</script>
+                </div>
+            </div>
+
+        </div>
+        <div class="toolbar">
+            <span class="button">
+                <button type="submit" class="btn save"><i class="fa fa-save"></i> Lưu</button>
+            </span>
+            <span class="btn back">
+                <a href="@Url.Action("Index", null, new { id = ViewContext.RouteData.Values["id"], fileType = Model.FileType })">
+                    <i class="fa fa-mail-reply"></i> <span>Trở về</span>
+                </a>
+            </span>
+        </div>
+        @Html.ValidationSummary(true)
+    }
+</div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryui")
+    @Scripts.Render("~/bundles/editor")
+    <script>
+        $(function () {
+
+            $("#tabs").validtabs();
+            $("input[data-auto-copy=true]").autoCopy();
+
+            $("input[type=radio]").change(function () {
+                $("input[type=radio]").parent().next().find("input").attr("data-val", false);
+                $(this).parent().next().find("input").attr("data-val", $(this).checked);
+            })
+        });
+
+    </script>
+}
+
+

@@ -1,0 +1,72 @@
+﻿@model WebsiteDetail
+@if (SiteConfig.Languages.Select(l => l.Id).Contains(Model.LanguageId))
+{
+    @Html.HiddenFor(model => model.LanguageId)
+    @Html.HiddenFor(model => model.WebsiteId)
+    <div id="tabs-@Model.LanguageId" class="tab-pane">
+        @Html.HiddenFor(m => m.LanguageId)
+        <div class="editor-label">
+            @Html.Label("tên")
+        </div>
+        <div class="editor-field">
+            @Html.TextBoxFor(model => model.Name)
+
+        </div>
+        <div class="editor-label">
+            @Html.Label("tiêu đề")
+        </div>
+        <div class="editor-field">
+            @Html.TextBoxFor(model => model.Title)
+        </div>
+        <div class="editor-label">
+            @Html.Label("meta keywords")
+        </div>
+        <div class="editor-field">
+            @Html.TextBoxFor(model => model.SEOKeywords, new { @class = "keyword" })
+
+        </div>
+        <div class="editor-label">
+            @Html.Label("meta description")
+        </div>
+        <div class="editor-field">
+            @Html.TextAreaFor(model => model.SEODescription)
+
+        </div>
+    </div>
+}
+else
+{
+    @Html.HiddenFor(model => model.LanguageId)
+    @Html.HiddenFor(model => model.WebsiteId)
+    <div id="tabs-@Model.LanguageId" class="hidden tab-pane">
+        @Html.HiddenFor(m => m.LanguageId)
+        <div class="editor-label">
+            @Html.Label("tên")
+        </div>
+        <div class="editor-field">
+            @Html.TextBoxFor(model => model.Name)
+
+        </div>
+        <div class="editor-label">
+            @Html.Label("tiêu đề")
+        </div>
+        <div class="editor-field">
+            @Html.TextBoxFor(model => model.Title)
+
+        </div>
+        <div class="editor-label">
+            @Html.Label("meta keywords")
+        </div>
+        <div class="editor-field">
+            @Html.TextBoxFor(model => model.SEOKeywords, new { @class = "keyword", @autocomplete = "off" })
+
+        </div>
+        <div class="editor-label">
+            @Html.Label("meta description")
+        </div>
+        <div class="editor-field">
+            @Html.TextAreaFor(model => model.SEODescription)
+
+        </div>
+    </div>
+}

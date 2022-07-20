@@ -1,0 +1,109 @@
+﻿@model PagedList<Comment>
+@{
+    if (Model.TotalItemCount > 0)
+    {
+        foreach (var item in Model.List)
+        {
+            var name = item.Name.Split(new char[] { ' ' });
+
+            <div class="box-comment" data-id="@item.Id" data-name="@item.Name">
+                <div class="cm-displayname">
+                    @for (int i = 0; i < name.Length; i++)
+                    {
+                        if (i > name.Length - 3)
+                        {
+                            @name[i].ToString().FirstOrDefault();
+                        }
+                    }
+                </div>
+                <div class="cm-name">
+                    @if (Request.IsAuthenticated && !item.UserID.HasValue)
+                    {
+                        <div class="cm-gender">@(item.Gender ? "Anh" : "Chị")</div>
+                    }
+                    @item.Name
+                    @if (item.UserID.HasValue)
+                    {
+                        <span class="user-role badge">@Html.Locale("qtv")</span>
+                    }
+                </div>
+                <div class="cm-info" data-id="@item.Id">
+                    <div class="cm-message">
+                        @item.Message
+                    </div>
+                    @if (Request.IsAuthenticated)
+                    {
+                        <div class="cm-email">
+                            <strong>Email :</strong> @item.Email
+                        </div>
+                    }
+                    <div class="cm-group">
+                        <div class="cm-reply">
+                            @Html.Locale("reply")
+                        </div>
+                        @if (item.UserID > 0)
+                        {
+                            <div class="cm-like" data-like="0">
+                                @Html.Locale("hl") <span class="like-number">(@item.LikeNumber)</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="cm-like" data-like="0">
+                                @Html.Locale("like") <span class="like-number">(@item.LikeNumber)</span>
+                            </div>
+                        }
+                        <time class="timeago" datetime="@(string.Format("{0:o}",item.DateCreated))"></time>
+                        @if (Roles.IsUserInRole("Super Administrators") || Roles.IsUserInRole("Administrators"))
+                        {
+                            if (item.IsPending)
+                            {
+                                <div class="cm-status badge">
+                                    <i class="fa fa-check" aria-hidden="true"></i> Duyệt
+                                </div>
+                            }
+                            <div class="cm-delete badge">
+                                <i class="fa fa-trash" aria-hidden="true"></i> Xóa
+                            </div>
+                        }
+                    </div>
+
+                </div>
+                @if (item.Children.Count > 0)
+                {
+                    var i = 1;
+                    <div class="list-comment-reply">
+                        @foreach (var sub in item.Children)
+                        {
+                            var count = item.Children.Count;
+                            <div class="box-comment-reply @(i>3?"hidden":"")" data-id="@sub.ParentId" data-name="@sub.Name">
+                                @Html.Partial("_CommentReplyList", sub)
+                            </div>
+                            if (i == 3 && count > 3)
+                            {
+                                <div class="cm-view_more">
+                                    <i class="fa fa-angle-double-down" aria-hidden="true"></i>
+                                    Xem tiếp @(count - 3) bình luận khác
+                                </div>
+                            }
+                            i++;
+                        }
+                    </div>
+                }
+            </div>
+
+        }
+
+        <div class="col-xs-12">
+            @Html.Pager("ViewByArticle", "Comment", new { articleId = Model.List.FirstOrDefault().ArticleId }, new PagerOptions { VisibleItemCount = 5, ItemCount = Model.TotalItemCount, PageSize = Model.PageSize, FirstText = Html.Locale("text_first").ToHtmlString(), LastText = Html.Locale("text_last").ToHtmlString() }, null)
+        </div>
+
+    }
+    else
+    {
+        <span>@Html.Locale("no_comment")</span>
+    }
+}
+
+
+

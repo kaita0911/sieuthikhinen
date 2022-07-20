@@ -1,0 +1,27 @@
+﻿@model ArticleResult
+@{
+    var lstCate = Category.GetTree(Category.GetByType(7, SiteConfig.LanguageId)).Where(a => a.Level == 0).ToList();
+}
+<div class="box-category box-c-document">
+    <div class="content">
+        <div class="row">
+            @foreach (var item in lstCate)
+            {
+                <div class="col-md-2 col-sm-3">
+                    <div class="item">
+                        <figure>
+                            <a href="@Url.Action("Detail", "Category", new {id=item.Id,code=item.ArticleType.UrlFriendly,title = item.UrlFriendly })" title="@item.CategoryName">
+                                @Html.Image(SiteConfig.Image("icon-folder.jpg"), new ImageOptions { Width = 168, Height = 150, Lazy = false }, new { alt = item.CategoryName })
+                            </a>
+                        </figure>
+                        <h3 class="c-header">
+                            <a class="left" href="@Url.Action("Detail", "Category", new {id=item.Id,code=item.ArticleType.UrlFriendly,title = item.UrlFriendly })">
+                                @item.CategoryName
+                            </a>
+                        </h3>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

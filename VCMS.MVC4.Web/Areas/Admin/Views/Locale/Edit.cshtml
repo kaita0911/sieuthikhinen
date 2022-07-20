@@ -1,0 +1,49 @@
+﻿@using VCMS.MVC4.Web
+@model VCMS.MVC4.Data.Locale
+@{
+    ViewBag.Title = "Edit";
+}
+<div class="form">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+
+        <fieldset>
+            <legend>Locale</legend>
+            @Html.HiddenFor(model => model.Id)
+            <div class="editor-label">
+                @Html.LabelFor(model => model.LocaleKey)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.LocaleKey)
+                @Html.ValidationMessageFor(model => model.LocaleKey)
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(model => model.DefaultValue)
+            </div>
+            <div class="editor-field">
+                @Html.TextAreaFor(model => model.DefaultValue)
+                @Html.ValidationMessageFor(model => model.DefaultValue)
+            </div>
+            @foreach (var l in SiteConfig.Languages)
+            {
+                <div class="editor-label">
+                    @Html.Label("Value - " + l.DisplayName)
+                </div>
+                <div id="tabs-@l.Id">
+                    @Html.TextAreaFor(model => model.LocaleDetail[l.Id].Value)
+                </div>
+            }
+            <div class="toolbar">
+                <span class="button">
+                    <button type="submit" class="btn save"><i class="fa fa-save"></i> Save</button>
+                </span>
+                <span class="btn back">
+                    <a href="@Url.Action("Index",null,null)">
+                        <i class="fa fa-mail-reply"></i> <span>Trở về</span>
+                    </a>
+                </span>
+            </div>
+        </fieldset>
+    }
+</div>

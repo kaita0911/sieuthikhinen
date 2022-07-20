@@ -1,0 +1,345 @@
+﻿/*@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,600,700');*/
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600&family=Montserrat:wght@400;500;600;700&display=swap');
+@import "Less/variables";
+@container: 1200px;
+@col-padding: 15px;
+
+@cubic-button: cubic-bezier(.6,-.28,.735,.045);
+@cubic-button-hover: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+@cubic-adv: cubic-bezier(0.455, 0.030, 0.515, 0.955);
+
+/**
+  * Site property
+  */
+@body-bg: #eef5ff /*url(images/body.jpg) repeat*/;
+
+@font-base: Arial,sans-serif; /*'UTM Swiss Condensed',*/
+@font-title:'Montserrat', sans-serif;
+@font-mobile: @font-base;
+@font-heading: @font-base;
+@font-Helvetlns: 'UTM HelvetIns', @font-base;
+@font-Avo: 'UTM Avo', @font-base;
+@font-UTM-Swiss-Condensed: 'UTM Swiss Condensed', @font-base;
+@font-Roboto: 'Roboto', @font-base;
+@font-roboto-Condensed: 'Roboto Condensed', @font-base;
+@font-Open-Sans: 'Open Sans', sans-serif;
+@font-monospace: Monaco, Menlo, Consolas, "Courier New", monospace;
+@font-Awesome: FontAwesome;
+@font-Muli: 'Muli', sans-serif;
+@font-Play: 'Play', sans-serif;
+@font-Pridi: 'Pridi', serif;
+
+@background: #11468f;
+@background-hover: #da1212;
+
+@color: #000;
+@color-hover: #ffc10d;
+
+@selection-bg: @background;
+@selection-color: #fff;
+
+@font-size-page: 13.5px;
+@site-color: #333333;
+@site-line-height: 20px;
+
+@button-bg: @background;
+@button-bg-hover: #004285;
+/*
+  Snap
+  */
+@snap-background: @background;
+@snap-header-background: @background;
+@snap-color: #fff;
+
+@snap-header-height: 50px;
+@snap-header-link-width: 40px;
+@snap-header-link-color: #fff;
+
+
+/**
+  * Link
+  */
+@link-color: #333333;
+@link-hover-color: @background-hover;
+
+/**
+  * header
+  */
+@top-bg: #fff;
+@top-color: #6c3d00;
+@header-bg: #fff;
+@header-color: #444444;
+
+/**
+  * Search
+  */
+@search-bachground: #dcdcdc;
+@search-boder: 0px;
+@search-boder-color: @background;
+
+@search-boder-radius: 17px;
+
+@search-width: 330px;
+@search-height: 32px;
+
+@search-color: fade(black,70%);
+@search-font-size: 12px;
+
+@search-placeholder-color: #c1c1c1;
+@search-font-style: normal;
+
+@search-button-width: 32px;
+
+/**
+  * mini cart info
+  *
+  */
+@mini-cart-link-color: @site-color;
+@mini-cart-price-size: 14px;
+@mini-cart-price-color: #af2928;
+
+/**
+  * Main menu
+  */
+@menu-font-size: 16px;
+@menu-font-size-md: 14px;
+@submenu-font-size: 14px;
+
+@menu-link-color: #005198;
+@menu-link-hover: yellow;
+@submenu-link-color: #0068c9;
+
+@submenu-bg: #fff; /*fade(white,92%)*/
+@vns-menu-mobile-color: #ddd;
+
+/**
+  * Show in mobile
+  */
+@mobile-icon-width: 49px;
+@mobile-icon-height: 42px;
+
+@mobile-icon-color: #fff;
+@mobile-icon-color-hover: @mobile-icon-color;
+
+@mobile-icon-bg: fade(#fff,0%);
+@mobile-icon-bg-hover: darken(@background,12%);
+
+@mobile-icon-size: 16px;
+
+/**
+  * Category
+  */
+@category-size: 13px;
+@category-size-md: 12px;
+
+@category-bg: url(images/category-bg.png);
+@category-bg-hover: url(images/category-bg-hover.png);
+
+@category-color: #b9b9b9;
+@category-color-hover: #d5d5d5;
+
+/**
+  * Heading
+  */
+@sidebar-width: 300px;
+
+@main-heading-size: 16px;
+@main-heading-size-md: 16px;
+@main-heading-size-sm: 16px;
+@main-heading-size-xs: 16px;
+
+@sidebar-heading-size: 18px;
+@sidebar-heading-size-md: 14px;
+@sidebar-heading-size-sm: @sidebar-heading-size;
+@sidebar-heading-size-xs: @sidebar-heading-size;
+
+@footer-heading-size: 20px;
+
+@heading-color: #fff;
+@heading-sidebar-color: @background;
+@footer-heading-color: @background;
+
+/**
+  * Box article
+  */
+@box-border: #e4e4e4;
+@box-border-hover: @box-border;
+
+@box-color: @site-color;
+
+@price-color: #898989;
+@price-color-hover: #898989;
+@price-old-color: #baa492;
+
+@price-size: 12px;
+@price-old-size: 13px;
+
+@box-button-width: 36px;
+@box-button-height: 36px;
+@box-button-size: 18px;
+
+@box-button-bg: #fff;
+@box-button-color: @background;
+
+@box-label-bg: @background;
+@box-label-border: 0;
+@box-label-height: 24px;
+@box-line-heigt: @site-line-height; //default: 18px;
+
+@overlay-bg: fade(black,31%);
+
+/**
+  * Article Detail
+  */
+@price-size-2: 20px;
+@price-old-size-2: 15px;
+
+@price-color-2: @background;
+@price-old-color-2: @price-old-color;
+
+/**
+  * Share icon
+  */
+@share-article-border: 0px;
+@share-article-font-size: 13px;
+
+@facebook-bg: #435f9f;
+@google-bg: #e04b34;
+@twitter-bg: #00aaf0;
+@linkedin-bg: #000;
+
+/**
+  * Pager
+  */
+@page-color: @color;
+@page-hover-color: @color-hover;
+
+@page-bg: @background;
+@page-hover-bg: @background-hover;
+
+/**
+  * Footer
+  */
+
+@footer-bg: #fff;
+@footer-color: #444444;
+
+@bottom-bg: @background;
+@bottom-color: @color;
+/**
+  * Tag
+  */
+@tag-bg: #fff;
+@tag-bg-hover: @background;
+
+@tag-color: @link-color;
+@tag-color-hover: @color;
+@tag-font-size: 75%;
+
+@tag-boder-radius: 4px;
+
+/**
+  * Top down
+  */
+@top-down-width: 34px;
+@top-down-height: 34px;
+
+/**
+  * Form element
+  */
+@legend-color: inherit;
+
+@input-font-size-base: @component-font-size-base;
+@input-font-size-sm: floor((@component-font-size-base * 0.867)); // ~13px
+@input-font-size-lg: ceil((@component-font-size-base * 1.05)); // ~17px
+@input-font-size-hg: floor((@component-font-size-base * 1.467)); // ~22px
+
+@input-line-height-base: 1.467; // ~22px
+@input-line-height-sm: 1.462; // ~19px
+@input-line-height-lg: 1.235; // ~21px
+@input-line-height-hg: 1.318; // ~29px
+
+@input-icon-font-size: ceil((@component-font-size-base * 1.067)); // ~16px
+@input-icon-font-size-lg: ceil((@component-font-size-base * 1.2)); // ~18px
+@input-icon-font-size-hg: ceil((@component-font-size-base * 1.333)); // ~20px
+
+@input-bg: @inverse;
+@input-bg-disabled: mix(@gray, white, 5%);
+@input-color-focus: rgba(82, 168, 236, 0.8);
+
+@input-height-sm: 40px;
+@input-height-base: 36px;
+@input-height-lg: 36px;
+@input-height-md: 33px;
+@input-height-hg: 53px;
+
+@input-border-radius: 2px;
+@cursor-disabled: not-allowed;
+@input-placeholder-color: #555555;
+
+/**
+  * Support
+  */
+@support-hotline-color: #404040;
+@support-phone-font-size: 24px;
+@support-phone-color: #fc0101;
+
+@support-item-font-size: 12px;
+
+/**
+  * Screen
+  */
+@screen-xs-min: 480px;
+@screen-sm-min: 768px;
+@screen-md-min: 992px;
+@screen-lg-min: 1200px;
+
+@screen-xs-max: (@screen-sm-min - 1);
+@screen-sm-max: (@screen-md-min - 1);
+@screen-md-max: (@screen-lg-min - 1);
+
+/**
+  * Hover div
+  */
+@hover-div-bg: @background;
+
+/**
+  * Heading element
+  */
+@font-size-h1: 25px;
+@font-size-h2: 20px;
+@font-size-h3: 18px;
+@font-size-h4: 15px;
+@font-size-h5: 13px;
+@font-size-h6: 12px;
+
+/**
+  * Notify
+  */
+@font-size-notify: 12px;
+@notify-color: #000;
+@warning-boder: #F8ACAC;
+@success-border: #BBDF8D;
+
+/**
+  * Shopping Cart
+  */
+@shop-cart-border: #ddd;
+@shop-cart-background-color-td: rgba(109, 109, 109, 0.27);
+@shop-cart-color-td: #4D4D4D;
+@bt-cart-background: #e03d3d;
+@bt-cart-background-hover: #760000;
+
+/**
+  * Select list
+  */
+@select-background: #aec4aa;
+@select-color: @color;
+
+@select-background-hover: @background-hover;
+@select-color-hover: @color-hover;
+
+@select-ul-bg: @select-background;
+
+@select-item-hover-bg: darken(@select-ul-bg,15%);
+@select-item-hover-color: #fff;

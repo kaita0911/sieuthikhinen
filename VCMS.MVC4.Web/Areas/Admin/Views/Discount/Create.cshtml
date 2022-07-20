@@ -1,0 +1,167 @@
+﻿@using VCMS.MVC4.Data
+@using VCMS.MVC4.Web
+@model VCMS.MVC4.Data.Discount
+@{
+    ViewBag.Title = "Thêm mới giảm giá";
+    var currencies = Model.Currencies;
+    var articles = Model.Articles;
+    var categories = Model.Categories;
+    ViewBag.Breadcrumb = new BreadcrumbModel()
+    {
+        Items = new List<BreadcrumbItem>()
+        {
+            new BreadcrumbItem(){Url = Url.Action("Index","Home"), Text="Home", IsFirst = true},
+            new BreadcrumbItem(){Url = null, Text = "Thêm mới giảm giá", IsLast = true},
+        }
+    };
+}
+@Styles.Render("~/Content/themes/base/css")
+
+<div class="form discount">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+        <div class="clear-fix">
+            <div class="left width-70">
+                <div id="tabs">
+                    <fieldset>
+                        <legend class="title">Thông tin chung</legend>
+                        <div class="editor-label">
+                            <label>Tên</label>
+                        </div>
+                        <div class="editor-field">
+                            @Html.EditorFor(model => model.Name)
+                        </div>
+                        <div class="editor-label">
+                            <label>Sử dụng tỷ lệ phần trăm</label>
+                            <div class="editor-field">
+                                @Html.CheckBox("chk-usepercen", Model.UsePercent, new { @class = "use-percentage", onchange = "usePercentage()" })
+                            </div>
+                        </div>
+                        <div class="dis-percentage" style="display: none">
+                            <div class="editor-label">
+                                <label>Phần trăm giảm</label>
+                            </div>
+                            <div class="editor-field">
+                                @Html.TextBox("DiscountPercent", Model.DiscountPercent, new { @class = "price w-300" })
+                                @Html.ValidationMessageFor(model => model.DiscountPercent)
+                            </div>
+                        </div>
+                        <div class="dis-amount">
+                            <div class="editor-label">
+                                <label>Số tiền giảm</label>
+                            </div>
+                            <div class="editor-field  pri-and-curr w-300">
+                                @Html.TextBox("DiscountAmount", Model.DiscountAmount, new { @class = "w-300" })
+                                @Html.DropDownList("Currency", new SelectList(currencies, "Id", "CurrencySymbol", currencies.FirstOrDefault(c => c.IsDefault).Id), new { @class = "currency" })
+                                @Html.ValidationMessageFor(model => model.DiscountAmount)
+                            </div>
+                        </div>
+                        <div class="editor-label">
+                            <label>Ngày bắt đầu</label>
+                        </div>
+                        <div class="editor-field date-time">
+                            @Html.TextBoxFor(model => model.DateStart, new { @class = "datepicker" })
+                        </div>
+                        <div class="editor-label">
+                            <label>Ngày kết thúc</label>
+                        </div>
+                        <div class="editor-field date-time">
+                            @Html.TextBoxFor(model => model.DateEnd, new { @class = "datepicker" })
+                            @Html.ValidationMessageFor(model => model.DateEnd)
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            <div class="right width-29">
+                <fieldset>
+                    <legend>Chọn nhóm giảm giá</legend>
+                    @if (categories.Count > 0)
+                    {
+                        <div>
+                            @Html.Partial("~/Areas/Admin/Views/Category/_SearchAutocomplete.cshtml", categories)
+                        </div>
+                    }
+                </fieldset>
+                <fieldset>
+                    <legend>Chọn sản phẩm giảm giá</legend>
+                    @if (articles.Count > 0)
+                    {
+                        <div>
+                            @Html.Partial("~/Areas/Admin/Views/Article/_SearchAutocomplete.cshtml", articles)
+                        </div>
+                    }
+                </fieldset>
+            </div>
+        </div>
+        <div class="toolbar">
+            <span class="button">
+                <button type="submit" class="btn save"><i class="fa fa-save"></i> Lưu</button>
+            </span>
+            <span class="btn back">
+                <a href="@Url.Action("Index", null, null)">
+                    <i class="fa fa-mail-reply"></i> <span>Trở về</span>
+                </a>
+            </span>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryui")
+
+    <script>
+
+        $(document).ready(function () {
+            $(".datepicker").datepicker({
+                changeMonth: true,
+                changeYear: true,
+                dateFormat: 'mm/dd/yy'
+            }).datepicker('setDate', new Date());
+        });
+
+        function usePercentage() {
+            if ($('.use-percentage').is(":checked")) {
+                $(".dis-amount").hide();
+                $(".dis-percentage").show();
+            }
+            else {
+                $(".dis-amount").show();
+                $(".dis-percentage").hide();
+            }
+        }
+
+        $(".button .save").click(function () {
+            var start_date = $("#DateStart").val();
+            var end_date = $("#DateEnd").val();
+            if (new Date(start_date) > new Date(end_date)) {
+                alert("Ngày kết thúc phải lớn hơn ngày bắt đầu");
+                return false;
+            }
+        });
+
+        $(".url-source").each(function () {
+            $(this).latinize({ destination: $(this).nextUntil(".url-dest").next() });
+        });
+
+        //$(function () {
+        //    $(".price").keyup(function (e) {
+        //        if (e.which >= 37 && e.which <= 40) {
+        //            e.preventDefault()
+        //        }
+        //        var t = $(this);
+        //        var n = t.val().replace(/,/gi, "").split("").reverse().join("");
+        //        var r = RemoveRougeChar(n.replace(/(.{3})/g, "$1,").split("").reverse().join(""));
+        //        t.val(r);
+        //    })
+        //});
+
+        //function RemoveRougeChar(e) {
+        //    if (e.substring(0, 1) == ",") {
+        //        return e.substring(1, e.length)
+        //    } return e
+        //}
+
+    </script>
+}

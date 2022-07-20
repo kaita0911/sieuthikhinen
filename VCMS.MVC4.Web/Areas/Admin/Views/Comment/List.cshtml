@@ -1,0 +1,116 @@
+﻿@model ICollection<Comment>
+
+@{
+    ViewBag.Title = "Bình luận";
+    var article = (Article)ViewBag.Article;
+    ViewBag.Breadcrumb = new BreadcrumbModel
+    {
+        Items = new BreadcrumbItem[] {
+new BreadcrumbItem { Url="/", Text="Home", IsFirst=true},
+new BreadcrumbItem { Url=null, Text="Bình luận", IsLast=true}}
+    };
+}
+<div class="btn-group">
+    <span class="btn create">
+        <a href="@Url.Action("Edit", "Comment", new { id = ViewContext.RouteData.Values["id"] })">
+            <i class="fa fa-plus"></i> <span class="hidden-xs">Sửa</span>
+        </a>
+    </span>
+    <span class="btn delete">
+        <a href="@Url.Action("Delete", "Comment")" id="delete">
+            <i class="fa fa-trash-o"></i> <span class="hidden-xs">Xóa</span>
+        </a>
+    </span>
+    <span class="btn save">
+        <a href="javascript:void(0)" id="update-attribute">
+            <i class="fa fa-puzzle-piece"></i>
+            <span class="hidden-xs">Cập nhật thuộc tính</span>
+        </a>
+    </span>
+</div>
+@Html.Pager(new PagerOptions { ItemCount = ViewBag.ItemCount, VisibleItemCount = 7, PageSize = 20 }, null)
+<div class="tables">
+    <table class="table table-hover">
+        <thead class="header">
+            <tr>
+                <th class="check">
+                    <label class="checkbox single noborder">@Html.CheckBox("chkSelectAll", false, new { id = "check-all" })<i></i></label>
+                </th>
+                <th class="name">
+                    @Html.Label("Họ tên")
+                </th>
+                <th class="email">
+                    @Html.Label("Email")
+                </th>
+                <th>
+                    @Html.Label("Đã duyệt")
+                </th>
+                <th class="date">
+                    @Html.Label("Ngày tháng")
+                </th>
+                @*<th class="rating">
+                    @Html.Label("Điểm đánh giá")
+                </th>*@
+                <th class="content">Nội dung</th>
+            </tr>
+        </thead>
+        <tbody class="items">
+            @foreach (var item in Model)
+            {
+                <tr class="item">
+                    <td class="check"><label class="checkbox fix"><input type="checkbox" value="@item.Id" /><i></i></label></td>
+                    <td class="name">
+                        <span>@item.Name</span>
+                    </td>
+                    <td class="email">
+                        <span>@item.Email</span>
+                    </td>
+                    <td class="attr">
+                        <label class="checkbox fix">
+                            @Html.CheckBoxFor(model => item.IsActive, new { value = item.Id, @class = "status" })<i></i>
+                        </label>
+                    </td>
+                    <td class="date">
+                        <span>@item.DateCreated.ToString("dd/MM/yyyy")</span>
+                    </td>
+                    @*<td class="rating">
+                        <span>@item.Rating</span>
+                    </td>*@
+                    <td class="content">
+                        <p>@Html.Raw(item.Message)</p>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@Html.Pager(new PagerOptions { ItemCount = ViewBag.ItemCount, VisibleItemCount = 7, PageSize = 20 }, null)
+@section Scripts
+{
+    <script type="text/javascript">
+         $("#update-attribute").click(function () {
+            var json = [];
+
+            $(".item input[type='checkbox']").each(
+                function () {
+                    var isActive = $(this).parentsUntil(".items").find(".status:checked").length > 0;
+                    json.push({ "id": $(this).val(), "isActive": isActive });
+                });
+
+            if (json.length > 0) {
+                $.ajax({
+                    url: '@Url.Action("UpdateAttributes")',
+                    type: 'POST',
+
+                    success: function (data) {
+                        if (data.Status == 0) {
+                            alert(data.Message);
+                            window.location.reload();
+                        }
+                    },
+                    data: "json=" + JSON.stringify(json)
+                });
+            }
+        });
+    </script>
+}

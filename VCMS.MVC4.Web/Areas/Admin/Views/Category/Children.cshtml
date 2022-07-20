@@ -1,0 +1,5 @@
+﻿@model ICollection<VCMS.MVC4.Data.Category>
+@foreach (var item in Model)
+{
+    @Html.Partial("_ListItem", item)
+}

@@ -1,0 +1,16 @@
+﻿@model Category
+<ul class="sub-level">
+    @foreach (var item in Model.Children.Where(c => !c.IsNew))
+    {
+        <li>
+            <a href="@Url.Action("Detail", "Category", new { id = item.Id, title = item.UrlFriendly })">
+                <span>@item.CategoryName</span>
+            </a>
+            @if (item.ChildrenCount > 0)
+            {
+                @Html.Partial("_SubmenuLR", item)
+            }
+        </li>
+    }
+</ul>
+

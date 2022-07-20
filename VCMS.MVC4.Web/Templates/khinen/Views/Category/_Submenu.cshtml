@@ -1,0 +1,12 @@
+﻿@model Category
+<ul class="submenu">
+    @foreach (var item in Model.Children)
+    {
+        <li class="items">
+            <a href="@Url.Action("Detail", "Category", new { id=item.Id,code=item.ArticleType.UrlFriendly,title=Unichar.UnicodeStrings.UrlString(item.CategoryName)})" class="@(ViewBag.CateId==item.Id?"active":"")">
+                <i class="fa fa-angle-right"></i>
+                <span>@item.CategoryName</span>
+            </a>
+        </li>
+    }
+</ul>

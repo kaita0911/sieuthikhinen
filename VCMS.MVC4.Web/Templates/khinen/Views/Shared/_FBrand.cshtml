@@ -1,0 +1,29 @@
+﻿@using System.Data.Entity;
+@using (DataContext db = new DataContext())
+{
+    var articleType = db.ArticleTypes.FirstOrDefault(t => t.Code == "BRAND");
+    if (articleType != null)
+    {
+        var cate = Category.GetByType(articleType.Id, SiteConfig.SiteId, SiteConfig.LanguageId);
+        <div class="f-brand">
+            <h3 class="header">
+                Hãng sản xuất
+            </h3>
+            <div class="content">
+                <div class="row">
+                    @foreach (var item in cate)
+                    {
+                        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                            <div class="item">
+                                <a href="@Url.Action("Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.CategoryName) }, null)" title="@item.CategoryName">
+                                    @item.CategoryName
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+}
+

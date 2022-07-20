@@ -1,0 +1,107 @@
+﻿@model ArticleResult
+@if (Model.List.Count > 0)
+{
+    var type = ViewBag.Type != null ? ViewBag.Type as ArticleType : Model.List.FirstOrDefault().ArticleType;
+    if (type.DescriptionCategory)
+    {
+        <div id="description-type">
+            @Html.Raw(type.ArticleTypeDetail[SiteConfig.LanguageId].Description)
+        </div>
+    }
+    <div class="article content-background article-list">
+        @*<h1 class="title col-xs-12">@(ViewBag.Title != null ? ViewBag.Title : type.Name)</h1>*@
+        @foreach (var items in Model.List)
+        {
+            <div class="item">
+                <div class="row">
+                    @*<div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                            <figure>
+                                <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                    @Html.Image(item.ImageUrl, new ImageOptions { Width = 337, Height = 200, Mode = ImageMode.crop }, new { alt = item.ArticleName, @class = "width-full" })
+                                </a>
+                            </figure>
+                        </div>*@
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="meta">
+                            <h3><a href="#" title="@items.ArticleName">@items.ArticleName</a></h3>
+                            <div class="file-attach">
+                                @if (items.ArticleFiles.Where(af => af.FileType == ArticleFileType.ATTACHMENT).Count() > 0)
+                                {
+                                    int i = 1;
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th class="sort-order width-80">@Html.Locale("sort_order")</th>
+                                                <th class="name">@Html.Locale("price_list_type")</th>
+                                                <th class="name">@Html.Locale("price_list_name")</th>
+                                                <th class="date width-80">@Html.Locale("date")</th>
+                                                <th class="size width-80">@Html.Locale("size")</th>
+                                                <th class="extension width-80">@Html.Locale("extension")</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in items.ArticleFiles.Where(af => af.FileType == ArticleFileType.ATTACHMENT).OrderBy(f => f.SortOrder))
+                                            {
+                                                var exarr = item.OriginalFileName.Split('.');
+                                                double dl = (item.FileSize / 1024f) / 1024f;
+
+                                                <tr>
+                                                    <td class="center">@i</td>
+                                                    <td>
+                                                        <a href="@item.FileName" title="@Html.Locale("click_to_download")" target="_blank">
+                                                            @item.ArticleFileDetail[SiteConfig.LanguageId].Description
+                                                        </a>
+                                                    </td>
+                                                    <td>
+                                                        <a href="@item.FileName" title="@Html.Locale("click_to_download")" target="_blank">
+                                                            @item.ArticleFileDetail[SiteConfig.LanguageId].Title
+                                                        </a>
+                                                    </td>
+                                                    <td class="center">
+                                                        <a href="@item.FileName" title="@Html.Locale("click_to_download")" target="_blank">
+                                                            @item.DateCreated.ToString("dd/MM/yyyy")
+                                                        </a>
+                                                    </td>
+                                                    <td class="center">
+                                                        <a href="@item.FileName" title="@Html.Locale("click_to_download")" target="_blank">
+                                                            @dl.ToString("0.00") MB
+                                                        </a>
+                                                    </td>
+                                                    <td class="center">
+                                                        <a href="@item.FileName" title="@Html.Locale("click_to_download")" target="_blank">
+                                                            @if (exarr.Length > 0)
+                                                            {
+                                                                <span>.@exarr[1].ToString()</span>
+                                                            }
+                                                        </a>
+                                                    </td>
+                                                </tr>
+
+                                                            i++;
+                                            }
+                                        </tbody>
+                                    </table>
+                                }
+                                else
+                                {
+                                    <strong>@Html.Locale("not_info")</strong>
+                                }
+
+                            </div>
+                            @*<span class="date">@item.Day</span>
+                                <div class="description">
+                                    @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, 50))
+                                </div>*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    @Html.Pager(new PagerOptions { VisibleItemCount = 5, ItemCount = Model.TotalItemCount, PageSize = Model.PageSize, FirstText = Html.Locale("text_first").ToHtmlString(), LastText = Html.Locale("text_last").ToHtmlString() }, null)
+}
+else
+{
+    <span>@Html.Locale("article_null")</span>
+
+}

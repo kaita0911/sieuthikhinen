@@ -1,0 +1,93 @@
+﻿@model VCMS.MVC4.Data.Cart
+@{
+    decimal total = 0;
+    decimal totaltam = 0;
+    decimal totalvat = 0;
+    int qty = 0;
+    //var timecho = Article.GetByTypeCode("TIMECHO", SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 10, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING).List;
+    //var timecho = (List<Article>)ViewBag.Timecho;
+    var timecho = Article.GetByTypeCode("TIMECHO", SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 10, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING, ArticleIncludeFlags.ARTICLE_DETAIL).List;
+
+}
+<h2 class="heading main-heading">Giỏ hàng của bạn</h2>
+<div class="cart-info hasImage">
+    @foreach (var item in Model.Items)
+    {
+        if (item.Article.Number >= item.Quantity || item.Article.Number == 0)
+        {
+            <div class="item-cart">
+                <div class="img">
+                    @Html.Image(item.Article.ImageUrl, new ImageOptions { Width = 90, Height = 90 }, new { alt = item.Article.ArticleName })
+                </div>
+                <div class="info-item-cart">
+                    <h3><a href="@Url.Action("Detail", "Article", new { id = item.Article.Id, code = item.Article.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.Article.ArticleName).ToLower() })" title="@item.Article.ArticleName" target="_blank">@item.Article.ArticleName</a></h3>
+                    <p class="qty">Số lượng: <span>@item.Quantity</span></p>
+                    @*<p>Đơn giá: <span class="numprice">@Html.Amount(item.UnitPrice)</span></p>*@
+                    <p class="ttinh"><span>@Html.Amount(item.Amount)</span></p>
+                    @if (item.Article.Number == 0)
+                    {
+                        var tie = timecho.FirstOrDefault(a => a.Id == item.Article.timeId);
+                        if (tie != null)
+                        {
+                            <p class="status">
+                                Thời gian giao hàng: <span>@tie.ArticleName</span>
+                            </p>
+                        }
+                    }
+                    else
+                    {
+                        <p class="status">Thời gian giao hàng:<span>Có sẵn</span></p>
+                    }
+                </div>
+            </div>
+        }
+        else
+        {
+            var sodu = item.Quantity - item.Article.Number;
+            var tie = timecho.FirstOrDefault(a => a.Id == item.Article.timeId);
+            
+            <div class="item-cart">
+                <div class="img">
+                    @Html.Image(item.Article.ImageUrl, new ImageOptions { Width = 90, Height = 90 }, new { alt = item.Article.ArticleName })
+                </div>
+                <div class="info-item-cart">
+                    <h3><a href="@Url.Action("Detail", "Article", new { id = item.Article.Id, code = item.Article.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.Article.ArticleName).ToLower() })" title="@item.Article.ArticleName" target="_blank">@item.Article.ArticleName</a></h3>
+                    <p class="qty">Số lượng: <span>@item.Article.Number</span></p>
+                    @*<p class="numprice">Đơn giá: <span>@Html.Amount(item.UnitPrice)</span></p>*@
+                    <p class="ttinh"><span>@Html.Amount(item.UnitPrice * (int)item.Article.Number)</span></p>
+                    <p class="status">Thời gian giao hàng:<span>Có sẵn</span></p>
+                </div>
+            </div>
+            <div class="item-cart">
+                <div class="img">
+                    @Html.Image(item.Article.ImageUrl, new ImageOptions { Width = 90, Height = 90 }, new { alt = item.Article.ArticleName })
+                </div>
+                <div class="info-item-cart">
+                    <h3><a href="@Url.Action("Detail", "Article", new { id = item.Article.Id, code = item.Article.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.Article.ArticleName).ToLower() })" title="@item.Article.ArticleName" target="_blank">@item.Article.ArticleName</a></h3>
+                    <p class="qty">Số lượng: <span>@sodu</span></p>
+                    @*<p class="numprice">Đơn giá: <span>@Html.Amount(item.UnitPrice)</span></p>*@
+                    <p class="ttinh"><span>@Html.Amount((int)sodu * item.UnitPrice)</span></p>
+                    
+                    @if (tie != null)
+                    {
+                    <p class="status">
+                        Thời gian giao hàng: <span>@tie.ArticleName</span>
+                    </p>
+                    }
+                </div>
+            </div>
+        }
+        totaltam = totaltam + item.Amount;
+        totalvat = totalvat + item.Amount * 10 / 100;
+        total = totaltam + totalvat;
+        qty += item.Quantity;
+
+    }
+    <div class="end-cart">
+        <p> @Html.Locale("cart_qty") <span>@qty</span></p>
+        <p>Tạm tính <span>@Html.Amount(totaltam)</span></p>
+        <p>VAT (10%) <span>@Html.Amount(totalvat)</span></p>
+        <p>Tổng tiền <span class="total">@Html.Amount(total)</span></p>
+    </div>
+
+</div>

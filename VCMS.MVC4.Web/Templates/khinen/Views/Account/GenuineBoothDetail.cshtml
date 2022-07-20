@@ -1,0 +1,73 @@
+﻿@model VCMS.MVC4.Data.UserProfile
+@{
+    Layout = "~/Templates/" + SiteConfig.SiteCode + "/Views/Shared/_LayoutAccount.cshtml";
+    ViewBag.Title = Html.Locale("account_list_genu_booth").ToHtmlString();
+    ViewBag.Breadcrumb = new BreadcrumbModel { Items = new List<BreadcrumbItem> { new BreadcrumbItem { Text = Html.Locale("account_list_genu_booth").ToHtmlString(), Url = null, IsLast = true } } };
+    var pageSize = 20;
+    if (Request["pageSize"] != null)
+    {
+        int.TryParse(Request["pageSize"], out pageSize);
+    }
+    var pageIndex = 1;
+    if (Request["pageIndex"] != null)
+    {
+        int.TryParse(Request["pageIndex"], out pageIndex);
+    }
+    ArticleSortOrder sortOrder = ArticleSortOrder.SORT_ORDER;
+    VCMS.MVC4.Data.SortDirection direction = VCMS.MVC4.Data.SortDirection.DESCENDING;
+    ArticleFlags flag = ArticleFlags.ACTIVE;
+
+    if (Request["sortorder"] != null)
+    {
+        sortOrder = (ArticleSortOrder)Enum.Parse(typeof(ArticleSortOrder), Request["sortorder"]);
+    }
+    if (Request["sortdirection"] != null)
+    {
+        direction = (VCMS.MVC4.Data.SortDirection)Enum.Parse(typeof(VCMS.MVC4.Data.SortDirection), Request["sortdirection"]);
+    }
+    if (Request["flag"] != null)
+    {
+        if (Request["flag"] == "all")
+        {
+            flag = ArticleFlags.ACTIVE;
+        }
+        else
+        {
+            flag = (ArticleFlags)Enum.Parse(typeof(ArticleFlags), Request["flag"]);
+        }
+    }
+    var cate_id = -1;
+    if(Request["cateId"] != null)
+    {
+        cate_id = Convert.ToInt32(Request["cateId"]);
+    }
+    var list_art = Article.GetByUser(Model.UserId, 2, SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, pageIndex, pageSize, sortOrder, direction);
+    if(cate_id > 0)
+    {
+        list_art = Article.GetByCategory(Model.UserId, cate_id, SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, pageIndex, pageSize, sortOrder, direction);
+    }
+}  
+<div class="genu-info-detail">
+    <div class="container">
+        @Html.Breadcrumb()
+        <div class="u-banner">
+            @if (Model.Banner != null)
+            {
+                @Html.Image(Model.Banner, new ImageOptions { Width = 1172, Height = 280, Mode = ImageMode.crop, Lazy = false }, new { alt = Model.UserProfileDetail[SiteConfig.LanguageId].Title })
+            }
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                @Html.Partial("_CategoryLeft")
+            </div>
+            <div class="col-md-9">
+                <h2 class="heading">
+                    @Model.UserProfileDetail[SiteConfig.LanguageId].Title
+                </h2>
+                <div class="content">
+                    @Html.Partial("_ListProduct", list_art)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

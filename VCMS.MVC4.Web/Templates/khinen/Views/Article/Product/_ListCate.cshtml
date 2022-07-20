@@ -1,0 +1,101 @@
+﻿@model List<Category>
+@if (Model.Count > 0)
+{
+    var temp = Article.GetByCategories(Model.Select(c => c.Id).ToArray(), SiteConfig.LanguageId, ArticleFlags.ACTIVE, 100, ArticleSortOrder.ARTICLE_NAME, VCMS.MVC4.Data.SortDirection.ASCENDING, ArticleIncludeFlags.ARTICLE_TYPE | ArticleIncludeFlags.DISCOUNTS | ArticleIncludeFlags.PRICES | ArticleIncludeFlags.PROPERTIES);
+    var type = ViewBag.Type != null ? ViewBag.Type as ArticleType : Model.FirstOrDefault().ArticleType;
+
+    <div class="box-product-list-cate box-products-home">
+        <div class="content">
+            @foreach (var sitem in Model.Where(c => !c.IsNew))
+            {
+                var lst = temp.Where(a => a.CurrentCategory.Id == sitem.Id).ToList();
+                if (lst.Count > 0)
+                {
+                    <div class="citem">
+                        <h3 class="c-header">
+                            <a class="left" href="@Url.Action("Detail", "Category", new {id=sitem.Id,code=sitem.ArticleType.UrlFriendly,title=Unichar.UnicodeStrings.UrlString(sitem.CategoryName) })">
+                                @sitem.CategoryName
+                            </a>
+                            @*<a class="right"></a>*@
+                        </h3>
+                    </div>
+                    @*<div class="owl-carousel is-active" data-plugin-options='{"items": 3, "singleItem": false, "autoPlay": true, "navigation": true, "pagination": false,"slideSpeed":1200,"addClassActive":true,"itemsDesktop": [1199, 3],"itemsDesktopSmall": [991, 3],"itemsTablet": [768, 2],"itemsMobile": [479, 1]}'>*@
+                    <div class="row">
+                        @foreach (var item in lst)
+                        {
+                            <center>
+                                <div class="col-lg-3 col-md-4 col-xs-6">
+                                    <div class="animated" data-animation="fadeInUp">
+                                        <div class="box-block box-product">
+                                            @if (item.IsNew)
+                                            {
+                                                <span class="new-product "></span>
+                                            }
+                                            @if (type.ShowImageInList)
+                                            {
+                                                <figure class="list-product">
+                                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName" data-tooltip="sticky-@item.Id">
+                                                        @Html.Image(item.ImageUrl, new ImageOptions { Width = 220, Height = 220, Watermark = SiteConfig.Watermark, Mode = ImageMode.pad, Lazy = false }, new { alt = item.ArticleName })
+                                                    </a>
+
+                                                </figure>
+                                            }
+
+                                            <div class="meta">
+                                                @if (type.ShowDescription)
+                                                {
+                                                    <a class="ov" href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                                                    </a>
+                                                }
+                                                <h3>
+                                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title =item.UrlFriendly })" title="@item.ArticleName">@item.ArticleName</a>
+                                                </h3>
+                                                @if (type.HasPrice)
+                                                {
+                                                    <div class="price-all">
+                                                        @if (item.DiscountPrice > 0)
+                                                        {
+                                                            <span class="price">@Html.DiscountPrice(item.ItemPrice)</span>
+                                                            <span class="price-old">@Html.Price(item.ItemPrice)</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="price">@Html.Price(item.ItemPrice)</span>
+                                                        }
+                                                    </div>
+                                                }
+                                                @*<div class="as">
+                                                        @Html.Raw(item.ShortDescription)
+                                                    </div>*@
+
+
+                                                @if (type.ShowActionLink)
+                                                {
+                                                    <div class="action">
+                                                        @if (item.CheckCart)
+                                                        {
+                                                            <a class="cart" href="@Url.Action("AddToCart", "ShoppingCart", new { id=item.Id})" rel="nofollow">@Html.Locale("cart_add")</a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <a href="@Url.Action("Contact", "Home", new { id=item.Id})" class="cart" rel="nofollow">@Html.Locale("cart_add")</a>
+                                                        }
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </center>
+                        }
+                    </div>
+                    @*</div>*@
+                }
+            }
+        </div>
+    </div>
+}
+else
+{
+    <span>@Html.Locale("article_null")</span>
+}

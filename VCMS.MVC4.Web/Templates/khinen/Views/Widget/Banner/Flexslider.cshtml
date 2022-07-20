@@ -1,0 +1,112 @@
+﻿<link rel="stylesheet" href="~/Content/Plugin/flexslider/StyleSheet.css" />
+<script type='text/javascript' src='http://gboil.vn/wp-includes/js/jquery/jquery.js?ver=1.12.4'></script>
+<script type ='text/javascript' src="~/Content/Plugin/flexslider/flexslider.js">
+    </script>
+    @model Widget
+    @{
+        var article = Article.GetByType((int)Model.ArticleTypeId, SiteConfig.SiteId, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection, Model.Includes);
+        if (article.List.Count > 0)
+        {
+            <section class="top_content header-166114 clearfix">
+                <div class="flex-container">
+                    <div class="flexslider" id="slider-643274">
+                        <ul class="slides">
+                            <li class="stretch" data-sliderminheight="500px" data-flexfirstslide="true">
+                                <div class="slide_data">
+                                    <img src="http://gboil.vn/wp-content/uploads/2016/05/slideshow_1.png" alt="" title="" />
+                                    <div class="flex-caption left">
+                                        <div class="caption-holder">
+                                            <div class="caption-one">CUNG CẤP GIẢI PHÁP TỐT NHẤT CHO KHÁCH HÀNG</div>
+                                            <div class="caption-text">Bằng cách thiết kế các chất bôi trơn và các dịch vụ phù hợp theo yêu cầu của bạn, chúng tôi có thể giúp bạn giảm đáng kể tổng chi phí vận hành và các thiết bị vận tải.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="stretch">
+                                <div class="slide_data">
+                                    <img src="http://gboil.vn/wp-content/uploads/2016/05/slideshow_2.png" alt="" title="" />
+                                    <div class="flex-caption left">
+                                        <div class="caption-holder">
+                                            <div class="caption-one">NHÀ SẢN XUẤT DẦU NHỜN HÀNG ĐẦU</div>
+                                            <div class="caption-text">Nhà sản xuất, phân phối hàng đầu các sản phẩm dầu nhờn chất lượng cao dành cho Ô tô, xe máy, xe tải, tàu thủy và dầu nhớt công nghiệp.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="stretch">
+                                <div class="slide_data">
+                                    <img src="http://gboil.vn/wp-content/uploads/2016/05/slideshow_3.png" alt="" title="" />
+                                    <div class="flex-caption right">
+                                        <div class="caption-holder">
+                                            <div class="caption-one">TẤT CẢ VÌ ĐỘNG CƠ CỦA BẠN</div>
+                                            <div class="caption-text">Bảo vệ động cơ, giúp giảm chi phí vận hành, nâng cao độ tin cậy</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="stretch">
+                                <div class="slide_data">
+                                    <img src="http://gboil.vn/wp-content/uploads/2016/05/slideshow_4.png" alt="" title="" />
+                                    <div class="flex-caption right">
+                                        <div class="caption-holder">
+                                            <div class="caption-one">SỰ PHÁT TRIỂN CỦA DẦU NHỚT ĐỘNG CƠ</div>
+                                            <div class="caption-text">GB Oil kết hợp chặt chẽ với thợ máy, đội ngũ bảo dưỡng và nhà sản xuất thiết bị để phát triển các giải pháp bôi trơn tiên tiến và cung cấp hiệu năng vượt trội.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="stretch">
+                                <div class="slide_data">
+                                    <img src="http://gboil.vn/wp-content/uploads/2016/05/slideshow_5.png" alt="" title="" />
+                                    <div class="flex-caption left">
+                                        <div class="caption-holder">
+                                            <div class="caption-one">CHUYÊN MÔN CAO, CẢI TIẾN LIÊN TỤC</div>
+                                            <div class="caption-text">Sản phẩm GB Oil liên tục đổi mới, sáng tạo và tạo mới đáp ứng yêu cầu nghiêm ngặt của xe đua, xe có số dặm cao, tổng hợp và dầu nhớt thông thường.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="stretch">
+                                <div class="slide_data">
+                                    <img src="http://gboil.vn/wp-content/uploads/2016/05/slideshow_6.png" alt="" title="" />
+                                    <div class="flex-caption center">
+                                        <div class="caption-holder">
+                                            <div class="caption-one">SẢN PHẨM CÓ HIỆU SUẤT CAO</div>
+                                            <div class="caption-text">Nhóm sản phẩm dầu nhớt GB Oil được biết đến thông qua hiệu năng, sự đổi mới và tính chuyên môn cao. Được chứng nhận bởi các hãng sản xuất động cơ tiên tiến nhất trên toàn thế giới. Nhiều năm qua, các sản phẩm của GB Oil đáp ứng ngoài mong đợi của khách hàng bao gồm cá nhân và doanh nghiệp.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="flex-nav-container"></div>
+                </div>
+
+                <script type="text/javascript">
+                    /* <![CDATA[ */
+                    // Flex Slider and Helper Functions
+                    jQuery(window).load(function () {
+                        jQuery("#slider-643274").flexslider({
+                            animation: "slide",
+                            controlsContainer: "#slider-643274 .flex-nav-container",
+                            slideshow: true,
+                            slideshowSpeed: 8 * 1000,
+                            smoothHeight: true,
+                            directionNav: true,
+                            controlNav: false,
+                            prevText: "<span class=\"icon-left-open\"></span>",
+                            nextText: "<span class=\"icon-right-open\"></span>",
+                            start: function (slider) {
+                                slider.parents(".flex-container:eq(0)").removeAttr("style");
+                                jQuery.waypoints('refresh');
+                            },
+                            after: function () {
+                                jQuery.waypoints('refresh');
+                            },
+                        });
+                    });
+                    /* ]]> */
+                </script>
+            </section>
+        }
+    }

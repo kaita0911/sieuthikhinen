@@ -1,0 +1,126 @@
+﻿
+
+@model Widget
+@{
+
+    var article = Article.GetByType(Model.ArticleTypeId.Value, SiteConfig.SiteId, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection, Model.Includes);
+    var type = VCMS.MVC4.Web.PageContext.GetArticleType(Model.ArticleTypeId.Value, SiteConfig.SiteId, SiteConfig.LanguageId);
+    //var cates = Category.GetByType(type.Id, SiteConfig.SiteId, SiteConfig.LanguageId, 0, CategoryFlags.MOSTVIEW, 0);
+    //var articles = Article.GetByCategories(cates.Select(c => c.Id).ToArray(), SiteConfig.LanguageId, Model.Attribute, Model.Number, Model.SortOrder, Model.SortDirection, Model.Includes);
+    var i = 1;
+    
+    if (article.List.Count > 0)
+            
+    {
+        var j = 0; var itemrow = 2;
+        bool most = Model.Attribute == ArticleFlags.HOT ? true : false;
+        
+        
+        <div class="box-products-home @(most?"most":"") animated" data-animation="fadeInUp">
+            <div class="container">
+                <div class="box-title">
+                    <span><h2 class="heading main-heading">@*<span>@type.Name</span>*@@Model.Title </h2></span>
+                    
+                    @*@if (cates.Count > 0)
+                    {
+                        <div class="list-category">
+                            <a href="javascript:void(0)">@Html.Locale("all")</a>
+                            @foreach (var sub in cates)
+                            {
+                                <a class="item" href="@Url.Action("Detail", "Category", new { id = sub.Id, code = sub.ArticleType.UrlFriendly, title = sub.UrlFriendly })" title="@sub.CategoryName">@sub.CategoryName</a>
+                            }
+                            <a href="@Url.Action("Index", "ArticleType", new { code = article.List.FirstOrDefault().ArticleType.UrlFriendly })" title="" class="view-all">
+                                @Html.Locale("view_all")
+                            </a>
+                        </div>
+                    }*@
+                </div>
+
+                <div class="content-background">
+                   
+                        <div class="row">
+                           
+                                <div class="owl-carousel" data-plugin-options='{"items": 1, "singleItem": false, "autoPlay": true, "navigation": true, "pagination": false,"slideSpeed":400,"addClassActive":true,"itemsDesktop": [1199, 1],"itemsDesktopSmall": [991, 1],"itemsTablet": [768, 1],"itemsMobile": [530, 1]}' data-snap-ignore="true">
+                                    @foreach (var item in article.List)
+                                {
+                                     if (j % itemrow == 0)
+                                    {
+                                        @:<div class="item">
+                                        
+                                    }
+                                    <center>
+                                        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6">
+                                            <div class="box-block box-product animated" data-animation="fadeInUp">
+                                                @if (item.IsNew)
+                                                {
+                                                    <span class="new-product"></span>
+                                                }
+                                                @if (!Model.HiddenImage)
+                                                {
+                                                    <figure>
+                                                        <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                                                            @Html.Image(item.ImageUrl, new ImageOptions { Width = 273, Height = 243, Watermark = SiteConfig.Watermark, Mode = ImageMode.pad, Lazy = false }, new { alt = item.ArticleName, @class = (Model.LazyOwl ? "owl" : "") })
+                                                        </a>
+                                                    </figure>
+                                                }
+
+                                                <div class="meta">
+                                                    <h3>
+                                                        <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">@item.ArticleName</a>
+                                                    </h3>
+                                                    @if (Model.ShowDescription)
+                                                    {
+                                                        <div class="as">
+                                                            @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, 20))
+                                                        </div>
+                                                    }
+                                                </div>
+
+                                                @if (Model.ShowViewMore)
+                                                {
+                                                    <div class="view-detail">
+                                                        <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName"><i class="fa fa-search-plus" aria-hidden="true"></i></a>
+                                                        <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName" class="more">@Html.Locale("More")<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+                                                    </div>
+                                                }
+
+                                                @if (Model.ShowButton)
+                                                {
+                                                    <div class="ac">
+                                                        @if (item.CheckCart && SiteConfig.SiteInfo.HasShoppingCart)
+                                                        {
+
+                                                            <a href="#" class="cart @(item.Price > 0 ? "addToCart" : "")" data-submit="@Url.Action("AddToCart", "ShoppingCart", new { id=item.Id})" data-id="@item.Id" data-load="@Url.Action("CartList","ShoppingCart")">@Html.Locale("addcart")</a>
+
+                                                        }
+                                                        else
+                                                        {
+                                                            <a href="@Url.Action("Contact", "Home", new { id=item.Id})" class="contact">@Html.Locale("addcart")</a>
+                                                        }
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+
+                                    </center>
+                                        if (j++ % itemrow == itemrow - 1 || j == article.List.Count)
+                                        {
+                                            @:</div>
+                                        }
+                                        i++;
+
+
+                            }
+                                </div>
+                                   
+
+                        </div>
+
+                </div>
+            </div>
+           
+            </div>
+    
+    
+    }
+}

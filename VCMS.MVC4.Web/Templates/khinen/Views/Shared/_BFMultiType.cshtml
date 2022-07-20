@@ -1,0 +1,83 @@
+﻿@using System.Data.Entity;
+@using (DataContext db = new DataContext())
+{
+    var art = Article.GetByTypeCode("PROJECT", SiteConfig.LanguageId, ArticleFlags.NEW, 1, 1, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.DESCENDING).List.FirstOrDefault();
+    var art2 = Article.GetByTypeCode("PHOTOS", SiteConfig.LanguageId, ArticleFlags.NEW, 1, 1, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.DESCENDING).List.FirstOrDefault();
+    var art3 = Article.GetByTypeCode("LIBRARY", SiteConfig.LanguageId, ArticleFlags.NEW, 1, 1, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.DESCENDING).List.FirstOrDefault();
+
+    <div class="box-home box-multi-type">
+        <div class="container">
+            <div class="content">
+                <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                        <div class="items">
+                            @if (art != null)
+                            {
+                                if (art.ImageUrl != null)
+                                {
+                                    <figure>
+                                        <a href="@Url.Action("Detail", "Article", new { id = art.Id, code = art.ArticleType.UrlFriendly, title = art.UrlFriendly })" title="@art.ArticleName">
+                                            @Html.Image(art.ImageUrl, new ImageOptions { Width = 355, Height = 355, Mode = ImageMode.crop, Lazy = false }, new { alt = art.ArticleName })
+                                        </a>
+                                    </figure>
+                                }
+                                <div class="name">
+                                    <a href="@Url.Action("Detail", "Article", new { id = art.Id, code = art.ArticleType.UrlFriendly, title = art.UrlFriendly })" title="@art.ArticleName">
+                                     Công trình tiêu biểu
+                                    </a>
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                        <div class="items">
+                            @if (art2 != null)
+                            {
+                                if (art2.ImageUrl != null)
+                                {
+                                    <figure>
+                                        <a href="@Url.Action("Detail", "Article", new { id = art2.Id, code = art2.ArticleType.UrlFriendly, title = art2.UrlFriendly })" title="@art2.ArticleName">
+                                            @Html.Image(art2.ImageUrl, new ImageOptions { Width = 355, Height = 355, Mode = ImageMode.crop, Lazy = false }, new { alt = art2.ArticleName })
+                                        </a>
+                                    </figure>
+                                }
+                                <div class="name">
+                                    <a href="@Url.Action("Detail", "Article", new { id = art2.Id, code = art2.ArticleType.UrlFriendly, title = art2.UrlFriendly })" title="@art2.ArticleName">
+                                        Hình ảnh sản xuất
+                                    </a>
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                        <div class="items">
+                            @if (art3 != null)
+                            {
+                                if (art3.ImageUrl != null)
+                                {
+                                    <figure>
+                                        <a href="@Url.Action("Detail", "Article", new { id = art3.Id, code = art3.ArticleType.UrlFriendly, title = art3.UrlFriendly })" title="@art3.ArticleName">
+                                            @Html.Image(art3.ImageUrl, new ImageOptions { Width = 355, Height = 355, Mode = ImageMode.crop, Lazy = false }, new { alt = art3.ArticleName })
+                                        </a>
+                                    </figure>
+                                }
+                                <div class="name">
+                                    <a href="@Url.Action("Detail", "Article", new { id = art3.Id, code = art3.ArticleType.UrlFriendly, title = art3.UrlFriendly })" title="@art3.ArticleName">
+                                        Chứng nhận chất lượng
+                                    </a>
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+

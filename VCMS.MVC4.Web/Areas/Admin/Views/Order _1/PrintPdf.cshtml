@@ -1,0 +1,341 @@
+﻿@model Order
+@{
+    Layout = null;
+    var db = new DataContext();
+    var user = db.Users.FirstOrDefault(a => a.UserId == Model.CustomerId);
+    decimal total = 0;
+    var i = 1;
+    decimal qyt = 0;
+}
+<style>
+    body {
+        font-family: Arial;
+        font-size: 10px;
+        color: #000;
+    }
+
+    .pull-left {
+        float: left !important;
+    }
+
+    .pull-right {
+        float: right !important;
+    }
+
+    .container {
+        width: 697px;
+    }
+
+    .padding-right-15 {
+        padding-right: 15px;
+    }
+
+    .width-174 {
+        width: 174px;
+        float: left;
+    }
+
+    .width-300 {
+        width: 300px;
+        float: left;
+    }
+
+    .width-348 {
+        width: 348px;
+        float: left;
+    }
+
+    .width-396 {
+        width: 396px;
+        float: left;
+    }
+
+    .row {
+        width: 100%;
+    }
+
+    .text-left {
+        text-align: left;
+    }
+
+    .text-right {
+        text-align: right;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .text-justify {
+        text-align: justify;
+    }
+
+    .border-top-1 {
+        border-top: 1px solid #ddd;
+    }
+
+    .table-print {
+        width: 100%;
+        font-size: 12px;
+        margin-top: 50px;
+    }
+
+        .table-print > thead > tr > th,
+        .table-print > tbody > tr > th,
+        .table-print > tfoot > tr > th,
+        .table-print > thead > tr > td,
+        .table-print > tbody > tr > td,
+        .table-print > tfoot > tr > td {
+            padding: 8px;
+            background: #fff;
+            color: #3a3633;
+            border: 0;
+            font-size: 11px;
+        }
+
+        .table-print > thead > tr > th {
+            border-bottom: 1px solid #ddd;
+            border-top: 1px solid #ddd;
+            border-color: #ddd;
+            display: block;
+            clear: both;
+        }
+
+    .label {
+        width: 100%;
+        display: block;
+        white-space: nowrap;
+    }
+
+    .clearfix:after,
+    .container:after,
+    .row:after {
+        clear: both;
+    }
+
+    .fs-10 {
+        font-size: 10px;
+    }
+
+    .fs-11 {
+        font-size: 11px;
+    }
+
+    .fs-12 {
+        font-size: 12px;
+    }
+
+    .logo {
+        margin-bottom: 20px;
+    }
+
+    h4 {
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+
+        h4 > span {
+            display: block;
+            border-bottom: 1px solid #ddd;
+        }
+
+
+    .order-customner-info > h4 {
+        font-size: 10px;
+        font-weight: normal;
+    }
+
+        .order-customner-info > h4 > span {
+            font-size: 10px;
+            font-weight: normal;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 4px;
+        }
+
+    .table-order {
+        margin-top: 10px;
+    }
+
+        .table-order > thead > tr > th {
+            border: 1px solid #808080;
+            font-size: 12px;
+            padding: 10px 10px 0 10px;
+        }
+
+            .table-order > thead > tr > th div {
+                width: 147px;
+                float: left;
+                font-size: 11px;
+                font-weight: normal;
+                padding-bottom: 10px;
+            }
+
+    .margin-top-25 {
+        margin-top: 25px;
+    }
+</style>
+<body class="print fs-12">
+    <div class="container">
+        <div class="logo">
+            <img src="@Url.Content(Request.Url.Scheme + System.Uri.SchemeDelimiter + Request.Url.Host + (Request.Url.IsDefaultPort ? "" : ":" + Request.Url.Port) + SiteConfig.Image("logo-print.png"))" alt="logo" />
+        </div>
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="width-348">
+                <div class="order-customner-info fs-11">
+                    <h4><span>Thông tin khách hàng</span></h4>
+                    @if (user != null)
+                    {
+                        <div>[N]: @user.DisplayName</div>
+                        <div>[E]: @user.Email</div>
+                        <div>[P]: @user.Phone</div>
+                        <div>[A]: @user.Address</div>
+                        <div>[C]: @user.NameCity</div>
+                        <div>[S]: @user.NameState</div>
+                    }
+                    else
+                    {
+                        <div>[N]: @Model.FullName</div>
+                        <div>[E]: @Model.Email</div>
+                        <div>[P]: @Model.Phone</div>
+                        <div>[A]: @Model.Address</div>
+                        <div>[C]: @Model.NameCity</div>
+                        <div>[S]: @Model.NameState</div>
+                    }
+                </div>
+            </div>
+            <div class="width-348">
+                <table cellspacing="0" border="0" class="table-order width-348">
+                    <thead class="header">
+                        <tr class="header">
+                            <th class="no-boder-right">
+                                <div>Mã hóa đơn:</div>
+                                <div>#@Model.OrderNumber</div>
+
+                                <div>Ngày đặt hàng:</div>
+                                <div>@Model.DateCreated</div>
+
+                                <div>Ngày giao hàng:</div>
+                                <div>@Model.DateDelivery.Value.ToShortDateString(), @Model.TimeShipping</div>
+
+                                <div>Số lượng:</div>
+                                <div>@Model.TotalQty</div>
+
+                                <div>Thành tiền:</div>
+                                <div>@Html.Amount(Model.TotalAmount + Model.AmountShipping)</div>
+
+                                @if (Model.HasPayment)
+                                {
+                                    <div>Hình thức thanh toán:</div>
+                                    <div>@Html.Locale("checkout_payment_bank")</div>
+                                }
+                            </th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <table class="table-print table tb-order" border="0" cellspacing="0">
+            <thead class="header">
+                <tr class="header">
+                    <th class="">STT</th>
+                    <th class="">Sản phẩm</th>
+                    <th class="text-center nowarp">Số lượng</th>
+                    <th class=" text-right nowarp">Đơn giá</th>
+                    <th class="text-right nowarp">Thành tiền</th>
+                </tr>
+            </thead>
+            <tbody class="items">
+                @foreach (var item in Model.OrderLines)
+                {
+                    <tr class="item">
+                        <td class="check">@i</td>
+                        <td class="title">@item.ProductName</td>
+                        <td class="check text-center nowarp">@item.Qty.ToString("#,##0")</td>
+                        <td class="check text-right nowarp">@Html.Amount(item.UnitPrice)</td>
+                        <td class="check text-right nowarp">@Html.Amount(item.Amount)</td>
+                    </tr>
+                    qyt += item.Qty;
+                    total += item.Amount;
+                    i++;
+                }
+            </tbody>
+            <tfoot class="">
+                @if (SiteConfig.SiteInfo.HasShoppingCart && SiteConfig.SiteInfo.AmountShippingToFree > 0)
+                {
+                    <tr>
+                        <td class="border-top-1 total text-right" colspan="4">@Html.Locale("cart_total"):</td>
+                        <td class="border-top-1 text-right">@Html.Amount(total)</td>
+                    </tr>
+                    <tr>
+                        <td class="total text-right" colspan="4">Phí vận chuyển:</td>
+                        <td class="text-right">
+                            @if (total >= SiteConfig.SiteInfo.AmountShippingToFree)
+                            {
+                                <span>@Html.Locale("cart_shipping_amount_free")</span>
+                            }
+                            else
+                            {
+                                <span>@Html.Amount(Model.AmountShipping)</span>
+                            }
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td class="total text-right" colspan="4">@Html.Locale("cart_qty"):</td>
+                    <td class="text-right">@Model.TotalQty</td>
+                </tr>
+                <tr>
+                    <td class="total text-right" colspan="4">@Html.Locale("cart_total_amount")</td>
+                    <td class="text-right nowarp">@Html.Amount(Model.TotalAmount + Model.AmountShipping)</td>
+                </tr>
+            </tfoot>
+        </table>
+        <div class="clearfix"></div>
+        @if (user != null)
+        {
+            <div class="order-shipper-info">
+                <h4 class="col-xs-12"><span>Địa chỉ giao hàng:</span></h4>
+                <div class="width-300">Tên: @user.DisplayName</div>
+                <div class="width-396">Địa chỉ: @user.Address</div>
+                <div class="width-300">Email: @user.Email</div>
+                <div class="width-396">Tỉnh/Thành phố: @user.NameCity</div>
+                <div class="width-300">Điện thoại: @user.Phone</div>
+                <div class="width-396">Quận/Huyện: @user.NameState</div>
+            </div>
+        }
+        else
+        {
+            <div class="order-shipper-info">
+                <h4 class="col-xs-12"><span>Địa chỉ giao hàng:</span></h4>
+                <div class="width-300">Tên: @Model.FullName</div>
+                <div class="width-396">Địa chỉ: @Model.Address</div>
+                <div class="width-300">Email: @Model.Email</div>
+                <div class="width-396">Tỉnh/Thành phố: @Model.NameCity</div>
+                <div class="width-300">Điện thoại: @Model.Phone</div>
+                <div class="width-396">Quận/Huyện: @Model.NameState</div>
+            </div>
+        }
+        <div class="clearfix"></div>
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <div class="width-697 margin-top-25">
+            <div class="width-348 text-left">
+                <div>
+                    .......... Ngày .... Tháng .... Năm ......
+                </div>
+                <div style="padding-left: 60px;">Khách hàng</div>
+            </div>
+            <div class="width-348 text-right">
+                <div>
+                    .......... Ngày .... Tháng .... Năm ......
+                </div>
+                <div style="padding-right: 60px;">Salevn.com</div>
+            </div>
+        </div>
+    </div>
+</body>

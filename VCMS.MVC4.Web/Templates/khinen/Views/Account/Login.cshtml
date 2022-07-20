@@ -1,0 +1,83 @@
+﻿@model LoginModel
+@{
+    ViewBag.Title = Html.Locale("account_login").ToHtmlString();
+    ViewBag.Breadcrumb = new BreadcrumbModel { Items = new List<BreadcrumbItem> { new BreadcrumbItem { Text = Html.Locale("account_login").ToHtmlString(), Url = null, IsLast = true } } };
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("returnUrl", new { returnUrl = ViewBag.ReturnUrl })
+    <div class="page-account register-s">
+        <div class="left">
+            <div class="heading">
+                <a href="@Url.Action("Register", "Account")">@Html.Locale("create_account")</a>
+                <a href="" class="active">@Html.Locale("account_login")</a>
+            </div>
+            <div class="content">
+                <h1>@Html.Locale("account_login")</h1>
+                <span class="field-validation-error @(ViewBag.Error != null && ViewBag.Error == 1 ? "" : "hidden")">@Html.Locale("account_login_error")!</span>
+                <div class="form-group required">
+                    <label>@Html.Locale("account"):</label>
+                    <div class="ctn">
+                        @Html.TextBoxFor(model => model.UserName, new { @class = "form-control", placeholder = Html.Locale("Email đăng ký").ToHtmlString(), type = "email" })
+                        @Html.ValidationMessageFor(model => model.UserName, Html.Locale("account_error_username").ToHtmlString())
+                    </div>
+                </div>
+                <div class="form-group required">
+                    <label>@Html.Locale("account_password"):</label>
+                    <div class="ctn">
+                        @Html.TextBoxFor(model => model.Password, new { @class = "form-control", placeholder = Html.Locale("account_password").ToHtmlString(), type = "password" })
+                        @Html.ValidationMessageFor(model => model.Password, Html.Locale("account_login_error_password").ToHtmlString())
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label></label>
+                    <div class="ctn">
+                        <a href="@Url.Action("ForgotPassword","Account")" title="@Html.Locale("account_forgot_password")" class="forgot-password">@Html.Locale("account_forgot_password")?</a>
+                        <label class="checkbox" style="display:none">@Html.CheckBoxFor(model => model.RememberMe)<i></i> @Html.Locale("account_remember")</label>
+                    </div>
+                </div>
+                <div>
+                    <button class="btn btn-continue btn-next" type="submit">@Html.Locale("account_login")</button>
+                </div>
+                @*@Html.Partial("_ExternalLogin")*@
+            </div>
+        </div>
+        @*<div class="right">
+            @Html.Image(SiteConfig.Image("image_register.jpg"), new ImageOptions { Width = 371, Height = 450, Lazy = false }, new { alt = SiteConfig.SiteInfo.Title })
+        </div>*@
+    </div>
+}
+@*<div class="row">
+            <div class="col-md-8 col-sm-12 col-xs-12 col-md-offset-2">
+                <fieldset class="account">
+                    <legend class="title">
+                        @Html.Locale("account_is_customer_salevn")
+                    </legend>
+                    <span class="field-validation-error @(ViewBag.Error != null && ViewBag.Error == 1 ? "" : "hidden")">@Html.Locale("account_login_error")!</span>
+                    <div class="form-group required">
+                        <label>@Html.Locale("account"):</label>
+                        @Html.TextBoxFor(model => model.UserName, new { @class = "form-control", placeholder = Html.Locale("Email đăng ký").ToHtmlString(), type = "email" })
+                        @Html.ValidationMessageFor(model => model.UserName, Html.Locale("account_error_username").ToHtmlString())
+                    </div>
+                    <div class="form-group required">
+                        <label>@Html.Locale("account_password"):</label>
+                        @Html.TextBoxFor(model => model.Password, new { @class = "form-control", placeholder = Html.Locale("account_password").ToHtmlString(), type = "password" })
+                        @Html.ValidationMessageFor(model => model.Password, Html.Locale("account_login_error_password").ToHtmlString())
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox">@Html.CheckBoxFor(model => model.RememberMe)<i></i> @Html.Locale("account_remember")</label>
+                    </div>
+                    <div class="form-group">
+
+                    </div>
+                    <button class="btn btn-continue btn-next" type="submit">@Html.Locale("account_login")</button> <a href="@Url.Action("ForgotPassword","Account")" title="@Html.Locale("account_forgot_password")" class="forgot-password">@Html.Locale("account_forgot_password")</a>
+                </fieldset>
+            </div>
+        </div>
+    }*@
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+}

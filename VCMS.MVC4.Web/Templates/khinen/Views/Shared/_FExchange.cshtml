@@ -1,0 +1,22 @@
+﻿<div class="box-footer f-exchange">
+    <h2 class="heading">
+        Tỷ giá
+    </h2>
+    <div class="content">
+        <div id='exchange'>
+        </div>
+    </div>
+</div>
+<script src='http://utils.viennam.com/home/exchange'></script>
+<script>
+    var arr = ["AUD", "CAD", "CHF","EUR","GBP","HKD","JPY","SGD","USD"];
+    $(function () { $("#exchange").exchange(arr) })
+
+    
+</script>
+<script>
+    $(document).ready(function () {
+        $(".exchange-table tr.header td").remove();
+        $(".exchange-table tr.header").append("<td>ISO</td><td>Mua vào</td><td>Bán ra</td>");
+    });
+</script>

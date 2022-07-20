@@ -1,0 +1,47 @@
+﻿@using (DataContext db = new DataContext())
+{
+    var articleType = db.ArticleTypes.FirstOrDefault(a => a.Code == "SUPPORT");
+    if (articleType != null)
+    {
+        var lst = Article.GetByType(articleType.Id, SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 10, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING);
+        <div class="f-support">
+            <h3 class="header">Hỗ trợ trực tuyến</h3>
+            <div class="content">
+                <div class="hotline">
+                    <a class="h-header"><span>Hotline: </span></a>
+                    <a class="h-ctn" href="callto:0942349909"><span>094.234.9909</span></a>
+                </div>
+                @foreach (var item in lst.List)
+                {
+                    //var yahoo = item.PropertyValues.FirstOrDefault(pv => pv.Property.Code.Equals("Yahoo", StringComparison.OrdinalIgnoreCase));
+                    var skype = item.PropertyValues.FirstOrDefault(pv => pv.Property.Code.Equals("SKYPE", StringComparison.OrdinalIgnoreCase));
+                    var viber = item.PropertyValues.FirstOrDefault(pv => pv.Property.Code.Equals("Viber", StringComparison.OrdinalIgnoreCase));
+                    var zalo = item.PropertyValues.FirstOrDefault(pv => pv.Property.Code.Equals("Zalo", StringComparison.OrdinalIgnoreCase));
+                    <div class="items">
+                        <div class="name">
+                            <span>@item.ArticleName</span>
+                        </div>
+                        <div class="nick">
+                            @if (!string.IsNullOrWhiteSpace(skype.Value))
+                            {
+                                <a href="skype:@skype.Value?chat" class="skype">
+                                    <img src="@Url.Content("~/Templates/" + SiteConfig.SiteCode + "/content/images/icon-skype.png")" />
+                                </a>
+                            }
+                            <a title="@viber.Value" href="callto:0904151551"> /Viber</a>
+                            <a title="@zalo.Value" href="callto:0942349909"> /Zalo</a>
+                            @*@if (!string.IsNullOrEmpty(yahoo.Value))
+                            {
+                                <a href="ymsgr:sendIM?@yahoo.Value">
+                                    <img src="http://opi.yahoo.com/online?u=@yahoo.Value&m=g&t=1" />
+                                </a>
+                            }*@
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+}
+
+

@@ -1,0 +1,78 @@
+﻿@model ArticlePropertyValue
+@{
+    ViewBag.Title = "Create";
+    var multilang = (bool)ViewBag.MultiLang;
+    ViewBag.Breadcrumb = new BreadcrumbModel()
+    {
+        Items = new List<BreadcrumbItem>()
+        {
+             new BreadcrumbItem(){Url = Url.Action("Index","Home"), Text="Home", IsFirst=true},
+            new BreadcrumbItem(){Url = null, Text="Thêm mới giá trị thuộc tính", IsLast=true},
+        }
+    };
+}
+<h4>@ViewBag.PropertyName</h4>
+<div class="form">
+    @using (Html.BeginForm(null, null, new { artId = Request["artId"] }, FormMethod.Post, new { id = "article-form", enctype = "multipart/form-data" }))
+    {
+        @Html.ValidationSummary(true)
+        <div class="clear-fix">
+            <div class="left width-70">
+                @if (multilang)
+                {
+                    <div id="tabs">
+                        <ul class="nav nav-tabs" role="tablist" id="myTab">
+                            @foreach (var l in SiteConfig.Languages)
+                            {
+                                <li><a href="#tabs-@l.Id" role="tab" data-toggle="tab">@l.DisplayName</a></li>
+                            }
+                        </ul>
+                        <div class="tab-content">
+                            @foreach (var l in SiteConfig.Languages)
+                            {
+                                <div id="tabs-@l.Id" class="tab-pane">
+                                    <div class="editor-label">
+                                        @Html.Label("Giá trị")
+                                    </div>
+                                    <div class="editor-field">
+                                        @Html.TextBox("txtValue_" + l.Id, string.Empty, new { name = "txtValue_" + l.Id, data_auto_copy = "true" })
+                                        @Html.ValidationMessage("txtValue_" + l.Id, "Giá trị không được trống và không dài quá 200 ký tự")
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="editor-label">
+                        @Html.Label("Giá trị")
+                    </div>
+                    <div class="editor-field">
+                        @Html.TextBox("txtValue_1", string.Empty, new { name = "txtValue_1" })
+                        @Html.ValidationMessage("txtValue_1", "Giá trị không được trống và không dài quá 200 ký tự")
+                    </div>
+                }
+
+            </div>
+        </div>
+        <div class="toolbar">
+            <span class="button">
+                <button type="submit" class="btn save"><i class="fa fa-save"></i> Save</button>
+            </span>
+            <span class="btn back">
+                <a href="@Url.Action("Index", null, new { propertyId = Request["propertyId"], articleId = Request["articleId"] })">
+                    <i class="fa fa-mail-reply"></i> <span>Trở về</span>
+                </a>
+            </span>
+        </div>
+    }
+</div>
+<script>
+    $(".nav-tabs li:first").addClass("active");
+    $(".tab-content .tab-pane:first").addClass("active");
+    $(function () {
+        $("input[data-auto-copy=true]").autoCopy();
+    });
+</script>
+

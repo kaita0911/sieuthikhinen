@@ -1,0 +1,47 @@
+﻿@*<script src="http://platform.tumblr.com/v1/share.js"></script>*@
+<script src="https://sp.zalo.me/plugins/sdk.js"></script>
+
+<div class="share-article">
+    <div class="item facebook">
+        <a href="#" id="facebook" title="Chía sẻ lên Facebook">
+            <i class="fa fa-facebook"></i> <span>Facebook</span>
+        </a>
+    </div>
+    <div class="item twitter">
+        <a href="#" id="twitter" title="Chía sẻ lên Twitter">
+            <i class="fa fa-twitter"></i> <span>Twitter</span>
+        </a>
+    </div>
+    @*<div class="item">
+            <a id="tumblr" target="_blank" href="http://Tumblr.com/widgets/share/tool?canonicalUrl=@HttpContext.Current.Request.Url.AbsoluteUri">
+                <i class="fa fa-tumblr"></i> <span>Tumblr</span>
+            </a>
+        </div>
+        <div class="item">
+            <a id="pinterest" href="https://www.pinterest.com/pin/create/button/?url=@HttpContext.Current.Request.Url.AbsoluteUri&media=@ViewBag.Image&description=" target="_blank">
+                <i class="fa fa-pinterest"></i> <span>Pinterest</span>
+            </a>
+        </div>*@
+    <div class="item google">
+        <a href="#" id="google" title="Chía sẻ lên Google">
+            <i class="fa fa-google"></i> <span>Google</span>
+        </a>
+    </div>
+    <div class="item linkedin">
+        <a href="#" id="linkedin" title="Chía sẻ lên Linked In">
+            <i class="fa fa-linkedin"></i> <span>Linkedin</span>
+        </a>
+    </div>
+    <div class="item zalo">
+        <div class="zalo-share-button" data-href="//@Request.Url.Host@HttpContext.Current.Request.Url.PathAndQuery" data-oaid="579745863508352884" data-layout="3" data-color="white" data-customize=false></div>
+    </div>
+    @*<div class="item">
+        <div class="fb-like" data-href="@HttpContext.Current.Request.Url.AbsoluteUri" data-layout="button_count" data-action="like" data-show-faces="false" data-share="false" data-size="large">
+        </div>
+    </div>*@
+    @*<div class="item">
+        <div class="fb-save" data-uri="@HttpContext.Current.Request.Url.AbsoluteUri" data-size="large"></div>
+    </div>*@
+</div>
+@*<div id="fb-root"></div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v3.3&appId=2116948808383563&autoLogAppEvents=1"></script>*@

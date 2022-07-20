@@ -1,0 +1,303 @@
+﻿@model CheckOutNoLoginModel
+@{
+    Layout = "_Layout.cshtml";
+    ViewBag.Title = Html.Locale("cart_checkout").ToHtmlString();
+    ViewBag.Breadcrumb = new BreadcrumbModel { Items = new List<BreadcrumbItem> { new BreadcrumbItem { Text = Html.Locale("cart_checkout").ToHtmlString(), Url = null, IsLast = true } } };
+    ViewBag.code = "shopcart";
+    decimal total = 0;
+    int qty = 0;
+    decimal totaltam = 0;
+    decimal totalvat = 0;
+    int i = 1;
+    var timecho = Article.GetByTypeCode("TIMECHO", SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 10, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING).List;
+
+}
+@if (SiteConfig.ShoppingCart.Items.Count > 0)
+{
+    string path = "";
+    <div class="article article-list cart-detail">
+        @*<h1 class="title">
+            <a>@Html.Locale("cart")</a>
+        </h1>*@
+        <div class="article">
+            <div class="row">
+                <div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
+                    <div class="content">
+                        <h3><i class="fa fa-shopping-cart"></i> Giỏ hàng của bạn</h3>
+                        <div class="cart-info hasImage">
+                            <table class="pav-shop-cart ajax">
+                                <thead>
+                                    <tr>
+                                        <td class="sort-order">Hình</td>
+                                        <td class="name">@Html.Locale("cart_product_name")</td>
+                                        <td class="quantity text-center">@Html.Locale("cart_qty")</td>
+                                        <td class="price text-right">@Html.Locale("cart_unitprice")</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (SiteConfig.ShoppingCart.Items.Count > 0)
+                                    {
+                                        foreach (var item in SiteConfig.ShoppingCart.Items)
+                                        {
+                                            <tr class="item">
+                                                <td class="sort-order text-center">
+                                                    @if (!string.IsNullOrEmpty(item.Article.ImageUrl))
+                                                    {
+                                                        var str = item.Article.ImageUrl.Split('/');
+                                                        if (str.Length <= 1)
+                                                        {
+                                                            path = "/UserUpload/Article/";
+                                                        }
+                                                        else
+                                                        {
+                                                            path = "";
+                                                        }
+                                                    }
+                                                    <figure>
+                                                        @Html.Image(path + item.Article.ImageUrl, new ImageOptions { Width = 100, Height = 100, Watermark = SiteConfig.Watermark, Mode = ImageMode.pad }, new { alt = item.Article.ImageUrl })
+                                                    </figure>
+                                                </td>
+                                                <td class="name" data-label="@Html.Locale("cart_product_name")">
+                                                    <a href="@Url.Action("Detail", "Article", new { id = item.ArticleId, code = SiteConfig.LanguageId == 1?"san-pham":"Product", title = Unichar.UnicodeStrings.UrlString(item.Article.ArticleName) })" title="@item.Article.ArticleName" target="_blank">
+                                                        <span>
+                                                            @item.Article.ArticleName
+                                                        </span>
+                                                    </a>
+                                                    @if (item.Article.Number == 0)
+                                                    {
+                                                        foreach (var itemed in timecho.Where(a => a.Id == item.Article.timeId))
+                                                        {
+                                                            <p class="status">Thời gian giao hàng: <span>@itemed.ArticleName</span></p>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <p class="status">Thời gian giao hàng: <span>Có sẵn</span></p>
+                                                    }
+                                                </td>
+                                                <td class="quantity" data-label="@Html.Locale("cart_qty")">
+                                                    @Html.TextBox("aqty", item.Quantity, new { @class = "form-control input-qty", @size = "3", @type = "number", @min = "1", rel = item.Id })
+                                                    <a href="" title="@Html.Locale("delete")" class="delete" data-submit="@Url.Action("Delete", "ShoppingCart", new { id=item.ArticleId})" data-id="@item.ArticleId" data-load="@Url.Action("CartList","ShoppingCart")"><i class="fa fa-trash"></i></a>
+                                                </td>
+                                                <td class="price text-right" data-label="@Html.Locale("cart_unitprice")">@Html.Amount(item.UnitPrice)</td>
+                                            </tr>
+                                            totaltam = totaltam + item.Amount;
+                                            totalvat = totalvat + item.Amount * 10 / 100;
+                                            total = totaltam + totalvat;
+                                            qty += item.Quantity;
+                                            i++;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="4"><span>Giỏ hàng rỗng.</span></td>
+                                        </tr>
+                                    }
+
+                                </tbody>
+                                <tfoot>
+                                    @if (SiteConfig.SiteInfo.AmountShippingToFree > 0)
+                                    {
+                                        <tr>
+                                            <td class="total" colspan="4">@Html.Locale("cart_total"):</td>
+                                            <td class="text-right totals" data-label="@Html.Locale("cart_total")">@Html.Amount(total)</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="total" colspan="4">@Html.Locale("cart_shipping_amount"):</td>
+                                            @if (total < SiteConfig.SiteInfo.AmountShippingToFree)
+                                            {
+                                                <td class="text-right" data-label="@Html.Locale("cart_shipping_amount")">@Html.Locale("cart_shipping_amount_2")</td>
+                                            }
+                                            else
+                                            {
+                                                <td class="text-right" data-label="@Html.Locale("cart_shipping_amount")">@Html.Locale("cart_shipping_amount_free")</td>
+                                            }
+                                        </tr>
+                                    }
+                                    <tr style="display: none">
+                                        <td class="total" colspan="5">@Html.Locale("cart_qty"):</td>
+                                        <td class="text-right qty" data-label="@Html.Locale("cart_qty")">@qty</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="total" colspan="3">Tạm tính:</td>
+                                        <td class="text-right" data-label="Tạm tính" id="total">@Html.Amount(totaltam)</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="total" colspan="3">VAT (10%):</td>
+                                        <td class="text-right" data-label="VAT 10%" id="total">@Html.Amount(totalvat)</td>
+                                    </tr>
+                                   
+                                    <tr>
+                                        <td class="total" colspan="3">Tổng tiền:</td>
+                                        <td class="text-right totals" data-label="Tổng tiền" id="total">@Html.Amount(total)</td>
+                                    </tr>
+
+                                </tfoot>
+                            </table>
+                            <div class="bt-carts indexajax">
+                                <a href="/" class="link-continue">Tiếp tục mua hàng</a>
+
+                                <a id="update_ajax" class="btn btn-continue" data-load="@Url.Action("CartList", "ShoppingCart")">@Html.Locale("update")</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-check col-lg-5 col-md-5 col-sm-12 col-xs-12">
+                    @using (Html.BeginForm("CheckOut", "ShoppingCart"))
+                    {
+                        <div class="content">
+                            <h3><i class="fa fa-map-marker"></i> Thông tin thanh toán</h3>
+                            <div class="checkout">
+                                <div class="editor">
+                                    <label>@Html.Locale("full_name"):</label>
+                                    @Html.EditorFor(model => model.FullName)
+                                </div>
+                                <div class="editor">
+                                    <label>@Html.Locale("phone"):</label>
+                                    @Html.EditorFor(model => model.Phone)
+                                </div>
+                                <div class="editor">
+                                    <label>Email:</label>
+                                    @Html.EditorFor(model => model.Email)
+                                </div>
+                                <div class="editor">
+                                    <label>@Html.Locale("address"):</label>
+                                    @Html.EditorFor(model => model.Address)
+                                </div>
+                                <div class="editor hidden">
+                                    @*<label>@Html.Locale("other_address"):</label>*@
+                                    @Html.TextBoxFor(model => model.Address2, new { @class = "text-box single-line", placeholder = Html.Locale("other_address") })
+                                </div>
+                                <div class="editor">
+                                    <label>Ghi chú:</label>
+                                    @Html.TextAreaFor(model => model.Notes)
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="xuathoadon">
+                                    <label class="check-hd">
+                                        Thông tin xuất hóa đơn
+                                        <input type="checkbox">
+                                        <span class="checkmark_hd"></span>
+                                    </label>
+                                    <div class="box_hoadon">
+                                        <div class="editor">
+                                            <label>Tên công ty</label>
+                                            @Html.EditorFor(model => model.Company)
+                                        </div>
+                                        <div class="editor">
+                                            <label>Địa chỉ</label>
+                                            @Html.EditorFor(model => model.Address2)
+                                        </div>
+                                        <div class="editor">
+                                            <label>Mã số thuế</label>
+                                            @Html.EditorFor(model => model.Fax)
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="bt-carts">
+                                    <input type="submit" value="@Html.Locale("cart_checkout")" class="btn btn-continue" />
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <span class="col-xs-12 padding-bottom-10">@Html.Locale("cart_null")</span>
+}
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+}
+    <script>
+        $(document).ready(function () {
+            $(".checkmark_hd").click(function () {
+                $(".box_hoadon").slideToggle();
+            });
+        });
+    </script>
+<script>
+    $.fn.updateOrder = function (options) {
+        var settings = $.extend({
+            'url': '',
+            'selector': '',
+            'param1': 'id',
+            'param2': 'quantity'
+        }, options);
+
+        $(this).click(function (e) {
+            var _this = $(this);
+            if (!confirm("Bạn muốn cập nhật đơn hàng này ?")) return false;
+            e.preventDefault();
+            var url = options.url;
+            var values = '';
+            var orders = '';
+            var param1 = (options.param1) ? options.param1 : 'id';
+            var param2 = (options.param2) ? options.param2 : 'quantity';
+            $(options.selector).each(function () {
+                values += (values ? "," : "") + $(this).attr('rel');
+                orders += (orders ? "," : "") + $(this).val();
+            });
+            if (values != '')
+                $.ajax({
+                    url: url,
+                    data: param1 + '=' + values + '&' + param2 + '=' + orders,
+                    type: 'post',
+                    success: function (json) {
+                        if (json.Status == 0) {
+                            $("#number").html(json.Qty);
+                            $("#total").html(json.Amount);
+                            $("#shop-cart .content,#show-mobile .carts-mobile").load(_this.data("load"));
+                        }
+                        return false;
+                    }
+                });
+        });
+    };
+
+    $(function () {
+        $("#update_ajax").updateOrder({
+            url: '/ShoppingCart/UpdateAjax',
+            selector: ".item input[name='aqty']",
+            param1: 'id',
+            param2: 'quantity'
+        });
+    })
+    $(".pav-shop-cart .delete").on("click", function () {
+        var _this = $(this);
+        var _parent = _this.parents("tr.item");
+        $.ajax({
+            url: _this.data("submit"),
+            type: 'post',
+            data: {
+                id: _this.data("id"),
+            },
+            dataType: 'json',
+            success: function (json) {
+                if (json.Status == 0) {
+                    _parent.css("display", "none");
+                    $(".pav-shop-cart .totals").html(json.Amount);
+                    $(".pav-shop-cart .qty").html(json.Qty);
+                    $("#number").html(json.Qty);
+
+                    $("#shop-cart .content,#show-mobile .carts-mobile").load(_this.data("load"));
+                }
+                return false;
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                return false;
+            }
+        });
+        return false;
+    });
+    $(".site-info #cart .content").remove();
+</script>
+
+
+

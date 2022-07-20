@@ -1,0 +1,89 @@
+﻿@using VCMS.MVC4.Web
+@using VCMS.MVC4.Data
+@model VCMS.MVC4.Data.Property
+
+@{
+    ViewBag.Title = "Thêm thuộc tính mới";
+    var types = from PropertyType p in Enum.GetValues(typeof(PropertyType))
+                select new { Key = (byte)p, Value = p.ToString() };
+    ViewBag.PropertyType = new SelectList(types, "Key", "Value");
+}
+
+<div class="form">
+
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+
+        <fieldset>
+            <legend>Property</legend>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Code)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Code)
+                @Html.ValidationMessageFor(model => model.Code)
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(model => model.PropertyType)
+            </div>
+            <div class="editor-field">
+                @Html.DropDownListFor(model => model.PropertyType, (SelectList)ViewBag.PropertyType, new { @class = "form-control mg-bottom-10" })
+                @Html.ValidationMessageFor(model => model.Code)
+            </div>
+            @*<div id="div-choice" style="display:none">
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.Choices)
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.Choices)
+                </div>
+            </div>
+            <div class="editor-field mg-bottom-5" style="display:none">
+                <label class="checkbox">@Html.CheckBoxFor(model => model.MultiValue)<i></i> Nhiều giá trị</label>
+            </div>*@
+            <div class="editor-field mg-bottom-5">
+                <label class="checkbox">@Html.CheckBoxFor(model => model.MultiLanguage)<i></i> Nhiều ngôn ngữ</label>
+            </div>
+            @foreach (var l in SiteConfig.Languages)
+            {
+                <div class="editor-label">
+                    @Html.Label("Tên thuộc tính - " + l.DisplayName)
+                </div>
+                <div id="tabs-@l.Id">
+                    <input type="text" class="text-box" name="txtName_@l.Id" value="@(Model.PropertyDetail[l.Id] == null ? "" : Model.PropertyDetail[l.Id].Name)" />
+                </div>
+            }
+            <div class="toolbar">
+                <span class="button">
+                    <button type="submit" class="btn save"><i class="fa fa-save"></i> <span>Lưu</span></button>
+                </span>
+                <span class="btn back">
+                    <a href="@Url.Action("Index",null,null)">
+                        <i class="fa fa-mail-reply"></i> <span>Huỷ</span>
+                    </a>
+                </span>
+            </div>
+        </fieldset>
+    }
+
+
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+        @Scripts.Render("~/bundles/jqueryui")
+        <script type="text/javascript">
+            $(function () { $("#tabs").tabs(); });
+
+            //$(function () {
+            //    $('#PropertyType').change(function () {
+            //        if ($(this).val() == '5') {
+            //            $('#div-choice').show();
+            //        } else {
+            //            $('#div-choice').hide();
+            //        }
+            //    });
+            //});
+        </script>
+    }
+</div>

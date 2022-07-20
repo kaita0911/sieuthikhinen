@@ -1,0 +1,35 @@
+﻿@using VCMS.MVC4.Web
+
+<div id="ajax-box">
+    @RenderBody()
+</div>
+@RenderSection("scripts",false)
+@RenderSection("styles",false)
+@*<script>
+    $(function () {
+        $("a").on("click", function (e) {
+
+            $.ajax({
+                url: $(this).attr('href') + "?X-Requested-With=XMLHttpRequest",
+                success: function (data) {
+                    //$(".ajax-box").addClass("bounceOutRight");
+                    testAnim("bounceOutRight");
+                        
+                    var wait = window.setTimeout(function () {
+                        $("#ajax-box").html(data);
+                        testAnim("bounceInLeft");
+                    },
+            500
+        );
+                        
+                    //testAnim("bounceInLeft");
+
+                }
+            });
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        })
+    
+    })
+</script>*@

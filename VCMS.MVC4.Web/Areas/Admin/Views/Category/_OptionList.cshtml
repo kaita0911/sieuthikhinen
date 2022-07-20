@@ -1,0 +1,118 @@
+﻿@model ICollection<VCMS.MVC4.Data.Category>
+@{
+    var selectedId = ViewBag.SelectedId == null ? 0 : ViewBag.SelectedId;
+    var categories = (List<Category>)Model;
+    categories.ForEach(c => { c.Level++; });
+    categories.Insert(0, new Category { Level = 0, Id = 0, ChildrenCount = Model.Count });
+}
+<div class="list search-list">
+    <div class="header">
+        <div class="check">
+        </div>
+        <div class="name"><input type="search" name="keyword" id="keyword" placeholder="Từ khóa, bấm Enter để tìm" /></div>
+    </div>
+    <div class="items">
+        @foreach (var item in categories)
+        {
+
+            <div class="item  @(item.Id == selectedId?"selected":"")" data-level="@item.Level">
+                <label class="radio list-category">
+                    @if (selectedId != null)
+                    {
+                        <input name="parentId" type="radio" value="@item.Id" class="check " @(item.Id == selectedId ? "checked" : "") /><i></i>
+                    }
+                    else
+                    {
+                        <input name="parentId" type="radio" value="@item.Id" class="check" /><i></i>
+                    }
+                    <span class="name">
+                        <span data-level="@item.Level" class="level level_@item.Level">
+                            <a href="javascript:void(0)" class="@(item.ChildrenCount > 0 ? "collapse" : "hidden")"></a>
+                           
+                            <span>@(item.Level == 0 ? "Chọn nhóm cha" : item.CategoryName)</span>
+                        </span>
+                    </span>
+                </label>
+                @*<div class="check">
+                        @if (selectedId != null)
+                        {
+                            <label class="radio fix">
+                                <input name="parentId" type="radio" value="@item.Id" class="check " @(item.Id == selectedId ? "checked" : "") /><i></i>
+                            </label>
+                        }
+                        else
+                        {
+                            <label class="radio fix">
+                                <input name="parentId" type="radio" value="@item.Id" class="check" /><i></i>
+                            </label>
+                        }
+                    </div>
+                    <div class="name">
+                        <div data-level="@item.Level" class="level level_@item.Level">
+                            <a href="javascript:void(0)" class="@(item.ChildrenCount > 0 ? "collapse" : "hidden")"></a>
+                            <span>@(item.Level == 0 ? "Chọn nhóm cha" : item.CategoryName)</span>
+                        </div>
+                    </div>*@
+            </div>
+        }
+    </div>
+</div>
+<script>
+    
+ 
+    function filter(keyword) {
+        if (keyword != '') {
+            $(".search-list .item").each(function () {
+                var name = $(".name span", $(this)).text().toLowerCase();
+
+                if (name.indexOf(keyword.toLowerCase()) >= 0) {
+                    $(this).show();
+                    var level = $(this).attr('data-level');
+                    var prev = $(this);
+                    while (level > 0) {
+                        prev = prev.prev();
+                        if (prev.attr('data-level') < level) {
+                            prev.show();
+                            level = level - 1;
+                        }
+
+                    }
+                }
+                else
+                    $(this).hide();
+            })
+        }
+        else
+            $(".search-list .item").show();
+    }
+    $(function () {
+        var width = $(".search-list").width();
+        $(".search-list .name").css({ width: width - 10 - 20 - $(".search-list div.check").width() });
+        $("input[type=search]").keydown(function (evt) {
+            var code = evt.keyCode ? evt.keyCode : evt.which;
+
+            if (code == 13) {
+                evt.preventDefault();
+                evt.stopPropagation();
+                filter($(this).val());
+
+            }
+        }).change(function () {
+            filter($(this).val());
+        }).click(function () { $(this).change(); });
+        $("form").submit(function (evt) {
+            var code = evt.keyCode ? evt.keyCode : evt.which;
+
+            if (code == 13) {
+                evt.preventDefault();
+                evt.stopPropagation();
+                return false;
+
+            }
+        })
+        $("input[type=radio]").change(function () {
+            $(".search-list .item").removeClass('selected');
+            $(this).parentsUntil("div.items", "div.item").addClass('selected');
+        })
+    })
+</script>

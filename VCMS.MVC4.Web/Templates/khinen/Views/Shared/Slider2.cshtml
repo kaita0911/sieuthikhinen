@@ -1,0 +1,58 @@
+﻿@model List<Article>
+@{
+    if (Model.Count > 0)
+    {
+        <div class="box-product-slider hot-product-home">
+            <h2 class="heading-title">
+                <span>Sản phẩm bán chạy</span>
+            </h2>
+            <div class="viewtatca"><a href="./san-pham.html" title="Xem tất cả">Xem tất cả</a></div>
+            <div class="row">
+                <div class="owl-carousel" data-plugin-options='{"items": 4, "singleItem": false, "autoPlay": true, "navigation": true, "pagination": false,"slideSpeed":400,"addClassActive":true,"itemsDesktop": [1199, 4],"itemsDesktopSmall": [991, 3],"itemsTablet": [768, 2],"itemsMobile": [479, 2]}' data-snap-ignore="true">
+                    @foreach (var item in Model)
+                    {
+                        var code = item["CODE"];
+                        <div class="items box-block box-product">
+                            <figure>
+
+                                <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly.ToLower() })" title="@item.ArticleName">
+                                    @Html.Image(item.ImageUrl !=null ? item.ImageUrl.ToLower():item.ImageUrl, new ImageOptions { Width = 260, Height = 230, Watermark = SiteConfig.Watermark, Mode = ImageMode.pad, Lazy = false }, new { alt = code != null ? code : item.ArticleName })
+                                </a>
+                            </figure>
+                            <div class="muangaynb">
+                                <a href="@Url.Action("addtocart", "shoppingcart", new { id = item.Id })" class="addcart" title="Mua ngay" rel="nofollow">
+                                    Mua ngay
+                                </a>
+                            </div>
+                            <div class="meta">
+
+                                <h3>
+                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly.ToLower() })" title="@item.ArticleName">@item.ArticleName</a>
+                                </h3>
+                                <p><label class="hidden-xs">Mã số: </label><span>@code</span></p>
+                                <div class="price-all">
+                                    @if (item.DiscountPrice > 0)
+                                    {
+
+                                        <span class="price">@Html.DiscountPrice(item.ItemPrice)</span>
+                                        <span class="price-old">@Html.Price(item.ItemPrice)</span>
+
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("Contact", "Home", new { id = item.Id })">
+                                            <span class="price">@Html.Price(item.ItemPrice)</span>
+                                        </a>
+                                    }
+                                </div>
+
+                            </div>
+                        </div>
+
+                    }
+                </div>
+            </div>
+        </div>
+    }
+}
+

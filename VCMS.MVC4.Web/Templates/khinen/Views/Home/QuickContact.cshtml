@@ -1,0 +1,24 @@
+﻿@model ContactModel
+@{
+    Layout = "~/Templates/" + SiteConfig.SiteInfo.Code + "/Views/Shared/_LayoutQuickView.cshtml";
+}
+<div class="contacts content-background">
+    <div class="row">
+        @if (ViewBag.ContactInfo != null)
+        {
+            <div class="col-lg-12">
+                <h2>@Model.Subject</h2>
+                <br />
+                @if (!string.IsNullOrEmpty(ViewBag.ContactInfo))
+                {
+                    @Html.Raw(ViewBag.ContactInfo)
+                }
+                else
+                {
+                    <span>Nội dung tư vấn đang được cập nhật. Vui lòng quay lại sau.</span>
+                }
+            </div>
+        }
+    </div>
+</div>
+

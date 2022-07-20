@@ -1,0 +1,140 @@
+﻿@model VCMS.MVC4.Data.Cart
+@{
+    decimal total = 0;
+    decimal totaltam = 0;
+    decimal totalvat = 0;
+    int qty = 0;
+}
+<h2 class="heading main-heading">Giỏ hàng của bạn</h2>
+<div class="cart-info hasImage">
+    <table class="pav-shop-cart">
+        <thead>
+            <tr>
+                <td class="image text-center">@Html.Locale("cart_product_image")</td>
+                <td class="name">@Html.Locale("cart_product_name")</td>
+                <td class="quantity text-center">@Html.Locale("cart_qty")</td>
+                <td class="price text-right">@Html.Locale("cart_unitprice")</td>
+                <td class="total text-right">@Html.Locale("cart_total")</td>
+                <td class="total text-right">Tình trạng</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                if (item.Article.Number >= item.Quantity || item.Article.Number == 0)
+                {
+                    <tr>
+                        <td class="image text-center">
+                            @Html.Image(item.Article.ImageUrl, new ImageOptions { Width = 50, Height = 50 }, new { alt = item.Article.ArticleName })
+                        </td>
+                        <td class="name" data-label="@Html.Locale("cart_product_name")">
+                            <a href="@Url.Action("Detail", "Article", new { id = item.Article.Id, code = item.Article.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.Article.ArticleName) })" title="@item.Article.ArticleName" target="_blank">
+                                <span>
+                                    @item.Article.ArticleName
+                                </span>
+                            </a>
+                        </td>
+                        <td class="quantity text-center" data-label="@Html.Locale("cart_qty")">
+                            <span>@item.Quantity</span>
+                        </td>
+                        <td class="price text-right" data-label="@Html.Locale("cart_unitprice")">@Html.Amount(item.UnitPrice)</td>
+                        <td class="total text-right" data-label="@Html.Locale("cart_total")">@Html.Amount(item.Amount)</td>
+                        @if (item.Article.Number == 0)
+                        {
+                            <td class="total text-right" data-label="Tình trạng">Chờ @item.Article.Time</td>
+                        }
+                        else
+                        {
+                            <td class="total text-right" data-label="Tình trạng">Có sẵn</td>
+                        }
+
+                    </tr>
+                }
+                else
+                {
+                    var sodu = item.Quantity - item.Article.Number;
+                    <tr>
+                        <td class="image text-center">
+                            @Html.Image(item.Article.ImageUrl, new ImageOptions { Width = 50, Height = 50 }, new { alt = item.Article.ArticleName })
+                        </td>
+                        <td class="name" data-label="@Html.Locale("cart_product_name")">
+                            <a href="@Url.Action("Detail", "Article", new { id = item.Article.Id, code = item.Article.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.Article.ArticleName) })" title="@item.Article.ArticleName" target="_blank">
+                                <span>
+                                    @item.Article.ArticleName
+                                </span>
+                            </a>
+                        </td>
+                        <td class="quantity text-center" data-label="@Html.Locale("cart_qty")">
+                            <span>@item.Article.Number</span>
+                        </td>
+                        <td class="price text-right" data-label="@Html.Locale("cart_unitprice")">@Html.Amount(item.UnitPrice)</td>
+                        <td class="total text-right" data-label="@Html.Locale("cart_total")">@Html.Amount(item.UnitPrice * (int)item.Article.Number)</td>
+                        <td class="total text-right">Có sẵn</td>
+
+                    </tr>
+                    <tr>
+
+                        <td class="image text-center">
+                            @Html.Image(item.Article.ImageUrl, new ImageOptions { Width = 50, Height = 50 }, new { alt = item.Article.ArticleName })
+                        </td>
+                        <td class="name" data-label="@Html.Locale("cart_product_name")">
+                            <a href="@Url.Action("Detail", "Article", new { id = item.Article.Id, code = item.Article.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.Article.ArticleName) })" title="@item.Article.ArticleName" target="_blank">
+                                <span>
+                                    @item.Article.ArticleName
+                                </span>
+                            </a>
+                        </td>
+                        <td class="quantity text-center" data-label="@Html.Locale("cart_qty")">
+                            <span>@sodu</span>
+                        </td>
+                        <td class="price text-right" data-label="@Html.Locale("cart_unitprice")">@Html.Amount(item.UnitPrice)</td>
+                        <td class="total text-right" data-label="@Html.Locale("cart_total")">@Html.Amount((int)sodu * item.UnitPrice)</td>
+                        <td class="total text-right">Chờ @item.Article.Time</td>
+
+                    </tr>
+                }
+
+                totaltam = totaltam + item.Amount;
+                totalvat = totalvat + item.Amount * 10 / 100;
+                total = totaltam + totalvat;
+                qty += item.Quantity;
+            }
+        </tbody>
+        <tfoot>
+            @if (SiteConfig.SiteInfo.AmountShippingToFree > 0)
+            {
+                <tr>
+                    <td class="total" colspan="4">@Html.Locale("cart_total"):</td>
+                    <td class="text-right totals" data-label="@Html.Locale("cart_total")">@Html.Amount(total)</td>
+                </tr>
+                <tr>
+                    <td class="total" colspan="4">@Html.Locale("cart_shipping_amount"):</td>
+                    @if (total < SiteConfig.SiteInfo.AmountShippingToFree)
+                    {
+                        <td class="text-right" data-label="@Html.Locale("cart_shipping_amount")">@Html.Locale("cart_shipping_amount_2")</td>
+                    }
+                    else
+                    {
+                        <td class="text-right" data-label="@Html.Locale("cart_shipping_amount")">@Html.Locale("cart_shipping_amount_free")</td>
+                    }
+                </tr>
+            }
+            <tr>
+                <td class="total" colspan="5">@Html.Locale("cart_qty"):</td>
+                <td class="text-right" data-label="@Html.Locale("cart_qty")">@qty</td>
+            </tr>
+            <tr>
+                <td class="total" colspan="5">Tạm tính</td>
+                <td class="text-right totals" data-label="@Html.Locale("cart_total_amount")">@Html.Amount(totaltam)</td>
+            </tr>
+            <tr>
+                <td class="total" colspan="5">VAT (10%)</td>
+                <td class="text-right totals" data-label="@Html.Locale("cart_total_amount")">@Html.Amount(totalvat)</td>
+            </tr>
+            <tr>
+                <td class="total" colspan="5">Tổng tiền</td>
+                <td class="text-right totals totalend" data-label="@Html.Locale("cart_total_amount")">@Html.Amount(total)</td>
+            </tr>
+        </tfoot>
+    </table>
+</div>

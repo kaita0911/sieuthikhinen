@@ -1,0 +1,56 @@
+﻿@model ArticleResult
+@if (Model.List.Count > 0)
+{
+    string path = "";
+    var type = ViewBag.Type != null ? ViewBag.Type as ArticleType : Model.List.FirstOrDefault().ArticleType;
+    if (type.DescriptionCategory)
+    {
+        <div id="description-type">
+            @Html.Raw(type.ArticleTypeDetail[SiteConfig.LanguageId].Description)
+        </div>
+    }
+    <div class="article article-list library-list">
+        <h1 class="title">
+            <a>@(ViewBag.Title != null ? ViewBag.Title : type.Name)</a>
+        </h1>
+        <div class="content">
+            <div class="row">
+                @foreach (var item in Model.List)
+                {
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                        <div class="item">
+                            @if (!string.IsNullOrEmpty(item.ImageUrl))
+                            {
+                                var str = item.ImageUrl.Split('/');
+                                if (str.Length <= 1)
+                                {
+                                    path = "/UserUpload/Article/";
+                                }
+                                else
+                                {
+                                    path = "";
+                                }
+                                <figure>
+                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                                        @Html.Image(path + item.ImageUrl, new ImageOptions { Width = 370, Height = 266, Mode = ImageMode.crop }, new { alt = item.ArticleName })
+                                    </a>
+                                </figure>
+                            }
+
+                            <div class="meta">
+                                <h3><a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">@item.ArticleName</a></h3>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+    </div>
+    @Html.Pager(new PagerOptions { VisibleItemCount = 5, ItemCount = Model.TotalItemCount, PageSize = Model.PageSize, FirstText = Html.Locale("text_first").ToHtmlString(), LastText = Html.Locale("text_last").ToHtmlString() }, null)
+}
+else
+{
+    <span>@Html.Locale("article_null")</span>
+
+}

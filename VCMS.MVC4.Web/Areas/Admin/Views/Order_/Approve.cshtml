@@ -1,0 +1,47 @@
+﻿@*@model Order
+@{
+    Layout = "";
+}
+
+<div class="modal-dialog">
+    <div class="form no-boder-radius">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Đóng</span></button>
+            <h4 class="modal-title" id="myModalLabel">Duyệt đơn hàng<span id="success"></span></h4>
+        </div>
+        @using (Html.BeginForm())
+        {
+            @Html.ValidationSummary(true)
+            <fieldset class="modal-body">
+                <div class="editor-field">
+                    <span id="sys-notification"></span>
+                </div>
+                <div class="editor-label">
+                    <label>Ngày giao hàng:</label>
+                </div>
+                <div class="editor-field">
+                    @Html.TextBoxFor(model => model.DateDelivery, new { type = "datetime", @class = "datepicker-mindate form-control" })
+                    @Html.ValidationMessageFor(model => model.DateDelivery)
+                </div>
+                @if (Model.TotalAmount < SiteConfig.SiteInfo.AmountShippingToFree && Model.HasShipping)
+                {
+                    <div class="editor-label">
+                        <label>Phí vận chuyển:</label>
+                    </div>
+                    <div class="editor-field">
+                        @Html.TextBoxFor(model => model.AmountShipping, new {type="number",min="0",@class="form-control" })
+                    </div>
+                }
+            </fieldset>
+            <div class="modal-footer">
+                <button type="button" id="button-approve" data-submit="@Url.Action("Approve", "Order", new { id = Model.Id, returnUrl = Request["returnUrl"] })" data-loading-text="Loading..." class="btn btn-primary"><i class="fa fa-save"></i> Lưu</button>
+                <button type="button" class="btn delete popup" data-dismiss="modal"><i class="fa fa-times"></i> Đóng</button>
+            </div>
+        }
+    </div>
+</div>
+<script>
+    var date = new Date();
+    $(".datepicker-mindate").val(date.toLocaleDateString());
+</script>*@
+

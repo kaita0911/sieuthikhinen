@@ -1,0 +1,11 @@
+﻿@{
+    ViewBag.Title = "Trang chủ";
+    Layout = Request.IsAjaxRequest() ? "~/Views/Shared/_LayoutAjax.cshtml" : "~/Views/Shared/_LayoutHome.cshtml";
+    ViewBag.Keywords = SiteConfig.SiteInfo.WebsiteDetail[SiteConfig.LanguageId].SEOKeywords;
+    ViewBag.Desciption = SiteConfig.SiteInfo.WebsiteDetail[SiteConfig.LanguageId].SEODescription;
+
+    VCMS.MVC4.Web.App_Start.DisplayMode mode = new VCMS.MVC4.Web.App_Start.DisplayMode();
+    
+}
+
+@mode.GetDeviceType(Request.UserAgent)

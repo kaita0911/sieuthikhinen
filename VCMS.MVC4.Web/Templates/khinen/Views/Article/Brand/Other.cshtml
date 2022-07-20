@@ -1,0 +1,107 @@
+﻿@model ArticleResult
+@if (Model.List.Count > 0)
+{
+    var type = Model.List.FirstOrDefault().ArticleType;
+    <div class="product-list-common box-other-product other-common">
+        <h2 class="title"><span>@Html.Locale("other_product")</span></h2>
+        <div class="row10">
+            <div class="owl-carousel" data-plugin-options='{"items": 5, "singleItem": false, "autoPlay":true, "navigation": true, "pagination": false,"slideSpeed":400,"addClassActive":true,"itemsDesktop": [1199, 5],"itemsDesktopSmall": [991, 4],"itemsTablet": [768, 2],"itemsMobile": [479, 2]}' data-snap-ignore="true">
+                @foreach (var item in Model.List)
+                {
+                    var code = item["CODE"];
+                    <div class="items">
+                        @if (type.ShowImageInList)
+                        {
+                            <figure>
+                                <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly.ToLower() })" title="@item.ArticleName" data-tooltip="sticky-@item.Id">
+                                    @Html.Image(item.ImageUrl, new ImageOptions { Width = 160, Height = 160, Watermark = SiteConfig.Watermark, Mode = ImageMode.pad, Lazy = false }, new { alt = code })
+                                </a>
+                                @*<figcaption>
+                                        <p>
+
+                                            <a class="quickview" href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="Xem chi tiết">
+                                                <i class="fa fa-search-plus"></i>
+                                            </a>
+
+                                            <a href="@Url.Action("AddToCart", "ShoppingCart", new { id = item.Id })" class="addcart cart" title="Cho vào giỏ hàng" rel="nofollow">
+                                                <i class="fa fa-shopping-cart"></i>
+                                            </a>
+                                        </p>
+                                    </figcaption>*@
+                            </figure>
+                        }
+                        <div class="meta">
+                            <h3>
+                                <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly.ToLower() })" title="@item.ArticleName">@item.ArticleName</a>
+                            </h3>
+                            <div class="code"><label class="hidden-xs">Mã số:</label>@code</div>
+
+                            @if (type.HasPrice)
+                            {
+                                <div class="price-all">
+                                    @if (item.DiscountPrice > 0)
+                                    {
+
+                                        <span class="price">@Html.DiscountPrice(item.ItemPrice)</span>
+                                        <span class="price-old">@Html.Price(item.ItemPrice)</span>
+
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("Contact", "Home", new { id = item.Id })">
+                                            <span class="price">@Html.Price(item.ItemPrice)</span>
+                                        </a>
+                                    }
+                                </div>
+                            }
+                            <form action="/ShoppingCart/AddToCart" method="post" class="form-order">
+                                @*@Html.Hidden("id", item.Id)*@
+                                <input type="hidden" name="id" id="@item.Id" value="@item.Id">
+                                <div class="quantitynum">
+                                    <input name="num" type="number" id="num_@item.Id" min="1" max="100" value="1" />
+                                </div>
+                                @*<p>Số lượng @Html.DropDownList("num", Enumerable.Range(1, 50).Select(j => new SelectListItem { Value = j.ToString(), Text = j.ToString() }), "1")</p>*@
+                                <button type="submit" class="bt-carted cartedngoai">Mua ngay</button>
+                            </form>
+                        </div>
+                    </div>
+
+                }
+            </div>
+        </div>
+    </div>
+}
+@*<script>
+            jQuery('<div class="quantity-nav"><div class="quantity-button quantity-up">+</div><div class="quantity-button quantity-down">-</div></div>').insertAfter('.quantitynum input');
+            jQuery('.quantitynum').each(function () {
+                var spinner = jQuery(this),
+                    input = spinner.find('input[type="number"]'),
+                    btnUp = spinner.find('.quantity-up'),
+                    btnDown = spinner.find('.quantity-down'),
+                    min = input.attr('min'),
+                    max = input.attr('max');
+
+                btnUp.click(function () {
+                    var oldValue = parseFloat(input.val());
+                    if (oldValue >= max) {
+                        var newVal = oldValue;
+                    } else {
+                        var newVal = oldValue + 1;
+                    }
+                    spinner.find("input").val(newVal);
+                    spinner.find("input").trigger("change");
+                });
+
+                btnDown.click(function () {
+                    var oldValue = parseFloat(input.val());
+                    if (oldValue <= min) {
+                        var newVal = oldValue;
+                    } else {
+                        var newVal = oldValue - 1;
+                    }
+                    spinner.find("input").val(newVal);
+                    spinner.find("input").trigger("change");
+                });
+
+            });
+    </script>*@

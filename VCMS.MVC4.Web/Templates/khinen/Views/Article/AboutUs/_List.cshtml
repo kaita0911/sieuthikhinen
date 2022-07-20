@@ -1,0 +1,7 @@
+﻿@model ArticleResult
+@if (Model.List.Count > 0)
+{
+    var article = Model.List.FirstOrDefault();
+    @Html.Partial("Detail", article)
+}
+

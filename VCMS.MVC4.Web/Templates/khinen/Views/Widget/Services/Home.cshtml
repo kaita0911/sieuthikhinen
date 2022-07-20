@@ -1,0 +1,79 @@
+﻿@model Widget
+@{
+    var type = ArticleType.GetById((int)Model.ArticleTypeId, SiteConfig.LanguageId);
+    var article = Article.GetByType((int)Model.ArticleTypeId, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection, Model.Includes);
+    if (article.List.Count > 0)
+    {
+        <div class="box-home box-home-service">
+            <div class="container">
+                <h2 class="heading">
+                    <a href="@Url.Action("Index", "ArticleType", new { code = type.UrlFriendly })">
+                        <span class="title pull-left">@Model.Title</span>
+                    </a>                
+                </h2>
+                <div class="content">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            @foreach (var item in article.List.Skip(0).Take(1))
+                            {
+                                <div class="item">
+                                    <figure>
+                                        <a class="banner-cubic-2" href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                                            @Html.Image(item.ImageUrl, new ImageOptions { Width = 570, Height = 570, Watermark = SiteConfig.Watermark, Mode = ImageMode.crop }, new { alt = item.ArticleName, @class = "owl" })
+                                        </a>
+                                    </figure>
+                                    <div class="meta">
+                                        <h3>
+                                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">@item.ArticleName</a>
+                                        </h3>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            @foreach (var item in article.List.Skip(1).Take(1))
+                            {
+                                <div class="item">
+                                    <figure>
+                                        <a class="banner-cubic-2" href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                                            @Html.Image(item.ImageUrl, new ImageOptions { Width = 570, Height = 267, Watermark = SiteConfig.Watermark, Mode = ImageMode.crop }, new { alt = item.ArticleName, @class = "owl" })
+                                        </a>
+                                    </figure>
+                                    <div class="meta">
+                                        <h3>
+                                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">@item.ArticleName</a>
+                                        </h3>
+                                    </div>
+                                </div>
+                            }
+                            <div class="row">
+                                @foreach (var item in article.List.Skip(2).Take(2))
+                                {
+                                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                        <div class="item">
+                                            <figure>
+                                                <a class="banner-cubic-2" href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                                                    @Html.Image(item.ImageUrl, new ImageOptions { Width = 270, Height = 273, Watermark = SiteConfig.Watermark, Mode = ImageMode.crop }, new { alt = item.ArticleName, @class = "owl" })
+                                                </a>
+                                            </figure>
+                                            <div class="meta">
+                                                <h3>
+                                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">@item.ArticleName</a>
+                                                </h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="view-all">
+                        <a href="@Url.Action("Index", "ArticleType", new { code = type.UrlFriendly })">
+                            @Html.Locale("view_more")
+                        </a>        
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}

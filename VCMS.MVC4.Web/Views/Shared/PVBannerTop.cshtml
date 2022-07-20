@@ -1,0 +1,25 @@
+﻿@using System.Data.Entity
+@*@using (VCMS.MVC4.Data.DataContext db = new VCMS.MVC4.Data.DataContext())
+{
+    
+    var banners = db.Articles.Include(a=>a.ArticleDetail).Include(a => a.PropertyValues.Select(pv => pv.Property)).OrderBy(a=>a.SortOrder).Where(a => a.ArticleType.Code.Equals("BANNER", StringComparison.OrdinalIgnoreCase)).ToList();
+    <div class="banner-top-wrapper">
+    <div class="banner-top">
+        @foreach (var item in banners)
+        {
+            item.LanguageId = SiteConfig.LanguageId;
+            <div class="banner-item">
+                <a href="@item.PropertyValues.FirstOrDefault(pv => pv.Property.Code.Equals("Website", StringComparison.OrdinalIgnoreCase)).Value" target="_blank">
+                    <img src="@Url.Content("~/UserUpload/Article/")@item.ImageUrl" alt="@item.ArticleName"/>
+                </a>
+                <div class="banner-title">
+                    @item.ArticleName
+                </div>
+            </div>
+        }
+    </div>
+        </div>
+}*@
+<script>
+    $(function(){$(".banner-top").cycle({fx:'fade'});});
+</script>

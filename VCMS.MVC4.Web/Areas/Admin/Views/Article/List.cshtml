@@ -1,0 +1,667 @@
+﻿@model VCMS.MVC4.Data.ArticleResult
+@using VCMS.MVC4.Extensions
+@using (var db = new DataContext())
+{
+    var cateId = -1;
+    if (!string.IsNullOrEmpty(Request["categoryId"]))
+    {
+        cateId = Convert.ToInt32(Request["categoryId"]);
+    }
+    var articleType = (ArticleType)ViewBag.ArticleType;
+    ViewBag.Title = "Danh sách " + articleType.Name;
+    ViewBag.Breadcrumb = new BreadcrumbModel()
+    {
+        Items = new List<BreadcrumbItem>()
+{
+new BreadcrumbItem(){Url = Url.Action("Index","Home"), Text="Home", IsFirst=true},
+new BreadcrumbItem(){Url = Url.Action("List","Article",new{id=articleType.Id}), Text="Danh sách " + articleType.Name, IsLast = true},
+}
+    };
+    var articleTypes = ArticleType.GetBySite(SiteConfig.LanguageId).OrderBy(at => at.SortOrder);
+    var multiprop = db.Properties.Include("ArticleTypes").Include("PropertyDetail").ToList();
+    string path = "";
+
+    <div class="btn-group">
+
+        <span class="btn create">
+            <a href="@Url.Action("Create", new { id = ViewContext.RouteData.Values["id"] })">
+                <i class="fa fa-plus"></i>
+                <span class="hidden-xs">Thêm mới</span>
+            </a>
+        </span>
+        <span class="btn delete">
+            <a href="javascript:void(0)" id="delete">
+                <i class="fa fa-trash-o"></i>
+                <span class="hidden-xs">Xóa</span>
+            </a>
+        </span>
+        <span class="btn save">
+            <a href="javascript:void(0)" id="copy">
+                <i class="fa fa-copy"></i>
+                <span class="hidden-xs">Copy</span>
+            </a>
+        </span>
+        <div class="btn-group btn type">
+            <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                Thao tác
+                <i class="fa fa-caret-down"></i>
+            </a>
+            <ul class="dropdown-menu fa-ul">
+                <li>
+                    <a href="javascript:void(0)" id="update">
+                        <i class="fa fa-sort-numeric-desc"></i>
+                        <span class="hidden-xs">Cập nhật thứ tự</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:void(0)" id="update-attribute">
+                        <i class="fa fa-puzzle-piece"></i>
+                        <span class="hidden-xs">Cập nhật thuộc tính</span>
+                    </a>
+                </li>
+                <li>
+                    @if (articleType.HasCopyAndMove)
+                    {
+                        <a href="javascript:void(0)" data-toggle="modal" data-target="#myType">
+                            <i class="fa fa-exchange"></i>
+                            <span class="hidden-xs">Cập nhật loại bài viết</span>
+                        </a>
+                    }
+                </li>
+            </ul>
+        </div>
+        @if (SiteConfig.CurrentUser.UserName == "admin" || SiteConfig.CurrentUser.UserName == "sa")
+        {
+            if (articleType.HasImportExPort)
+            {
+                <div class="btn-group btn ip-type">
+                    <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id="button-action">
+                        <i class="fa fa-plus"></i>
+                        Import
+                    </a>
+                    <ul class="dropdown-menu fa-ul">
+                        @*<li>
+                                <span class="btn f-import">
+                                    <a href="@Url.Action("FBImport", "Article", new { id = articleType.Id })">
+                                        <i class="fa fa-facebook"></i>
+                                        <span>Facebook</span>
+                                    </a>
+                                </span>
+                            </li>*@
+                        <li>
+                            <span class="btn import">
+                                <a href="@Url.Action("ImportCateId", "Article", new { id = articleType.Id , cateId})" data-toggle="modal" data-target="#article-form">
+                                    <i class="fa fa-calculator"></i>
+                                    <span>Excel</span>
+                                </a>
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="btn-group btn type">
+                    <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id="button-action">
+                        <i class="fa fa-table"></i>
+                        Export
+                    </a>
+                    <ul class="dropdown-menu fa-ul">
+                        <li>
+                            <a href="@Url.Action("ExportCateId", "Article", new { id = articleType.Id, cateId })">
+                                <i class="fa fa-align-justify fs15"></i>
+                                <span>Nhóm</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" id="export-select">
+                                <i class="fa fa-magic fs15"></i>
+                                <span>Tùy chọn</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            }
+        }
+
+
+        @if (articleType.HasCopyAndMove)
+        {
+            <div class="modal fade" id="myType" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">Cập nhật loại bài viết</h4>
+                        </div>
+                        <div class="modal-body selecttype">
+                            <span class="selecttype">
+                                @Html.DropDownList("selecttype", new SelectList(articleTypes.Where(at => at.HasCopyAndMove), "Id", "Name", articleType.Id), new { @class = "form-control mg-bottom-10" })
+                            </span>
+                            <span class="btn type">
+                                <a href="javascript:void(0)" id="movetotype" data-dismiss="modal">
+                                    <i class="fa fa-exchange"></i> Di chuyển
+                                </a>
+                            </span>
+                            <span class="btn save">
+                                <a href="javascript:void(0)" id="copytotype" data-dismiss="modal">
+                                    <i class="fa fa-copy"></i> Sao chép
+                                </a>
+                            </span>
+                            <span class="btn delete">
+                                <a href="javascript:void(0)" data-dismiss="modal">
+                                    <i class="fa fa-times"></i> Đóng
+                                </a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="pull-right input-group">
+        @Html.Partial("_Search")
+    </div>
+
+    @Html.Pager(new PagerOptions { ItemCount = ViewBag.ItemCount, VisibleItemCount = 7, PageSize = Model.PageSize }, null)
+    <table class="table table-hover">
+        <thead class="header">
+            <tr>
+                <th class="check">
+                    <label class="checkbox single noborder">@Html.CheckBox("chkSelectAll", false, new { id = "check-all" })<i></i></label>
+                </th>
+                @if (articleType.HasImage)
+                {
+                    <th class="img hidden-xs hidden-sm">
+                        @Html.Label("Hình đại diện")
+                    </th>
+                }
+
+                <th class="title filter">
+                    @if (Request["sortorder"] != null && Request["sortorder"].Equals("ARTICLE_NAME", StringComparison.OrdinalIgnoreCase) && Request["sortdirection"].Equals("ASCENDING", StringComparison.OrdinalIgnoreCase))
+                    {
+                        <div>
+                            @Html.Filter("Tiêu đề", new { sortorder = ArticleSortOrder.ARTICLE_NAME, sortdirection = VCMS.MVC4.Data.SortDirection.DESCENDING }, null)
+                        </div>
+                        <i class="fa fa-caret-up @(Request["sortorder"].Equals("ARTICLE_NAME", StringComparison.OrdinalIgnoreCase) ? "active" : "")"></i>
+                    }
+                    else
+                    {
+                        <div>
+                            @Html.Filter("Tiêu đề", new { sortorder = ArticleSortOrder.ARTICLE_NAME, sortdirection = VCMS.MVC4.Data.SortDirection.ASCENDING }, null)
+                        </div>
+                        <i class="fa @(Request["sortorder"] != null ? (Request["sortdirection"].Equals("DESCENDING", StringComparison.OrdinalIgnoreCase) && Request["sortorder"].Equals("ARTICLE_NAME", StringComparison.OrdinalIgnoreCase) ? "fa-caret-down active" : "fa-caret-up") : "fa-caret-up")"></i>
+                    }
+                </th>
+
+
+
+
+                <th class="date filter hidden-xs">
+                    @if ((Request["sortorder"] != null && (Request["sortorder"].Equals("DATE_CREATED", StringComparison.OrdinalIgnoreCase)) && Request["sortdirection"].Equals("ASCENDING", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        var dcreate = "Ngày tạo";
+                        if (articleType.Code == "ADVs")
+                        {
+                            dcreate = "Ngày bắt đầu";
+                        }
+                        <div>
+                            @Html.Filter(dcreate, new { sortorder = ArticleSortOrder.DATE_CREATED, sortdirection = VCMS.MVC4.Data.SortDirection.DESCENDING }, null)
+                        </div>
+                        <i class="fa fa-caret-up @(Request["sortorder"].Equals("DATE_CREATED", StringComparison.OrdinalIgnoreCase) ? "active" : "")"></i>
+                    }
+                    else
+                    {
+                        var dcreate = "Ngày tạo";
+                        if (articleType.Code == "ADVs")
+                        {
+                            dcreate = "Ngày bắt đầu";
+                        }
+                        <div>
+                            @Html.Filter(dcreate, new { sortorder = ArticleSortOrder.DATE_CREATED, sortdirection = VCMS.MVC4.Data.SortDirection.ASCENDING }, null)
+                        </div>
+                        <i class="fa @(Request["sortorder"] != null ? (Request["sortdirection"].Equals("DESCENDING", StringComparison.OrdinalIgnoreCase) && Request["sortorder"].Equals("DATE_CREATED", StringComparison.OrdinalIgnoreCase) ? "fa-caret-down active" : "fa-caret-up") : "fa-caret-up")"></i>
+                    }
+                </th>
+                <th class="date filter hidden-xs">
+                    @Html.Label("Ngày sửa")
+                </th>
+
+                @if (articleType.IsNew)
+                {
+                    <th class="attr nowarp @(Request["flag"] != null && Request["flag"].Equals("NEW", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+                        @if (Request["flag"] != null && Request["flag"].Equals("NEW", StringComparison.OrdinalIgnoreCase))
+                        {
+                            @Html.FilterMode((articleType.StrIsNew != null && articleType.StrIsNew != "") ? articleType.StrIsNew : "Mới", new { flag = "all" }, null)
+                        }
+                        else
+                        {
+                            @Html.FilterMode((articleType.StrIsNew != null && articleType.StrIsNew != "") ? articleType.StrIsNew : "Mới", new { flag = ArticleFlags.NEW }, null)
+                        }
+                    </th>
+                }
+                @if (articleType.IsHot)
+                {
+                    <th class="attr nowarp @(Request["flag"] != null && Request["flag"].Equals("HOT", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+                        @if (Request["flag"] != null && Request["flag"].Equals("HOT", StringComparison.OrdinalIgnoreCase))
+                        {
+                            @Html.FilterMode((articleType.StrIsHot != null && articleType.StrIsHot != "") ? articleType.StrIsHot : "Nổi bật", new { flag = "all" }, null)
+                        }
+                        else
+                        {
+                            @Html.FilterMode((articleType.StrIsHot != null && articleType.StrIsHot != "") ? articleType.StrIsHot : "Nổi bật", new { flag = ArticleFlags.HOT }, null)
+                        }
+                    </th>
+                }
+                @if (articleType.IsMostView)
+                {
+                    <th class="attr nowarp @(Request["flag"] != null && Request["flag"].Equals("MOSTVIEW", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+                        @if (Request["flag"] != null && Request["flag"].Equals("MOSTVIEW", StringComparison.OrdinalIgnoreCase))
+                        {
+                            @Html.FilterMode((articleType.StrIsMostView != null && articleType.StrIsMostView != "") ? articleType.StrIsMostView : "Xem nhiều", new { flag = "all" }, null)
+                        }
+                        else
+                        {
+                            @Html.FilterMode((articleType.StrIsMostView != null && articleType.StrIsMostView != "") ? articleType.StrIsMostView : "Xem nhiều", new { flag = ArticleFlags.MOSTVIEW }, null)
+                        }
+                    </th>
+                }
+                @*@if (articleType.Code == "PRODUCT")
+        {
+            <th class="attr">
+                @Html.Label("Xem nhiều")
+            </th>
+        }*@
+                <th class="attr nowarp @(Request["flag"] != null && Request["flag"].Equals("INACTIVE", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+                    @if (Request["flag"] != null && Request["flag"].Equals("INACTIVE", StringComparison.OrdinalIgnoreCase))
+                    {
+                        @Html.FilterMode("InActive", new { flag = "all" }, null)
+                    }
+                    else
+                    {
+                        @Html.FilterMode("InActive", new { flag = ArticleFlags.INACTIVE }, null)
+                    }
+                </th>
+
+                @*<th class="date filter hidden-xs">
+           <span>Ngày kết thúc</span>
+        </th>*@
+                <th class="sort filter">
+                    @if (Request["sortorder"] != null && Request["sortorder"].Equals("SORT_ORDER", StringComparison.OrdinalIgnoreCase) && Request["sortdirection"].Equals("ASCENDING", StringComparison.OrdinalIgnoreCase))
+                    {
+                        <div>
+                            @Html.Filter("Thứ tự", new { sortorder = ArticleSortOrder.SORT_ORDER, sortdirection = VCMS.MVC4.Data.SortDirection.DESCENDING }, null)
+                        </div>
+                        <i class="fa fa-caret-up @(Request["sortorder"].Equals("SORT_ORDER", StringComparison.OrdinalIgnoreCase) ? "active" : "")"></i>
+                    }
+                    else
+                    {
+                        <div>
+                            @Html.Filter("Thứ tự", new { sortorder = ArticleSortOrder.SORT_ORDER, sortdirection = VCMS.MVC4.Data.SortDirection.ASCENDING }, null)
+                        </div>
+                        <i class="fa @(Request["sortorder"] != null ? (Request["sortdirection"].Equals("DESCENDING", StringComparison.OrdinalIgnoreCase) && Request["sortorder"].Equals("SORT_ORDER", StringComparison.OrdinalIgnoreCase) ? "fa-caret-down  active" : "fa-caret-up") : "fa-caret-up")"></i>
+                    }
+                </th>
+                <th class="action">@Html.Label("Thao tác")</th>
+            </tr>
+        </thead>
+        <tbody class="items">
+            @foreach (var item in Model.List)
+            {
+
+            <tr class="item @(item.InActive ? "inactive" : "")">
+                <td class="check">
+                    <label class="checkbox fix">@Html.CheckBox("chkSelect", false, new { value = item.Id, @class = "check-export" })<i></i></label>
+                </td>
+                @if (articleType.HasImage)
+                {
+                    <td class="img hidden-xs hidden-sm">
+                        @if (item.ImageUrl != null)
+                        {
+                            var str = item.ImageUrl.Split('/');
+                            if (str.Length <= 1)
+                            {
+                                path = "/UserUpload/Article/";
+                            }
+                            else
+                            {
+                                path = "";
+                            }
+                            <a href="@Url.Content("~/" + path + item.ImageUrl)?width=400&mode=crop" class="preview">
+                                @Html.Image(path + item.ImageUrl, new ImageOptions { Width = 50, Height = 30, Mode = ImageMode.crop }, new { @class = "img" })
+                            </a>
+                        }
+                        else
+                        {
+                            <i class="fa fa-picture-o"></i>
+                        }
+                    </td>
+                }
+
+                <td class="title tet">
+                    <span class="title">
+                        @item.ArticleName
+
+                    </span>
+                </td>
+
+
+                <td class="date hidden-xs nowarp">
+                    @item.DateCreated.ToString("dd/MM/yyyy HH:mm")
+                </td>
+                <td class="date hidden-xs nowarp">
+                    @Convert.ToDateTime(item.DateUpdated).ToString("dd/MM/yyyy HH:mm")
+                </td>
+                @if (articleType.IsNew)
+                {
+                    <td class="attr">
+                        <label class="checkbox fix">@Html.CheckBoxFor(model => item.IsNew, new { value = item.Id, @class = "is-new" })<i></i></label>
+                    </td>
+                }
+                @if (articleType.IsHot)
+                {
+                    <td class="attr">
+                        <label class="checkbox fix">@Html.CheckBoxFor(model => item.IsHot, new { value = item.Id, @class = "is-hot" })<i></i></label>
+                    </td>
+                }
+                @if (articleType.IsMostView)
+                {
+                    <td class="attr">
+                        <label class="checkbox fix">@Html.CheckBoxFor(model => item.IsMostView, new { value = item.Id, @class = "is-most-view" })<i></i></label>
+                    </td>
+                }
+                @*@if (articleType.Code == "PRODUCT")
+        {
+            <td class="attr">
+                <label class="checkbox fix">@Html.CheckBoxFor(model => item.FullWidth, new { value = item.Id, @class = "is-fullwidth" })<i></i></label>
+            </td>
+        }*@
+                <td class="attr">
+                    <label class="checkbox fix">@Html.CheckBoxFor(model => item.InActive, new { value = item.Id, @class = "in-active" })<i></i></label>
+                </td>
+
+
+
+                @if (articleType.Code == "ADVs")
+                {
+                    <td class="date hidden-xs nowarp">
+                        @if (item.DateUpdated != null)
+                        {
+                            @Convert.ToDateTime(item.DateUpdated).ToString("dd/MM/yyyy HH:mm")
+                        }
+                        else
+                        {
+                            @item.DateCreated.ToString("dd/MM/yyyy HH:mm")
+                        }
+                    </td>
+                }
+
+                <td class="sort">
+                    @Html.TextBox("sort", item.SortOrder ?? 0, new { rel = item.Id })
+                </td>
+                <td class="action nowarp">
+                    <a href="@Url.Action("Edit", new { id = item.Id, returnUrl = ViewContext.HttpContext.Request.Url.PathAndQuery })" class="edit-link" data-toggle="tooltip" data-placement="top" title="Sửa">
+                        <i class="fa fa-edit"></i>
+                    </a>
+                    @*@if (articleType.HasPrice)
+            {
+                <a href="@Url.Action("Index", "Price", new { id = item.Id }, null)" class="attach-link" data-toggle="tooltip" data-placement="top" title="Quản lý giá">
+                    <span class="hidden-xs hidden-sm">-&nbsp;</span> <i class="fa fa-dollar"></i>
+                </a>
+            }*@
+                    @if (articleType.HasImage && articleType.MultiImage)
+                    {
+                        <a href="@Url.Action("Index", "ArticleFile", new { id = item.Id, fileType = ArticleFileType.IMAGE }, null)" class="image-link" data-toggle="tooltip" data-placement="top" title="Quản lý hình ảnh">
+                            <span class="hidden-xs hidden-sm">-&nbsp;</span> <i class="fa fa-picture-o"></i>
+                        </a>
+                    }
+                    @if (articleType.HasAttachment)
+                    {
+                        <a href="@Url.Action("Index", "ArticleFile", new { id = item.Id, fileType = ArticleFileType.ATTACHMENT }, null)" class="attach-link" data-toggle="tooltip" data-placement="top" title="@(articleType.Id == 2 ? "Tư liệu tải về" : "Quản lý file đính kèm")">
+                            <span class="hidden-xs hidden-sm">-&nbsp;</span> <i class="fa fa-paperclip"></i>
+                        </a>
+                        if (articleType.Id == 2)
+                        {
+                            <a href="@Url.Action("Index", "ArticleFile", new { id = item.Id, fileType = ArticleFileType.CONTENT }, null)" class="attach-link" data-toggle="tooltip" data-placement="top" title="Bảng giá list">
+                                <span class="hidden-xs hidden-sm">-&nbsp;</span> <i class="fa fa-dollar"></i>
+                            </a>
+                        }
+                    }
+                    @foreach (var p in multiprop.Where(mp => mp.ArticleTypes.Select(at => at.Code).Contains(item.ArticleType.Code)))
+                    {
+                        if (p.PropertyType.ToString() == "CHOICE" || p.PropertyType.ToString() == "MULTICHOICE")
+                        {
+                            <a href="@Url.Action("Index", "PropertyMulti", new { id = p.Id, artId = item.Id }, null)" class="edit-link" data-toggle="tooltip" data-placement="top" title="@p.PropertyDetail[SiteConfig.LanguageId].Name">
+                                <span class="hidden-xs hidden-sm">-&nbsp;</span> <i class="fa fa-list-alt fa-@p.Code.ToLower()"></i>
+                            </a>
+                        }
+                    }
+                    @if (articleType.AllowView)
+                    {
+                        <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName), area = "" }, null)" target="_blank" class="edit-link" data-toggle="tooltip" data-placement="top" title="Xem trước bài viết">
+                            <span class="hidden-xs hidden-sm">-&nbsp;</span> <i class="fa fa-eye"></i>
+                        </a>
+                    }
+                    @*@if (articleType.ShowComment)
+            {
+                int cm_count = item.Comments.Where(cm => cm.Status == CommentStatus.ALL).ToList().Count;
+                <a href="@Url.Action("List", "Comment", new { id = item.Id }, null)" class="comment" data-toggle="tooltip" data-placement="top" title="Bình luận">
+                    <span class="hidden-xs hidden-sm">
+                        -&nbsp;<i class="fa fa-comment"></i>
+                        @if (cm_count > 0)
+                        {
+                            <i class="counter">@cm_count</i>
+                        }
+                    </span>
+                </a>
+            }*@
+                    @if (articleType.HasPoster)
+                    {
+                        <div class="btn-group">
+                            <button type="button" class="auopost-modal btn btn-primary btn-lg hidden" data-toggle="modal" data-target="#auopost-modal"></button>
+                            <a href="javascript:void(0)" class="autupost-loading hidden" style="display:none">
+                                <span class="hidden-xs hidden-sm">-&nbsp;</span> <i class="fa fa-spinner fa-pulse"></i>
+                            </a>
+                            <a href="javascript:void(0)" class="dropdown-toggle autopost hidden" data-toggle="dropdown" aria-expanded="false">
+                                <span class="hidden-xs hidden-sm">-&nbsp;</span> <i class="fa fa-facebook-square"></i>
+                            </a>
+                            <ul class="dropdown-menu fa-ul autopost-action hidden">
+                                <li>
+                                    <a href="javascript:void(0)" class="post" data-id="@item.Id" data-submit="@Url.Action("FBPost","Article")">
+                                        <span class="hidden-xs">Post</span>
+                                    </a>
+                                </li>
+                                @*<li>
+                            <a href="javascript:void(0)" class="post-edit" data-id="@item.Id" data-submit="@Url.Action("FBPostEdit","Article")">
+                                <span class="hidden-xs">Edit + Post</span>
+                            </a>
+                        </li>*@
+                            </ul>
+                        </div>
+                    }
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+
+    @Html.Pager(new PagerOptions { ItemCount = ViewBag.ItemCount, VisibleItemCount = 7, PageSize = Model.PageSize }, null)
+    if (articleType.HasImportExPort)
+    {
+        <div class="modal fade" id="article-form" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            @{Html.RenderAction("Import", "Article", new { id = articleType.Id });}
+        </div>
+    }
+    @section Scripts{
+        <script type="text/javascript">
+            var ApiKey = '@SiteConfig.SiteInfo.ApiKey';
+            $(function () {
+                $("#check-all").checkAll(".item .check input[type='checkbox']");
+                $("#delete").sdelete({
+                    url: '@Url.Action("Delete")',
+                    selector: ".item .check input[type='checkbox']",
+                });
+                $("#copy").copy({
+                    url: '@Url.Action("Copy")',
+                    selector: ".item .check input[type='checkbox']",
+                });
+                $("#update").update({
+                    url: '@Url.Action("UpdateOrder")',
+                    selector: ".item input[name='sort']",
+                    param1: 'id',
+                    param2: 'order'
+                });
+                $(".is-new, .is-hot, .is-most-view,.in-active,.is-fullwidth,.check-export").change(function () {
+                    $(this).parentsUntil(".items").find(".check input[type='checkbox']").addClass("changed");
+                });
+                $("#export-select").on("click", function () {
+                    $('a#button-action').trigger('click');
+                    var json = [];
+                    $(".item .check input[type='checkbox'].changed").each(function () {
+                        json.push({ "id": $(this).val() });
+                    });
+                    if (json.length > 0) {
+                        $.ajax({
+                            url: '@Url.Action("ExportSelect", "Article", new { id = articleType.Id })',
+                            type: 'POST',
+                            success: function (json) {
+                                if (json['error'])
+                                    alert(json['error']['warning']);
+                                else if (json['redirect'])
+                                    location = json['redirect'];
+                            },
+                            data: "json=" + JSON.stringify(json)
+                        });
+                    }
+                    else
+                        alert('Lựa chọn bài viết cần Export.');
+                    return false;
+                });
+                $("#update-attribute").click(function () {
+                    var json = [];
+                    $(".item .check input[type='checkbox'].changed").each(
+                        function () {
+
+                            var isNew = $(this).parentsUntil(".items").find(".is-new:checked").length > 0;
+                            var isHot = $(this).parentsUntil(".items").find(".is-hot:checked").length > 0;
+                            var isMostView = $(this).parentsUntil(".items").find(".is-most-view:checked").length > 0;
+                            var inActive = $(this).parentsUntil(".items").find(".in-active:checked").length > 0;
+                            var isFullWith = $(this).parentsUntil(".items").find(".is-fullwidth:checked").length > 0;
+
+                            json.push({ "id": $(this).val(), "isNew": isNew, "isHot": isHot, "isMostView": isMostView, "inActive": inActive, "isFullWith": isFullWith });
+                        });
+                    if (json.length > 0) {
+
+                        $.ajax({
+                            url: '@Url.Action("UpdateAttributes")',
+                            type: 'POST',
+                            success: function (data) {
+                                if (data.Status == 0) {
+                                    alert(data.Message);
+                                    window.location.reload();
+                                }
+                            },
+                            data: "json=" + JSON.stringify(json)
+                        });
+                    }
+                });
+                $("#movetotype").movetotype({
+                    url: '@Url.Action("MoveToType")',
+                    selector1: ".item .check input[type='checkbox']",
+                    selector2: ".selecttype select",
+                    param1: 'id',
+                    param2: 'typeid'
+                });
+                $("#copytotype").copytotype({
+                    url: '@Url.Action("CopyToType")',
+                    selector1: ".item .check input[type='checkbox']",
+                    selector2: ".selecttype select",
+                    param1: 'id',
+                    param2: 'typeid'
+                });
+            })
+        </script>
+        <script src="@Url.Content("~/Scripts/jquery.simplepreview.js")"></script>
+        <script src="https://autopost.viennam.info/scripts/fb.js?apiKey=@SiteConfig.SiteInfo.FaceBookApp"></script>
+        <script>
+            var time = null;
+            var autoPoster = new AutoPoster();
+            autoPoster.check(function (data) {
+
+                if (data.status == -1) {
+                    $(".autopost, .autopost-action, .autupost-loading").remove();
+                }
+                else {
+                    $(".autopost, .autopost-action, .autupost-loading").removeClass("hidden");
+                }
+            });
+            $(".post").on("click", function () {
+                var _this = $(this);
+                var _parent = _this.parents(".btn-group");
+                $.ajax({
+                    url: _this.data("submit"),
+                    data: {
+                        id: _this.data("id")
+                    },
+                    beforeSend: function () {
+                        _parent.find(".autopost").animate({ opacity: '0' });
+                        _parent.find(".autupost-loading").fadeIn('slow');
+                        $("#sys-notification").fadeOut("slow");
+                        clearTimeout(time);
+                    },
+                    success: function (data) {
+                        if (data.Status == -1)
+                            alert(data.Message);
+                        else {
+                            $("#sys-notification").fadeIn("slow");
+                            time = setTimeout(function () {
+                                $("#sys-notification").fadeOut("slow");
+                            }, 5000);
+                        }
+                        _parent.find(".autopost").animate({ opacity: '1' });
+                        _parent.find(".autupost-loading").fadeOut('slow');
+
+                        return false;
+                    },
+                });
+            });
+
+            $(".post-edit").on("click", function () {
+                var _this = $(this);
+                var _parent = _this.parents(".btn-group");
+                $.ajax({
+                    url: _this.data("submit"),
+                    dataType: "html",
+                    data: {
+                        id: _this.data("id")
+                    },
+                    beforeSend: function () {
+                        _parent.find(".autopost").animate({ opacity: '0' });
+                        _parent.find(".autupost-loading").fadeIn('slow');
+                        clearTimeout(time);
+                    },
+                    success: function (html) {
+                        $("#auopost-modal").html(html);
+                        _this.addClass("posting");
+                        _parent.find(".autopost").animate({ opacity: '1' });
+                        _parent.find(".autupost-loading").fadeOut('slow');
+                        _parent.find(".auopost-modal").trigger("click");
+                        return false;
+                    },
+                });
+            });
+            function Success() {
+                var _parent = $(".post-edit.posting").parents(".btn-group");
+                $("#sys-notification").fadeIn("slow");
+                _parent.find(".auopost-modal").trigger("click");
+                $("#autopost-form input, #autopost-form textarea").val("");
+                time = setTimeout(function () {
+                    $("#sys-notification").fadeOut("slow");
+                }, 5000);
+                return false;
+            }
+            @*$("#multiplePost").MultiplePost({
+                url: '@Url.Action("MultiplePost")',
+                selector: ".item .check input[type='checkbox']",
+            });*@
+        </script>
+    }
+}

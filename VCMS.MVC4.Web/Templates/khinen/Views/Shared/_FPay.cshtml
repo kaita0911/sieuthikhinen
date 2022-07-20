@@ -1,0 +1,30 @@
+﻿@{
+    var top_pay = Article.GetByType(ArticleType.GetIdByCode("PAY"), SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.HOT, 1, 10, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING).List;
+    var footer_pay = Article.GetByType(ArticleType.GetIdByCode("PAY"), SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.NEW, 1, 10, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING).List;
+}
+
+<div class="f-pay box-footer">
+    <h2 class="heading">Hình thức thanh toán</h2>
+    <div class="content">
+        <ul class="top">
+            @foreach (var item in top_pay)
+            {
+                <li>
+                    <a>
+                        @item.ArticleName
+                    </a>
+                </li>
+            }
+        </ul>
+        <ul class="footer">
+            @foreach (var item in footer_pay)
+            {
+                <li>
+                    <figure>
+                        @Html.Image(item.ImageUrl, new ImageOptions { Height = 50, Mode = ImageMode.pad, Lazy = false }, new { alt = item.ArticleName })
+                    </figure>
+                </li>
+            }
+        </ul>   
+    </div>
+</div>

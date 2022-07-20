@@ -1,0 +1,40 @@
+﻿@model LocalPasswordModel
+@{
+    ViewBag.Title = Html.Locale("account_update_password").ToHtmlString();
+    ViewBag.Breadcrumb = new BreadcrumbModel { Items = new List<BreadcrumbItem> { new BreadcrumbItem { Text = Html.Locale("account_update_password").ToHtmlString(), Url = null, IsLast = true } } };
+}
+<h1 class="title hidden">@Html.Locale("account_update_password")</h1>
+@using (Html.BeginForm("ChangePassword", "Account"))
+{
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-md-8 col-sm-12 col-xs-12 col-md-offset-2">
+            <fieldset class="account">
+                <legend class="title">
+                    @Html.Locale("account_update_password")
+                </legend>
+                <div class="form-group required">
+                    <label>@Html.Locale("account_current_password"):</label>
+                    @Html.TextBoxFor(model => model.OldPassword, new { @class = "form-control", placeholder = Html.Locale("account_current_password").ToHtmlString(), type = "password" })
+                    @Html.ValidationMessageFor(model => model.OldPassword, Html.Locale("account_error_currentpass").ToHtmlString())
+                </div>
+                <div class="form-group required">
+                    <label>@Html.Locale("account_new_password"):</label>
+                    @Html.TextBoxFor(model => model.NewPassword, new { @class = "form-control", placeholder = Html.Locale("account_new_password").ToHtmlString(), type = "password" })
+                    @Html.ValidationMessageFor(model => model.NewPassword, Html.Locale("account_error_password").ToHtmlString())
+                </div>
+                <div class="form-group required">
+                    <label>@Html.Locale("account_password_confirm"):</label>
+                    @Html.TextBoxFor(model => model.ConfirmPassword, new { @class = "form-control", placeholder = Html.Locale("account_password_confirm").ToHtmlString(), type = "password" })
+                    @Html.ValidationMessageFor(model => model.ConfirmPassword, Html.Locale("account_error_confirmpassword").ToHtmlString())
+                </div>
+
+            </fieldset>
+            @*<a href="@Url.Action("Index","Account")" class="btn btn-continue btn-next"><i class="fa fa-angle-left"></i> @Html.Locale("acount_back")</a>*@
+            <button type="submit" class="btn btn-continue btn-next">@Html.Locale("account_update_password") <i class="fa fa-angle-right"></i></button>
+        </div>
+    </div>
+}
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+}

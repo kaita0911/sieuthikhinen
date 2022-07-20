@@ -1,0 +1,22 @@
+﻿@model Widget
+@{
+    var lst = Article.GetByType((int)Model.ArticleTypeId, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection);
+    <div class="box-comment-home2">
+        <h2 class="heading">
+            <span class="color-1">@Model.Title</span>
+            @*<span class="color-2"></span>*@
+        </h2>
+        <div class="content">
+            @foreach (var item in lst.List)
+            {
+                <div class="item">
+                    <h3>
+                        <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">@item.ArticleName</a>
+                    </h3>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+

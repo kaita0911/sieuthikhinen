@@ -1,0 +1,28 @@
+﻿@model VCMS.MVC4.Data.Cart
+
+<div>
+    <table class="cart">
+        <thead>
+            <tr>
+                <th class="check"></th>
+                <th>Sản phẩm</th>
+                <th>Số lượng</th>
+                <th>Đơn giá</th>
+                <th>Thành tiền</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td></td>
+                    <td>@item.Article.ArticleName</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.UnitPrice</td>
+                    <td>@item.Amount</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

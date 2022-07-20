@@ -1,0 +1,51 @@
+﻿@using VCMS.MVC4.Web
+@using System.Text.RegularExpressions
+@using System.Data.Entity
+@{
+    var db = new DataContext();
+    var menuItems = MenuItem.GetMenu(SiteConfig.SiteId, SiteConfig.LanguageId);
+
+}
+<ul class="clear-fix">
+    <li><a href="@Url.Action("Index", "Home")">
+        <img src="@Url.Content("~/Content/images/home-icon.png")" /></a></li>
+    @foreach (var item in menuItems)
+    {
+        <li>@if (item.ItemType == MenuItemType.LINK)
+            {
+            <a href="@item.Url">@item.ItemText</a>
+            }
+            else
+            {
+            @Html.ActionLink(item.ItemText, "Index", "ArticleType", new { code = item.ArticleType.UrlFriendly }, null)
+                if (item.HasSubMenu)
+                {
+                    var categories = Category.GetByType(item.ArticleTypeId??0, SiteConfig.SiteId, SiteConfig.LanguageId, 0 ).OrderBy(c=>c.SortOrder).ToList();
+                    
+                    if (categories.Count > 0)
+                    {
+                        var menus = Category.GetTree(categories).Where(c => c.Level == 0).ToList();
+            <ul class="dropdown">
+                @foreach (var cat in menus)
+                {
+                    <li>@Html.ActionLink(cat.CategoryName, "Detail", "Category", new { id = cat.Id, code=item.ArticleType.UrlFriendly, title =  Unichar.UnicodeStrings.UrlString( cat.CategoryName) },null)</li>
+                }
+            </ul>
+                    }
+                }
+            }
+        </li>
+    }
+
+
+</ul>
+
+
+<script>
+    $(function () {
+        $("li:has(.dropdown)").hover(
+            function () { $(".dropdown", this).show(); },
+            function () { $(".dropdown", this).hide(); }
+            )
+    })
+</script>

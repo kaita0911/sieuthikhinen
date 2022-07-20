@@ -1,0 +1,114 @@
+﻿@model Widget
+@{
+    var article = Article.GetByType(Model.ArticleTypeId.Value, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection, Model.Includes);
+
+    if (article.List.Count > 0)
+    {
+        <section id="banner" class="vns-slideshow">
+            <div class="slider fullwidthbanner-container  roundedcorners">
+                <div class="fullwidthbanner" data-height="301" data-plugin-options='{"startwidth": 1400,"delay": 9000,"navigationArrows":"none","autoHeight":off,"onHoverStop":on}' data-navigationstyle="round" data-snap-ignore="true">
+                    <ul class="hide">
+                        @foreach (var item in article.List)
+                        {
+                            <li data-transition="random" data-slotamount="14" data-masterspeed="300" data-delay="7000">
+                                @if (item.ImageUrl != null)
+                                {
+                                    <img src="@Url.Content(SiteConfig.Image("1x1.jpg"))?width=1400" data-lazyload="@Url.Content(item.ImageUrl)?width=1400&height=301&mode=crop" alt="" data-bgfit="cover" data-bgposition="center top" data-bgrepeat="no-repeat" />
+                                }
+                                else
+                                {
+                                    <img src="@Url.Content(SiteConfig.Image("1x1.jpg"))?width=900" data-lazyload="@Url.Content(SiteConfig.Image("banner.jpg"))?width=900&height=400&mode=crop" alt="" data-bgfit="cover" data-bgposition="center top" data-bgrepeat="no-repeat" />
+                                }
+                                @*<div class="tp-caption sfb stb easeOutExpo easeOutExpo"
+                                         data-x="669"
+                                         data-y="287"
+                                         data-speed="1200"
+                                         data-start="3000"
+                                         data-easing="easeOutExpo"
+                                         style="border-width: 10px 0px 0px 16px; border-color: transparent transparent transparent #582300; border-style: solid; ">
+                                    </div>
+                                    <div class="tp-caption box-description sft stt"
+                                         data-x="70"
+                                         data-y="170"
+                                         data-speed="1000"
+                                         data-start="1700"
+                                         data-easing="easeOutExpo"
+                                         style="border-width: 140px 42px 0px 0px !important; border-color: rgba(255, 255, 255, 0.9) transparent transparent transparent; border-style: solid; width: 638px; height: 140px;">
+                                    </div>
+                                    <div class="tp-caption box-description-border sft stt"
+                                         data-x="70"
+                                         data-y="170"
+                                         data-speed="1000"
+                                         data-start="1700"
+                                         data-easing="easeOutExpo"
+                                         style="width:14px;height:140px;max-width:14px;max-height:140px;">
+                                    </div>
+                                    <h2 class="medium_text tp-caption sfr stl" style="font-size: 21px; text-shadow: none; font-style: italic; letter-spacing: 0.4px; position: absolute; margin-bottom: 9px; font-weight: normal; top:-170px;left:14px;"
+                                        data-x="110"
+                                        data-y="196"
+                                        data-speed="1200"
+                                        data-start="2000"
+                                        data-easing="easeOutExpo">
+                                        @item.ArticleName
+                                    </h2>*@
+                                @*@if (Model.IncludeArticleDetail)
+                                    {
+                                        <div class="">
+                                            <div class="description tp-caption sfl stl" style=" height: 63px; font-size: 36px; width: 100%; font-weight: bold;"
+                                                 data-x="0"
+                                                 data-y="290"
+                                                 data-speed="1200"
+                                                 data-start="1500"
+                                                 data-easing="easeOutExpo">
+                                                <span class="name">@item.ArticleName</span>
+
+                                            </div>
+                                            <div class="description tp-caption sfl stl" style="height: 100px; color: #19ab4b; font-size: 27px; font-weight: normal; width: 100%; line-height: 30px; "
+                                                 data-x="0"
+                                                 data-y="350"
+                                                 data-speed="1200"
+                                                 data-start="2000"
+                                                 data-easing="easeOutExpo">
+                                                <span class="short-desc">@Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, Model.NumberText))</span>
+                                            </div>
+
+                                            <div class="description tp-caption sfl stl" style="height: 200px; padding: 0px 20px 0px 20px; line-height: 60px; color: #fff; font-size: 20px; font-weight: normal; width: 100%"
+                                                 data-x="10"
+                                                 data-y="230"
+                                                 data-speed="1200"
+                                                 data-start="2500"
+                                                 data-easing="easeOutExpo">
+
+                                                <div class="des">
+                                                    @Html.Raw(item.Description)
+                                                </div>
+                                                <div class="contact-banner">
+                                                    <a href="@Url.Action("Contact","Home")"><span>@Html.Locale("contact")</span></a>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    }*@
+
+                                @*@if (Model.IncludeProperty)
+                                    {
+                                        var link = item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("LINK", StringComparison.OrdinalIgnoreCase) && a.LanguageId == SiteConfig.LanguageId);
+                                        <div class="tp-caption link vns_medium_text medium_text sfb stb"
+                                             data-x="584"
+                                             data-y="296"
+                                             data-speed="1200"
+                                             data-start="3000"
+                                             data-easing="easeOutExpo" style="font-size: 12px; line-height: 30px; padding: 0; text-transform: uppercase; width: 101px; height: 28px; text-align: center; font-weight: normal; border-radius: 2px; max-height: 28px; max-width: 101px;">
+                                            <a href="@link.Value">@Html.Locale("view_more")</a>
+                                        </div>
+                                    }*@
+                            </li>
+                        }
+                    </ul>
+                    @*<div class="tp-bannertimer"></div>*@
+                </div>
+            </div>
+        </section>
+    }
+}

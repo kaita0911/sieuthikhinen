@@ -1,0 +1,81 @@
+﻿@using System.Data.Entity
+@using (VCMS.MVC4.Data.DataContext db = new VCMS.MVC4.Data.DataContext())
+{
+    var articleType = db.ArticleTypes.FirstOrDefault(a => a.Code == "BANNER");
+    if (articleType != null)
+    {
+        var banners = Article.GetByType(articleType.Id, SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 5, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.DESCENDING);
+        if (banners.List.Count > 0)
+        {
+            <div class="slider responsive-fade">
+                @foreach (var item in banners.List)
+                {
+                    var url = item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("URL", StringComparison.OrdinalIgnoreCase));
+                    if (item.ImageUrl != null)
+                    {
+                        <div class="item">
+                            <a href="@url.Value" target="_blank">
+                                <img src="@Url.Content("~/UserUpload/Article/")@item.ImageUrl?height=500" alt="@item.ArticleName" />
+                            </a>
+                            @*<div class="short-desc">
+                                <div class="name">
+                                    <a href="@url.Value">@item.ArticleName</a>
+                                </div>
+                                <div class="ctn">
+                                    <span>@Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.Description, 50))</span>
+                                </div>
+                                <div class="detail">
+                                    <a href="@url.Value">Xem tiếp</a>
+                                </div>
+                            </div>*@
+                        </div>
+                    }
+                }
+            </div>
+        }
+    }
+}
+<script>
+    $(document).ready(function () {
+
+        var nav = $('#main-menu');
+        $(window).scroll(function () {
+            if ($(this).scrollTop() > 150) {
+                nav.addClass("f-nav");
+            } else {
+                nav.removeClass("f-nav");
+            }
+        });
+
+        $('.responsive-fade').slick({
+            dots: true,
+            infinite: true,
+            speed: 1500,
+            fade: true,
+            autoplay: true,
+            autoplaySpeed: 3000,
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            slide: 'div',
+            cssEase: 'linear'
+        });
+    });
+</script>
+
+@*<script>
+        $(document).ready(function () {
+            $('.slider').mouseenter(
+
+                    function () {
+                        $('.slick-prev').show();
+                        $('.slick-next').show();
+                    });
+
+            $('.slider').mouseleave(
+                function () {
+                    $('.slick-prev').hide();
+                    $('.slick-next').hide();
+                }
+                );
+        })
+    </script>*@

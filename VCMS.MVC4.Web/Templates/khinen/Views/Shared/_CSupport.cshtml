@@ -1,0 +1,41 @@
+﻿@using (DataContext db = new DataContext())
+{
+    var art = Article.GetByTypeCode("SUPPORT", SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 1, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.DESCENDING, ArticleIncludeFlags.ARTICLE_DETAIL | ArticleIncludeFlags.ARTICLE_TYPE | ArticleIncludeFlags.PROPERTIES).List.FirstOrDefault();
+    if (art != null)
+    {
+        var phone = art.PropertyValues.FirstOrDefault(pv => pv.Property.Code.Equals("PHONE", StringComparison.OrdinalIgnoreCase));
+        var zalo = art.PropertyValues.FirstOrDefault(pv => pv.Property.Code.Equals("ZALO", StringComparison.OrdinalIgnoreCase));
+        var skype = art.PropertyValues.FirstOrDefault(pv => pv.Property.Code.Equals("ZALO", StringComparison.OrdinalIgnoreCase));
+        <section id="c_support" class="hidden-sm hidden-xs">
+            <div class="box-content">
+                <ul>
+                    <li>
+                        @if (!string.IsNullOrWhiteSpace(zalo.Value))
+                        {
+                            <a class="skype" href="skype:@skype.Value?chat">
+                                <span>Chat ngay</span>
+                            </a>
+                        }
+                    </li>
+                    <li>
+                        @if (!string.IsNullOrWhiteSpace(phone.Value))
+                        {
+                            <a class="phone" href="tel:@phone.Value" title="" target="_blank">
+                                <span>Gọi ngay</span>
+                            </a>
+                        }
+                    </li>
+                    <li>
+                        @if (!string.IsNullOrWhiteSpace(zalo.Value))
+                        {
+                            <a class="zalo" href="http://zalo.me/@zalo.Value" title="" target="_blank">
+                                <span>@zalo.Value</span>
+                            </a>
+                        }
+                    </li>
+                </ul>
+            </div>
+        </section>
+    }
+}
+

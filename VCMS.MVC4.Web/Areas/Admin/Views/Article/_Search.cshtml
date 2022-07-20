@@ -1,0 +1,27 @@
+﻿@{
+    var db = new DataContext();
+    var articleType = (ArticleType)ViewBag.ArticleType;
+    var categories = Category.GetTree(articleType.Categories);
+    if (Roles.IsUserInRole("Moderators"))
+    {
+        var uac = db.UserArticleTypeCates.Where(u => u.UserId == SiteConfig.CurrentUser.UserId && u.CategoryId > 0);
+        categories = Category.GetTree(articleType.Categories.Where(c => uac.Select(u => u.CategoryId).Contains(c.Id)).OrderBy(c => c.SortOrder).ToList());
+    }
+    var list = from c in categories
+               select new
+               {
+                   Id = c.Id,
+                   CategoryName = string.Join("", Enumerable.Repeat("--", c.Level)) + c.CategoryName
+               };
+}
+@using (Html.BeginForm("Search", "Article", new { id = articleType.Id }, FormMethod.Get, null))
+{
+    <div class="search-box">
+        @if (articleType.HasCategory && categories.Count > 0)
+        {
+            @Html.DropDownList("categoryId", new SelectList(list, "Id", "CategoryName"), "-- Chọn nhóm --", new { @class = "form-control" })
+        }
+        <input name="keyword" type="text" class="text-box pull-left" value="@Request["keyword"]" placeholder="Nhập từ khóa" />
+        <button type="submit" class="btn search"><i class="fa fa-search"></i> <span>Tìm kiếm</span></button>
+    </div>
+}

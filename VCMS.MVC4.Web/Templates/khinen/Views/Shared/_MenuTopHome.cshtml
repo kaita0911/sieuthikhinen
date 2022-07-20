@@ -1,0 +1,149 @@
+﻿@using System.Text.RegularExpressions
+@using System.Data.Entity
+@{
+    var db = new DataContext();
+    var menuItems = MenuItem.GetMenu(SiteConfig.SiteId, SiteConfig.LanguageId);
+    string code = "";
+    string action = "";
+    if (ViewContext.RouteData.Values["code"] != null)
+    {
+        code = ViewContext.RouteData.Values["code"].ToString().ToLower();
+    }
+    if (ViewContext.RouteData.Values["action"] != null)
+    {
+        action = ViewContext.RouteData.Values["action"].ToString().ToLower();
+    }
+}
+<div class="clearfix"></div>
+<nav id="navigation" class="hidden-sm hidden-xs">
+    <div class="container">
+        
+        <div class="row">
+            <div class="col-lg-3 col-md-3">
+                <div class="top-menu-cate">
+                    <label>
+                        Danh mục sản phẩm
+                    </label>
+                    <div class="content">
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-7 col-md-7">
+                <div id="vns-mainnav" class="wrap-menu">
+                    <ul class="nav navbar-nav megamenu">
+                        <li class="dropdown home">
+                            <a href="@Url.Action("Index","Home")">
+                                @Html.Locale("home")
+                            </a>
+                        </li>
+                        @foreach (var item in menuItems)
+                        {
+                            <li class="dropdown @(item.ArticleType.Code.ToLower()) @(code == item.ArticleType.UrlFriendly.ToLower() && item.ItemType != MenuItemType.LINK ? "active" : "")">
+                                <i class="fa fa-home visible-sm visible-xs"></i>
+                                @if (item.ItemType == MenuItemType.LINK)
+                                {
+                                    <a href="@item.Url">
+                                        <span class="menu-title">@item.ItemText</span>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("Index", "ArticleType", new { code = item.ArticleType.UrlFriendly })">
+                                        <span class="menu-title">@item.ItemText</span>
+                                    </a>
+                                    if (item.HasSubMenu)
+                                    {
+                                        var categories = Category.GetByType(item.ArticleTypeId ?? 0, SiteConfig.SiteId, SiteConfig.LanguageId).OrderBy(c => c.SortOrder).ToList();
+                                        if (categories.Count > 0 && item.ArticleTypeId != 13)
+                                        {
+                                            var submenu = Category.GetTree(categories).Where(a => a.Level == 0).ToList();
+                                            <div class="dropdown-menu">
+                                                <ul class="dropdown-menu-inner">
+                                                    @foreach (var sub in submenu)
+                                                    {
+                                                        <li>
+                                                            <a href="@Url.Action("Detail", "Category", new { sub.Id, code = sub.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(sub.CategoryName) })" title="">@sub.CategoryName</a>
+                                                            @if (sub.ChildrenCount > 0)
+                                                            {
+                                                                @Html.Partial("_SubmenuTop", sub)
+                                                            }
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            if (item.Id == 5)
+                                            {
+                                                <div class="dropdown-menu">
+                                                    <ul class="dropdown-menu-inner">
+                                                        <li>
+                                                            <a href="@(SiteConfig.LanguageId == 1?"/catalog.html":"/catalog-en.html")" title="@Html.Locale("download_catalog")">
+                                                                @Html.Locale("download_catalog")
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="@(SiteConfig.LanguageId == 1?"/bang-gia.html":"pricelist.html")" title="@Html.Locale("download_pricelist")">
+                                                                @Html.Locale("download_pricelist")
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="@(SiteConfig.LanguageId == 1?"/thu-vien.html":"library.html")" title="@Html.Locale("library")">
+                                                                @Html.Locale("library")
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                var article = Article.GetByType(item.ArticleType.Id, SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 6, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.DESCENDING, ArticleIncludeFlags.ARTICLE_TYPE);
+                                                if (article.List.Count > 0)
+                                                {
+                                                    <div class="dropdown-menu">
+                                                        <ul class="dropdown-menu-inner">
+                                                            @foreach (var at in article.List)
+                                                            {
+                                                                <li>
+                                                                    <a href="@Url.Action("Detail", "Article", new { id = at.Id, code = at.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(at.ArticleName) })" title="@at.ArticleName">@at.ArticleName</a>
+                                                                </li>
+                                                            }
+                                                        </ul>
+                                                    </div>
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            </li>
+                        }
+                        <li class="dropdown contact @(action == "contact"?"active":"")">
+                            <i class="fa fa-home visible-sm visible-xs"></i>
+                            <a class="" href="@Url.Action("Contact","Home")">
+                                <span class="menu-title">@Html.Locale("contact")</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-2">
+                <div id="shop-cart" class="carts">
+                    <div class="icon-cart">
+                        <span class="lbl">Giỏ hàng</span>
+                        <span id="number">@SiteConfig.ShoppingCart.Items.Sum(a => a.Quantity)</span>
+                    </div>
+                    <div class="content" style="display:none">
+                        @Html.Partial("_MiniCart")
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*@Html.AjaxPartial("_Addlink")
+            <div class="pull-right search @(SiteConfig.LanguageId == 2?"search-en":"")">
+                @Html.AjaxPartial("_Search")
+            </div>*@
+    </div>
+</nav>
+

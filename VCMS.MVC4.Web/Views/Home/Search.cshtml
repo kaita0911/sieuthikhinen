@@ -1,0 +1,22 @@
+﻿@model ICollection<Article>
+@{
+    string keyword = Request["keyword"].ToString();
+    ViewBag.Title = "Tìm kiếm : " + keyword;
+    ViewBag.Breadcrumb = new BreadcrumbModel
+    {
+        Items = new List<BreadcrumbItem>{
+            new BreadcrumbItem{Text= "Tìm kiếm: <strong>"+ keyword +"</strong>",Url=null, IsLast=true},
+        
+        }
+    };
+}
+
+
+<div class="search-result">
+    <ul>
+        @foreach (var item in Model)
+        {
+            <li>@Html.ActionLink(item.ArticleName,"Detail","Article",new{id=item.Id, title=Unichar.UnicodeStrings.UrlString(item.ArticleName), code=item.ArticleType.UrlFriendly},null)</li>
+        }
+    </ul>
+</div>

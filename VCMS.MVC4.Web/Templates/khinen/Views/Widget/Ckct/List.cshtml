@@ -1,0 +1,25 @@
+﻿@model Widget
+@{
+    var article = Article.GetByType((int)Model.ArticleTypeId, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection);
+}
+@if (article.List.Count > 0)
+{
+    <div class="home-ckct box-home">
+  
+
+                @foreach (var item in article.List)
+                {
+                   
+                        
+                            <figure>
+                               
+                                    @Html.Image(item.ImageUrl, new ImageOptions { Watermark = SiteConfig.WatermarkFill }, new { alt = item.ArticleName })
+
+                            </figure>
+                          
+                  
+                 
+                }
+      
+    </div>
+}

@@ -1,0 +1,177 @@
+﻿@using VCMS.MVC4.Data
+@using VCMS.MVC4.Web
+@using System.Data.Entity;
+@model ICollection<ArticleType>
+@{
+    var db = new DataContext();
+    var langId = 1;
+    if (!SiteConfig.Languages.Select(l => l.Id).Contains(langId))
+    {
+        langId = SiteConfig.LanguageId;
+    }
+    var uac = db.UserArticleTypeCates.Where(u => u.UserId == SiteConfig.CurrentUser.UserId);
+}
+@foreach (var item in Model)
+{
+    if (Roles.IsUserInRole("Super Administrators") || Roles.IsUserInRole("Administrators"))
+    {
+        if (SiteConfig.CurrentUser.UserName == "admin" || SiteConfig.CurrentUser.UserName == "sa")
+        {
+            if (!item.Code.Equals("BRAND", StringComparison.OrdinalIgnoreCase) && !item.Code.Equals("GROUPPRODUCT", StringComparison.OrdinalIgnoreCase))
+            {
+                <li class="@item.Code.ToLower()">
+                    <a href="#"><i class="fa fa-tags fa-lg fa-fw"></i> <span class="menu-item-parent">@item.ArticleTypeDetail[langId].Name</span></a>
+                    <ul>
+
+                        @if (item.IsContent)
+                        {
+                            <li><a href="@Url.Action("Detail", "ArticleType", new { id = item.Id })">Nội dung</a></li>
+                        }
+                        @if (item.Code.ToLower() != "brand")
+                        {
+                            <li><a href="@Url.Action("List", "Article", new { id = item.Id })">Danh sách bài viết</a></li>
+                        }
+
+                        @if (item.HasCategory)
+                        {
+                            <li><a href="@Url.Action("List", "Category", new { id = item.Id })">Danh sách nhóm</a></li>
+                        }
+                        @foreach (var i in item.CategoryTypes)
+                        {
+                            <li><a href="@Url.Action("ListByCateType", "Category", new { id = i.Id })">@i.Name</a></li>
+                        }
+                        @if (item.Code.Equals("PRODUCT", StringComparison.OrdinalIgnoreCase))
+                        {
+                            var groupid = db.ArticleTypes.FirstOrDefault(a => a.Code.Equals("GROUPPRODUCT", StringComparison.OrdinalIgnoreCase)).Id;
+                            var brandid = db.ArticleTypes.FirstOrDefault(a => a.Code.Equals("BRAND", StringComparison.OrdinalIgnoreCase)).Id;
+                            <li><a href="@Url.Action("List", "Category", new { id = groupid })">Xuất xứ</a></li>
+                            <li><a href="@Url.Action("List", "Category", new { id = brandid })">Nhà sản xuất</a></li>
+
+                        }
+                    </ul>
+                </li>
+
+            }
+        }
+        else
+        {
+            if (!item.Code.Equals("Promotion", StringComparison.OrdinalIgnoreCase) && !item.Code.Equals("Consulting", StringComparison.OrdinalIgnoreCase) && !item.Code.Equals("BRAND", StringComparison.OrdinalIgnoreCase) && !item.Code.Equals("GROUPPRODUCT", StringComparison.OrdinalIgnoreCase))
+            {
+                <li class="@item.Code.ToLower()">
+                    <a href="#"><i class="fa fa-tags fa-lg fa-fw"></i> <span class="menu-item-parent">@item.ArticleTypeDetail[langId].Name</span></a>
+                    <ul>
+
+                        @if (item.IsContent)
+                        {
+                            <li><a href="@Url.Action("Detail", "ArticleType", new { id = item.Id })">Nội dung</a></li>
+                        }
+                        @if (item.Code.ToLower() != "brand")
+                        {
+                            <li><a href="@Url.Action("List", "Article", new { id = item.Id })">Danh sách bài viết</a></li>
+                        }
+
+                        @if (item.HasCategory)
+                        {
+                            <li><a href="@Url.Action("List", "Category", new { id = item.Id })">Danh sách nhóm</a></li>
+                        }
+                        @foreach (var i in item.CategoryTypes)
+                        {
+                            <li><a href="@Url.Action("ListByCateType", "Category", new { id = i.Id })">@i.Name</a></li>
+                        }
+                        @if (item.Code.Equals("PRODUCT", StringComparison.OrdinalIgnoreCase))
+                        {
+                            var groupid = db.ArticleTypes.FirstOrDefault(a => a.Code.Equals("GROUPPRODUCT", StringComparison.OrdinalIgnoreCase)).Id;
+                            var brandid = db.ArticleTypes.FirstOrDefault(a => a.Code.Equals("BRAND", StringComparison.OrdinalIgnoreCase)).Id;
+                            <li><a href="@Url.Action("List", "Category", new { id = groupid })">Xuất xứ</a></li>
+                            <li><a href="@Url.Action("List", "Category", new { id = brandid })">Nhà sản xuất</a></li>
+
+                        }
+                    </ul>
+                </li>
+
+            }
+        }
+
+    }
+    else if (Roles.IsUserInRole("Moderators"))
+    {
+
+        if (uac.Where(u => u.ArticleTypeId > 0).Select(u => u.ArticleTypeId).Contains(item.Id))
+        {
+            <li class="@item.Code.ToLower()">
+                <a href="#"><i class="fa fa-tags fa-lg fa-fw"></i> <span class="menu-item-parent">@item.ArticleTypeDetail[langId].Name</span></a>
+                <ul>
+                    @if (item.IsContent)
+                    {
+                        <li>
+                            <a href="@Url.Action("Detail", "ArticleType", new { id = item.Id })">>Nội dung</a>
+                        </li>
+                    }
+                    @if (item.Code.ToLower() != "brand" & item.Id != 7)
+                    {
+                        <li><a href="@Url.Action("List", "Article", new { id = item.Id })">Danh sách bài viết</a></li>
+                    }
+
+                    @if (item.HasCategory)
+                    {
+                        <li><a href="@Url.Action("List", "Category", new { id = item.Id })">Danh sách nhóm</a></li>
+                    }
+                    @*@foreach (var i in item.CategoryTypes)
+                        {
+                            <li>
+                                <a href="@Url.Action("ListByCateType", "Category", new { id = i.Id })">@i.Name</a>
+                            </li>
+                        }*@
+                </ul>
+            </li>
+        }
+
+
+    }
+    @*else
+        {
+            if (item.Code.Equals("PRODUCT", StringComparison.OrdinalIgnoreCase))
+            {
+                using (DataContext dbs = new DataContext())
+                {
+                    var groupid = dbs.ArticleTypes.FirstOrDefault(a => a.Code.Equals("GROUPPRODUCT", StringComparison.OrdinalIgnoreCase)).Id;
+                    var brandid = dbs.ArticleTypes.FirstOrDefault(a => a.Code.Equals("BRAND", StringComparison.OrdinalIgnoreCase)).Id;
+                    <li><a href="@Url.Action("List", "Category", new { id = groupid })">Bộ sản phẩm</a></li>
+                    <li><a href="@Url.Action("List", "Category", new { id = brandid })">Thương hiệu</a></li>
+                }
+
+            }
+        }*@
+    @*else if (uac.Where(u => u.ArticleTypeId > 0).Select(u => u.ArticleTypeId).Contains(item.Id))
+        {
+            <li class="@item.Code.ToLower()">
+                <a href="#"><i class="fa fa-tags fa-lg fa-fw"></i> <span class="menu-item-parent">@item.ArticleTypeDetail[langId].Name</span></a>
+                <ul>
+                    @if (item.IsContent)
+                    {
+                        <li><a href="@Url.Action("Detail", "ArticleType", new { id = item.Id })">Nội dung</a></li>
+                    }
+                    <li><a href="@Url.Action("List", "Article", new { id = item.Id })">Danh sách bài viết</a></li>
+                </ul>
+            </li>
+        }*@
+    @*<li class="@item.Code.ToLower()">
+            <a href="#"><i class="fa fa-tags fa-lg fa-fw"></i> <span class="menu-item-parent">@item.ArticleTypeDetail[langId].Name</span></a>
+            <ul>
+                @if (item.IsContent)
+                {
+                    <li><a href="@Url.Action("Detail", "ArticleType", new { id = item.Id })">Nội dung</a></li>
+                }
+                <li><a href="@Url.Action("List", "Article", new { id = item.Id })">Danh sách bài viết</a></li>
+                @if (item.HasCategory)
+                {
+                    <li><a href="@Url.Action("List", "Category", new { id = item.Id })">Danh sách nhóm</a></li>
+                }
+                @foreach (var i in item.CategoryTypes)
+                {
+                    <li><a href="@Url.Action("ListByCateType", "Category", new { id = i.Id })">@i.Name</a></li>
+                }
+            </ul>
+        </li>*@
+}
+

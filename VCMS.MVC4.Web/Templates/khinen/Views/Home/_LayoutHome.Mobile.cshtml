@@ -1,0 +1,84 @@
+﻿@using VCMS.MVC4.Web
+<!DOCTYPE html>
+<html lang="vi" itemscope itemtype="http://schema.org/WebPage" class="desktop">
+<head>
+    <meta charset="utf-8" />
+    <title>@SiteConfig.SiteInfo.WebsiteDetail[SiteConfig.LanguageId].Title</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    @*<meta name="viewport" content="width=device-width, initial-scale=1">*@
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="keywords" content="@ViewBag.Keywords" />
+    <meta name="description" content="@ViewBag.Description" />
+
+    <meta itemprop="image" content="//@Request.Url.Host@SiteConfig.Image("logo.png").ToLower()">
+    <meta itemprop="description" content="@ViewBag.Description" />
+    <meta itemprop="keywords" content="@ViewBag.Keywords" />
+
+    <meta property="og:site_name" content="@SiteConfig.SiteInfo.Title">
+    <meta property="og:title" content="@ViewBag.Title" />
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="@ViewBag.Description" />
+    <meta property="og:url" content="//@Request.Url.Host@HttpContext.Current.Request.Url.PathAndQuery" />
+    <meta property="og:image" content="//@Request.Url.Host@SiteConfig.Image("logo.png").ToLower()" />
+
+    <meta name="twitter:title" content="@ViewBag.Title" />
+    <meta name="twitter:domain" content="//@Request.Url.Host" />
+    <meta name="twitter:image:src" content="//@Request.Url.Host@SiteConfig.Image("logo.png").ToLower()">
+    <meta name="twitter:description" content="@ViewBag.Description" />
+    @if (!string.IsNullOrWhiteSpace(SiteConfig.SiteInfo.FaceBookApp))
+    {
+        <meta property="fb:app_id" content="@SiteConfig.SiteInfo.FaceBookApp" />
+    }
+    @if (!string.IsNullOrWhiteSpace(SiteConfig.SiteInfo.FaceBookAdmin))
+    {
+        <meta property="fb:admins" content="@SiteConfig.SiteInfo.FaceBookAdmin" />
+    }
+    @Html.Canonical(SiteConfig.SiteInfo.DefaultDomain)
+    @Styles.Render(string.Format("~/templates/{0}/Content/{1}", SiteConfig.SiteInfo.Code, SiteConfig.SiteInfo.Skin))
+    @RenderSection("styles", required: false)
+    @Scripts.Render("~/bundles/jquery")
+    @Html.Setting("goana")
+</head>
+@{
+    var barner = (List<Article>)ViewBag.Banner;
+    var partner = (List<Article>)ViewBag.Partner;
+    var homenewsgrid = (List<Article>)ViewBag.Homenewsgrid;
+    var advduoi = (List<Article>)ViewBag.Advduoi;
+}
+<body class="dual-sidebar language-@SiteConfig.LanguageId">
+    @Html.Setting("body_script")
+    @Html.AjaxPartial("_HeaderFix")
+    <div id="page" class="mb">
+        @*@Html.Widget("Banner")
+        @Html.Widget("PARTNER")*@
+        @Html.Partial("_BannerSimple", barner)
+        @Html.Partial("Partner", partner)
+        <section id="columns" class="pagehome">
+            <div class="container">
+                @*@Html.WidgetGroup("MainHome")*@
+
+                @RenderBody()
+            </div>
+        </section>
+        <div class="clearfix"></div>
+        @*@Html.Widget("NEWS")*@
+        @Html.Partial("HomeNewsGrid", homenewsgrid)
+        @Html.Partial("SmallHome", advduoi)
+        @*@Html.Widget("ADV")*@
+        @Html.Partial("Footer")
+        @Html.AjaxPartial("_Copyright")
+    </div>
+    <section id="sys-notification" style="opacity: 0;"></section>
+    @Html.Partial("_Call")
+    @Html.Partial("_ScrollTop")
+    @Html.Partial("_LRSocial")
+
+    @*@Html.Partial("_CSupport")*@
+    @Scripts.RenderFormat("<script src='{0}' defer type='text/javascript'></script>", "~/bundles/Pager")
+    @Scripts.RenderFormat("<script src='{0}' defer type='text/javascript'></script>", "~/bundles/Slider")
+    @Scripts.RenderFormat("<script src='{0}' defer type='text/javascript'></script>", "~/bundles/bootstrap")
+
+    @Html.Partial("_SnapLeftRight")
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

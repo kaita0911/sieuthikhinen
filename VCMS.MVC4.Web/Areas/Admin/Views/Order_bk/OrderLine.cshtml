@@ -1,0 +1,214 @@
+﻿@model Order
+@using VCMS.MVC4.Extensions
+@using (DataContext db = new DataContext())
+{
+    ViewBag.Title = "Danh sách sản phẩm";
+
+    var i = 1;
+    decimal total = 0;
+
+    var articleType = (ArticleType)ViewBag.ArticleType;
+    var article = Article.GetByType(db.ArticleTypes.FirstOrDefault(a => a.Code == "PRODUCT").Id, SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 100000, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.DESCENDING);
+
+    <div class="form order">
+        <h1 class="name-order">@ViewBag.Title (@Model.OrderNumber)</h1>
+        <div class="clearfix"></div>
+        <fieldset>
+            <legend>Sản phẩm trong đơn hàng</legend>
+            <table class="table table-hover tb-order">
+                <thead class="header">
+                    <tr class="header">
+                        <th class="check">STT</th>
+                        <th class="title">Sản phẩm</th>
+                        <th class="attr">Số lượng</th>
+                        <th class="amount">Đơn giá</th>
+                        <th class="amount">Thành tiền</th>
+                    </tr>
+                </thead>
+                <tbody class="items">
+                    @foreach (var item in Model.OrderLines)
+                    {
+                        <tr class="item">
+                            <td class="check">@i</td>
+                            <td class="title">@item.ProductName</td>
+                            <td class="attr">@item.Qty.ToString("#,##0")</td>
+                            <td class="amount">@item.UnitPrice.ToString("#,##0")</td>
+                            <td class="amount">@item.Amount.ToString("#,##0")</td>
+                        </tr>
+                        total += item.Amount;
+                        i++;
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td class="total text-right" colspan="4">Tổng tiền:</td>
+                        <td class="price-total font-boll" data-label="Tổng tiền">@total.ToString("#,##0")<sup>vnđ</sup></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </fieldset>
+        @using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <fieldset>
+                <legend>Danh sách sản phẩm</legend>
+                <div class="toolbar">
+                    <span class="button">
+                        <button type="submit" class="btn save"><i class="fa fa-save"></i> Save</button>
+                    </span>
+                    <span class="btn saveOrder">
+                        <a href="javascript:void(0)" id="save">
+                            <span class="hidden-xs">Lưu đơn hàng</span>
+                        </a>
+                    </span>
+                    <span class="btn back">
+                        <a href="@Url.Action("Index", "Order", null)">
+                            <i class="fa fa-mail-reply"></i> <span>Trở về</span>
+                        </a>
+                    </span>
+                </div>
+                @*@Html.Pager(new PagerOptions { ItemCount = ViewBag.ItemCount, VisibleItemCount = 7, PageSize = 20 }, null)*@
+                <table class="table table-hover">
+                    <thead class="header">
+                        <tr>
+                            <th class="check">
+                                <label class="checkbox single noborder">@Html.CheckBox("chkSelectAll", false, new { id = "check-all" })<i></i></label>
+                            </th>
+                            <th class="img hidden-xs hidden-sm">
+                                Hình đại diện
+                            </th>
+                            <th class="title filter">Sản phẩm</th>
+                            <th class="attr">Số lượng</th>
+                            <th class="amount">Đơn giá</th>
+                        </tr>
+                    </thead>
+                    <tbody class="items products">
+                        @foreach (var item in article.List)
+                        {
+                            if (item.Price > 0)
+                            {
+                                <tr class="item @(item.InActive ? "inactive" : "")">
+                                    <td class="check">
+
+                                        @{var j = 0;}
+                                        @foreach (var OrProduct in Model.OrderLines)
+                                        {
+                                            if (OrProduct.ProductId == item.Id)
+                                            {
+                                                j++;
+                                            }
+                                        }
+                                        @if (j > 0)
+                                        {
+                                            <label class="checkbox fix">@Html.CheckBox("chkSelect", true, new { value = item.Id, @class = "check-export" })<i></i></label>
+                                        }
+                                        else
+                                        {
+                                            <label class="checkbox fix">@Html.CheckBox("chkSelect", false, new { value = item.Id, @class = "check-export"})<i></i></label>
+                                        }
+                                    </td>
+                                    <td class="img hidden-xs hidden-sm">
+                                        @if (item.ImageUrl != null)
+                                        {
+                                            <a href="@Url.Content("~/" + item.ImageUrl)?width=400&mode=crop" class="preview">
+                                                @Html.Image(item.ImageUrl, new ImageOptions { Width = 50, Height = 30 }, new { @class = "img" })
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <i class="fa fa-picture-o"></i>
+                                        }
+                                    </td>
+                                    <td class="title">
+                                        <span class="title">
+                                            @item.ArticleName
+                                        </span>
+                                    </td>
+                                    <td class="quantity">
+                                        @{var q = 1;}
+                                        @foreach (var OrProduct in Model.OrderLines)
+                                        {
+                                            if (OrProduct.ProductId == item.Id)
+                                            {
+                                                q = OrProduct.Qty;
+                                            }
+                                        }
+                                        <input type="number" value="@q" min="1" />
+                                    </td>
+                                    <td>
+                                        @if (item.DiscountPrice > 0)
+                                        {
+                                            @item.DiscountPrice.ToString("#,##0");
+                                        }
+                                        else
+                                        {
+                                            @item.Price.ToString("#,##0");
+                                        }
+
+                                    </td>
+                                </tr>
+                            }
+
+                        }
+                    </tbody>
+                </table>
+                @*@Html.Pager(new PagerOptions { ItemCount = ViewBag.ItemCount, VisibleItemCount = 7, PageSize = 5 }, null)*@
+                @section Scripts{
+                    <script type="text/javascript">
+                        var ApiKey = '@SiteConfig.SiteInfo.ApiKey';
+                        $(function () {
+                            $("#check-all").checkAll(".item .check input[type='checkbox']");
+
+
+                            $("#check-all").checkAll(".item .check input[type='checkbox']");
+
+                            @*$('#save').click(function () {
+                                var l = '@article.List.Count';
+                                var sQty = "";
+
+                                for (var i = 0; i < l; i++) {
+
+                                    var check = $(".products .item").eq(i).children(".check").children("label").children("input[type='checkbox']:checked");
+                                    
+                                    if (check.length) {
+                                        
+                                        sQty +=(i!=0?",":"")+$(".products .item").eq(i).children(".quantity").children("input").val();
+                                    }
+                                }   
+                            });*@
+                            $("#save").update({
+                                url: '@Url.Action("OrderLines", new { order = Model.Id })',
+                                selector: ".item .check input[type='checkbox']",
+                                param1: 'id'
+                            });
+                        })
+                    </script>
+                    <script src="@Url.Content("~/Scripts/jquery.simplepreview.js")"></script>
+                    <script src="https://autopost.viennam.info/scripts/fb.js?apiKey=@SiteConfig.SiteInfo.FaceBookApp"></script>
+                    <script>
+                        var time = null;
+                        var autoPoster = new AutoPoster();
+                        autoPoster.check(function (data) {
+
+                            if (data.status == -1) {
+                                $(".autopost, .autopost-action, .autupost-loading").remove();
+                            }
+                            else {
+                                $(".autopost, .autopost-action, .autupost-loading").removeClass("hidden");
+                            }
+                        });
+                    </script>
+                }
+            </fieldset>
+            <div class="toolbar">
+                <span class="button">
+                    <button type="submit" class="btn save"><i class="fa fa-save"></i> Save</button>
+                </span>
+                <span class="btn back">
+                    <a href="@Url.Action("Index", "Order", null)">
+                        <i class="fa fa-mail-reply"></i> <span>Trở về</span>
+                    </a>
+                </span>
+            </div>
+        }
+    </div>
+}

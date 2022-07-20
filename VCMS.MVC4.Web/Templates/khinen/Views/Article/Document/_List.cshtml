@@ -1,0 +1,104 @@
+﻿@model ArticleResult
+@if (Model.List.Count > 1)
+{
+    var type = ViewBag.Type != null ? ViewBag.Type as ArticleType : Model.List.FirstOrDefault().ArticleType;
+    <div class="box-category box-c-document">
+        <div class="content">
+            <div class="row">
+                @foreach (var item in Model.List)
+                {
+                    <div class="col-md-2 col-sm-3">
+                        <div class="item">
+                            <figure>
+                                <a href="@Url.Action("Detail", "Article", new {id=item.Id,code=item.ArticleType.UrlFriendly,title = item.UrlFriendly })" title="@item.ArticleName">
+                                    @Html.Image(SiteConfig.Image("icon-folder.png"), new ImageOptions { Width = 168, Height = 150, Lazy = false }, new { alt = item.ArticleName })
+                                </a>
+                            </figure>
+                            <h3 class="c-header">
+                                <a class="left" href="@Url.Action("Detail", "Article", new {id=item.Id,code=item.ArticleType.UrlFriendly,title = item.UrlFriendly })">
+                                    @item.ArticleName
+                                </a>
+                            </h3>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    @Html.Pager(new PagerOptions { VisibleItemCount = 5, ItemCount = Model.TotalItemCount, PageSize = Model.PageSize, FirstText = Html.Locale("text_first").ToHtmlString(), LastText = Html.Locale("text_last").ToHtmlString() }, null)
+}
+else if (Model.List.Count == 1)
+{
+    int i = 1;
+    var type = ViewBag.Type as ArticleType;
+    var art = Model.List.FirstOrDefault();
+    <article class="article-detail" itemscope itemtype="http://schema.org/Article">
+        <div class="file-attach">
+            @if (art.ArticleFiles.Where(af => af.FileType == ArticleFileType.ATTACHMENT).Count() > 0)
+            {
+                <h2>@art.ArticleName</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="sort-order width-80">Thứ tự</th>
+                            <th class="name">Tên file</th>
+                            <th class="extension width-80">Loại file</th>
+                            <th class="size width-80">Kích thước</th>
+                            <th class="date width-80">Tải về</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in art.ArticleFiles.Where(af => af.FileType == ArticleFileType.ATTACHMENT))
+                        {
+                            var exarr = item.OriginalFileName.Split('.');
+                            double dl = (item.FileSize / 1024f) / 1024f;
+                            <tr>
+                                <td class="center">@i</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.Title))
+                                    {
+                                        <a href="@item.FileName" title="Click để tải về" target="_blank">
+                                            @item.Title
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@item.FileName" title="Click để tải về" target="_blank">
+                                            @art.ArticleName
+                                        </a>
+                                    }
+                                </td>
+                                <td class="center">
+                                    @if (exarr.Length > 0)
+                                    {
+                                        <span>@exarr[1].ToString()</span>
+                                    }
+                                </td>
+                                <td class="center">
+                                    <span> @dl.ToString("0.00") MB</span>
+                                </td>
+                                <td class="center">
+                                    <a href="@item.FileName" title="Click để tải về" target="_blank">
+                                        <span class="fa fa-download"></span>
+                                    </a>
+
+                                </td>
+                            </tr>
+
+                            i++;
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </article>
+    @Html.Action("Other", "Article", new { id = art.Id, typeid = art.ArticleTypeId, categoryId = art.Categories.Count > 0 ? art.Categories.Skip(art.Categories.Count - 1).FirstOrDefault().Id : 0, pageSize = 6 })
+    if (Request.IsAuthenticated && (Roles.IsUserInRole("Super Administrators") || Roles.IsUserInRole("Administrators")))
+    {
+        <a href="@Url.Action("Edit", "Article", new { id = art.Id, area = "Admin" })" target="_blank" class=" col-xs-12"><i class="fa fa-edit"></i> @Html.Locale("view_admin")</a>
+    }
+}
+else
+{
+    <span>@Html.Locale("article_null")</span>
+}

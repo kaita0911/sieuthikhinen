@@ -1,0 +1,85 @@
+﻿@using VCMS.MVC4.Web
+@model VCMS.MVC4.Data.Order
+@{
+    DataContext db = new DataContext();
+    ViewBag.Title = "Sửa";
+}
+<div class="form">
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.ValidationSummary(true)
+        <fieldset>
+            <legend>Sửa đơn hàng</legend>
+            @Html.HiddenFor(model => model.Id)
+            <div class="clear-fix">
+                <div id="tabs">
+                    <fieldset>
+                        <legend class="title">Thông tin khách hàng</legend>
+                        <div class="editor-label">
+                            <label>Họ và tên</label>
+                        </div>
+                        <div class="editor-field">
+                            @Html.EditorFor(model => model.FullName)
+                            @Html.ValidationMessageFor(model => model.FullName)
+                        </div>
+                       
+                        <div class="editor-label">
+                            <label>Địa chỉ</label>
+                            <div class="editor-field">
+                                @Html.EditorFor(model => model.Address)
+                                @Html.ValidationMessageFor(model => model.Address)
+                            </div>
+                        </div>
+                        <div class="editor-label">
+                            <label>Email</label>
+                            <div class="editor-field">
+                                @Html.EditorFor(model => model.Email)
+                                @Html.ValidationMessageFor(model => model.Email)
+                            </div>
+                        </div>
+                        <div class="editor-label">
+                            <label>Số điện thoại</label>
+                            <div class="editor-field">
+                                @Html.EditorFor(model => model.Phone)
+                                @Html.ValidationMessageFor(model => model.Phone)
+                            </div>
+                        </div>
+                        @*<div class="editor-label">
+                            <label>Ghi chú</label>
+                            @Html.TextAreaFor(model => model.Notes)
+                            @Html.ValidationMessageFor(model => model.Notes)
+                        </div>
+                        <div class="editor-label">
+                            <label>Tiến độ đơn hàng</label>
+                            @Html.DropDownListFor(model => model.Status, new SelectList(postion, "Value", "Name"), new { @class = "form-control" })
+                        </div>*@
+                    </fieldset>
+                </div>
+            </div>
+            <div class="toolbar">
+                <span class="button">
+                    <button type="submit" class="btn save"><i class="fa fa-save"></i> <span>Lưu</span></button>
+                </span>
+                <span class="btn back">
+                    <a href="@Url.Action("Index", "Order")">
+                        <i class="fa fa-mail-reply"></i> <span>Trở về danh sách</span>
+                    </a>
+                </span>
+            </div>
+        </fieldset>
+
+    }
+
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+        @Scripts.Render("~/bundles/jqueryui")
+        <script>
+
+            function RemoveRougeChar(e) {
+                if (e.substring(0, 1) == ",") {
+                    return e.substring(1, e.length)
+                } return e
+            }
+        </script>
+    }
+</div>

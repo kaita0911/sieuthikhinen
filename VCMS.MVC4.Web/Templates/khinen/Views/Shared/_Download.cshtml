@@ -1,0 +1,21 @@
+﻿@{
+    var article = Article.GetByTypeCode("LINK", SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 1, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.DESCENDING, includeflags : ArticleIncludeFlags.FILES).List.FirstOrDefault();
+}
+<div class="download">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 pull-right">
+                @if (article != null)
+                {
+                    foreach (var aitem in article.Attachments)
+                    {
+                        <a download="@aitem.OriginalFileName" href="@aitem.FileName" target="_blank" class="downlaod">
+                            @Html.Locale("Download Catalogue")<i class="fa fa-download" aria-hidden="true"></i>
+                        </a>
+                    }
+
+                }
+            </div>
+        </div>
+    </div>
+</div>

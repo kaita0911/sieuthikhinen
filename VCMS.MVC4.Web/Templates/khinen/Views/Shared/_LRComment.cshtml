@@ -1,0 +1,50 @@
+﻿@using (DataContext db = new DataContext())
+{
+    var type = db.ArticleTypes.FirstOrDefault(a => a.Code == "COMMENTUS");
+    if (type != null)
+    {
+        var list = Article.GetByType(type.Id, SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 4, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING);
+        <div class="box-sidebar-3 box-comment hidden-sm hidden-xs">
+            <h2 class="heading">@Html.Locale("comment_us")</h2>
+            <div class="content">
+                <label>@Html.Locale("lbl_comment_us")</label>
+                <ul>
+                    @foreach (var item in list.List)
+                    {
+                        <li class="item">
+                            <label for="@item.Id">
+                                <input type="radio" @(item.IsNew ? "checked='checked'" : "") name="comment-us" value="@item.Id" id="@item.Id" /> 
+                                <span>@item.ArticleName</span>
+                            </label>
+                        </li>
+                    }
+                </ul>
+                <div class="submit">
+                    <a id="submit_comment">@Html.Locale("submit_comment")</a>
+                    <a href="/@(SiteConfig.LanguageId == 1 ? "danh-gia-ve-chung-toi.html" : "comment-us.html")">@Html.Locale("result")</a>
+                </div>
+            </div>
+        </div>
+    }
+}
+<script type="text/javascript">
+   
+    $("a#submit_comment").click(function () {
+        $.ajax({
+            url: "/Home/CommentUs?",
+            type: "POST",
+            data: "id=" + $("input[type='radio'][name='comment-us']:checked").val(),
+            dataType: "text",
+            cache: "false",
+            success: function (result) {
+                alert("Cảm ơn bạn đã đánh giá về chúng tôi.");
+                return false;
+            }
+        });
+    });
+   
+</script>
+
+
+
+

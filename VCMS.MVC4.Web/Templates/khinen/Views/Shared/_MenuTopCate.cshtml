@@ -1,0 +1,65 @@
+﻿@using System.Text.RegularExpressions
+@using System.Data.Entity
+@{
+    var db = new DataContext();
+    var menuItems = MenuItem.GetMenu(SiteConfig.LanguageId);
+    string code = "";
+    string action = "";
+    if (ViewContext.RouteData.Values["code"] != null)
+    {
+        code = ViewContext.RouteData.Values["code"].ToString().ToLower();
+    }
+    if (ViewContext.RouteData.Values["action"] != null)
+    {
+        action = ViewContext.RouteData.Values["action"].ToString().ToLower();
+    }
+    var menucate = Category.GetByType(2, SiteConfig.LanguageId).OrderBy(c => c.SortOrder).ToList();
+}
+<div class="clearfix"></div>
+<nav id="navigation" class="hidden-sm hidden-xs menu-top-cate">
+    <div class="container">
+        <div id="vns-mainnav" class="wrap-menu pull-left">
+            <ul class="nav navbar-nav megamenu ul-level-0">
+                <li class="li-level-0">
+                    <a class=" level-0" href="/">
+                        <span>@Html.Locale("home")</span>
+                    </a>
+                </li>
+                @if (menucate.Count > 0)
+                {
+                    var submenu = Category.GetTree(menucate).Where(a => a.Level == 0).ToList();
+                    foreach (var sub in submenu)
+                    {
+                        <li class="dropdown li-level-0">
+                            <a href="@Url.Action("Detail", "Category", new { sub.Id, code = sub.ArticleType.UrlFriendly, title = sub.UrlFriendly })" title="@sub.CategoryName" class="level-0">
+                                <span class="menu-title">@sub.CategoryName</span>
+                            </a>
+                            @if (sub.ChildrenCount > 0)
+                            {
+                                <i class="fa fa-angle-down" aria-hidden="true"></i>
+                                <div class="dropdown-menu">
+                                    <ul class="dropdown-menu-inner">
+                                        @foreach (var ssub in sub.Children)
+                                        {
+                                            <li class="dropdown">
+                                                <a href="@Url.Action("Detail", "Category", new { ssub.Id, code = ssub.ArticleType.UrlFriendly, title = ssub.UrlFriendly })" title="">@ssub.CategoryName</a>
+                                                @if (ssub.ChildrenCount > 0)
+                                                {
+                                                    @*<i class="fa fa-arrow-circle-right" aria-hidden="true"></i>*@
+                                                    @Html.Partial("_SubmenuTop", ssub)
+                                                }
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            }
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+        <div class="pull-right">
+            @Html.Partial("_AddLink")
+        </div>
+    </div>
+</nav>

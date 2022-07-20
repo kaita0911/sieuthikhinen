@@ -1,0 +1,12 @@
+﻿@model Category
+<ul class="sub-level level@(Model.Level + 1)">
+    @foreach (var item in Model.Chidren)
+    {
+        <li>@Html.ActionLink(item.CategoryName, "Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.CategoryName) }, null)
+            @if (item.ChildrenCount > 0)
+            {
+                @Html.Partial("_Submenu", item) 
+            }
+        </li> 
+    }
+</ul>

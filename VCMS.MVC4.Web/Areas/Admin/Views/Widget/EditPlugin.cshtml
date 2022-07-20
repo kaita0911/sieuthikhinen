@@ -1,0 +1,227 @@
+﻿@using VCMS.MVC4.Web
+@using VCMS.MVC4.Data
+@model VCMS.MVC4.Data.Widget
+
+@{
+    ViewBag.Title = "Edit Widget";
+    ViewBag.Breadcrumb = new BreadcrumbModel()
+    {
+        Items = new List<BreadcrumbItem>()
+        {
+            new BreadcrumbItem(){Url = Url.Action("Index","Home"), Text="Home", IsFirst = true},
+            new BreadcrumbItem(){Url = null, Text="Edit widget", IsLast = true},
+        }
+    };
+    var group = ViewBag.Group as IEnumerable<SelectListItem>;
+}
+<div class="form">
+    @using (Html.BeginForm("Edit", "Widget", new { id = Model.Id }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="toolbar">
+            <span class="button">
+                <button type="submit" class="btn save"><i class="fa fa-save"></i> Save</button>
+            </span>
+            <span class="btn back">
+                <a href="@Url.Action("Index", null, null)">
+                    <i class="fa fa-mail-reply"></i> <span>Trở về</span>
+                </a>
+            </span>
+        </div>
+        if (Roles.IsUserInRole("Super Administrators"))
+        {
+            <fieldset>
+                <legend class="title">Update Widget</legend>
+                @Html.ValidationSummary(true)
+                <div class="left width-70">
+                    <div id="tabs">
+                        <ul class="nav nav-tabs" role="tablist" id="myTab">
+                            @foreach (var l in SiteConfig.Languages)
+                            {
+                            <li><a href="#tabs-@l.Id" role="tab" data-toggle="tab">@l.DisplayName</a></li>
+                            }
+                        </ul>
+                        <div class="tab-content">
+                            <div class="editor-label">
+                                @Html.Label("Mã Widget")
+                            </div>
+                            <div class="editor-field">
+                                @Html.EditorFor(model => model.Code)
+                                @Html.ValidationMessageFor(model => model.Code)
+                            </div>
+                            @foreach (var l in SiteConfig.Languages)
+                            {
+                            <div id="tabs-@l.Id" class="tab-pane">
+                                <div class="editor-label">
+                                    @Html.Label("Tiêu đề") <small>(Multiple languages)</small>
+                                </div>
+                                <div class="editor-label">
+                                    @Html.TextBoxFor(model => model.WidgetDetail[l.Id].Title, new { data_auto_copy = "true", @class = "url-source" })
+                                    @Html.ValidationMessageFor(model => model.WidgetDetail[l.Id].Title)
+                                </div>
+                            </div>
+                            }
+                            <div class="editor-label">
+                                @Html.Label("Value")
+                            </div>
+                            <div class="editor-field">
+                                @Html.TextAreaFor(model => model.WidgetDetail[1].Value, new { rows = "13" })
+                            </div>
+                        </div>
+                        <script>
+                            $(".nav-tabs li:first").addClass("active");
+                            $(".tab-content .tab-pane:first").addClass("active");
+                        </script>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+                <div class="right width-29">
+                    <div class="editor-label">
+                        @Html.Label("Thứ tự")
+                    </div>
+                    <div class="editor-field">
+                        @Html.TextBoxFor(model => model.WidgetsortOrder, new { type = "number", @class = "form-control" })
+                    </div>
+                    @if (group.Count() > 0)
+                    {
+                    <div class="editor-label">
+                        @Html.Label("Nhóm") <small>(Lấy tất cả widget theo mã nhóm)</small>
+                    </div>
+                    <div class="editor-field">
+                        @Html.DropDownListFor(model => model.WidgetGroupId, group, " Chọn nhóm", new { @class = "form-control" })
+                    </div>
+                    }
+                </div>
+                <div class="clearfix"></div>
+            </fieldset>
+        }
+        else
+        {
+            @*<fieldset>
+                    <legend class="title">Update Widget</legend>
+                    @Html.ValidationSummary(true)
+                    <div class="editor-label">
+                        @Html.Label("Value")
+                    </div>
+                    <div class="editor-field">
+                        @Html.TextAreaFor(model => model.WidgetDetail[1].Value, new { rows = "13" })
+                    </div>
+                    <div class="clearfix"></div>
+                </fieldset>*@
+            <fieldset>
+                <legend class="title">Update Widget</legend>
+                @Html.ValidationSummary(true)
+                <div class="left width-70">
+                    <div id="tabs">
+                        <ul class="nav nav-tabs" role="tablist" id="myTab" style="display:none">
+                            @foreach (var l in SiteConfig.Languages)
+                            {
+                                <li><a href="#tabs-@l.Id" role="tab" data-toggle="tab">@l.DisplayName</a></li>
+                            }
+                        </ul>
+                        <div class="tab-content">
+                            <div class="editor-label" style="display:none">
+                                @Html.Label("Mã Widget")
+                            </div>
+                            <div class="editor-field" style="display:none">
+                                @Html.EditorFor(model => model.Code)
+                                @Html.ValidationMessageFor(model => model.Code)
+                            </div>
+                            @foreach (var l in SiteConfig.Languages)
+                            {
+                                <div id="tabs-@l.Id" class="tab-pane" style="display:none">
+                                    <div class="editor-label">
+                                        @Html.Label("Tiêu đề") <small>(Multiple languages)</small>
+                                    </div>
+                                    <div class="editor-label">
+                                        @Html.TextBoxFor(model => model.WidgetDetail[l.Id].Title, new { data_auto_copy = "true", @class = "url-source" })
+                                        @Html.ValidationMessageFor(model => model.WidgetDetail[l.Id].Title)
+                                    </div>
+                                </div>
+                            }
+                            <div class="editor-label">
+                                @Html.Label("Value")
+                            </div>
+                            <div class="editor-field">
+                                @Html.TextAreaFor(model => model.WidgetDetail[1].Value, new { rows = "13" })
+                            </div>
+                        </div>
+                        <script>
+                            $(".nav-tabs li:first").addClass("active");
+                            $(".tab-content .tab-pane:first").addClass("active");
+                        </script>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+                <div class="right width-29" style="display:none">
+                    <div class="editor-label">
+                        @Html.Label("Thứ tự")
+                    </div>
+                    <div class="editor-field">
+                        @Html.TextBoxFor(model => model.WidgetsortOrder, new { type = "number", @class = "form-control" })
+                    </div>
+                    @if (group.Count() > 0)
+                    {
+                        <div class="editor-label">
+                            @Html.Label("Nhóm") <small>(Lấy tất cả widget theo mã nhóm)</small>
+                        </div>
+                        <div class="editor-field">
+                            @Html.DropDownListFor(model => model.WidgetGroupId, group, " Chọn nhóm", new { @class = "form-control" })
+                        </div>
+                    }
+                </div>
+                <div class="clearfix"></div>
+            </fieldset>
+        }
+
+        <div class="toolbar">
+            <span class="button">
+                <button type="submit" class="btn save"><i class="fa fa-save"></i> Save</button>
+            </span>
+            <span class="btn back">
+                <a href="@Url.Action("Index", null, null)">
+                    <i class="fa fa-mail-reply"></i> <span>Trở về</span>
+                </a>
+            </span>
+        </div>
+    }
+</div>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/editor")
+    <script>
+        $(document).ready(function () {
+            var _check = $("#WidgetTypeCheckBox");
+            var _html = $("#WidgetType[value=HTML]");
+            var _article = $("#WidgetType[value=ARTICLE]");
+            var _articleList = $(".article-list");
+            if (_check.is(":checked")) {
+                _html.prop("checked", true);
+                _article.prop("checked", false);
+                _articleList.css("display", "none");
+            }
+            else {
+                _html.prop("checked", false);
+                _article.prop("checked", true);
+                _articleList.removeAttr("style");
+            }
+        });
+        $(function () {
+            $("#WidgetTypeCheckBox").on("change", function () {
+                var _this = $(this);
+                var _html = $("#WidgetType[value=HTML]");
+                var _article = $("#WidgetType[value=ARTICLE]");
+                var _articleList = $(".article-list");
+                if (_this.is(":checked")) {
+                    _html.prop("checked", true);
+                    _article.prop("checked", false);
+                    _articleList.css("display", "none");
+                }
+                else {
+                    _html.prop("checked", false);
+                    _article.prop("checked", true);
+                    _articleList.removeAttr("style");
+                }
+            });
+        });
+    </script>
+}

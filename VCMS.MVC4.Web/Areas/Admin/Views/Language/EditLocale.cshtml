@@ -1,0 +1,47 @@
+﻿@using VCMS.MVC4.Web
+@using VCMS.MVC4.Data
+@model VCMS.MVC4.Data.Locale
+
+@{
+    Layout = "";
+    int language = ViewBag.Language;
+}
+<div class="form">
+    @using (Ajax.BeginForm("EditLocale", "Language", new AjaxOptions { HttpMethod = "post", OnSuccess = "Success" }))
+    {
+        @Html.ValidationSummary(true)
+
+        <fieldset>
+            <legend>Property</legend>
+            @Html.HiddenFor(model => model.Id)
+            @Html.HiddenFor(model => language)
+            <div class="editor-label">
+                <b>LocaleKey:</b>&nbsp;
+                @Model.LocaleKey
+            </div>
+            <div class="editor-field">
+                <b>Giá trị mặc định:</b>&nbsp;
+                @Model.DefaultValue
+            </div>
+            <div class="editor-label">
+                @foreach (var l in SiteConfig.Languages)
+                {
+                    if (l.Id == language)
+                    {
+                        @Html.TextAreaFor(model => model.LocaleDetail[l.Id].Value, 10, 10, new { @style = "width:98%" })
+                    }
+                    else
+                    {
+                        @Html.TextAreaFor(model => model.LocaleDetail[l.Id].Value, 10, 10, new { @style = "display:none" })
+                    }
+                }
+            </div>
+            <div class="toolbar">
+                <span class="button"> <input type="submit" value="Save" class="icon save" /></span>
+            </div>
+            <div id="error" class="editor-label">
+
+            </div>
+        </fieldset>
+    }
+</div>

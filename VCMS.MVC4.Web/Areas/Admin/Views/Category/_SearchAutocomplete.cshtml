@@ -1,0 +1,99 @@
+﻿@model ICollection<VCMS.MVC4.Data.Category>
+@{
+    var count_cate = (int)ViewBag.CateCount;
+    var categories = (ViewBag.Categories as List<Category>);
+}
+<div>
+    <div class="form-group row">
+        <div class="col-md-12">
+            <div class="search">
+                <input id="key_autocom" type="text" name="keyword" class="txt-search" placeholder="Nhập vào tên nhóm muốn tìm" />
+                <div class="auto-search">
+                    <div id="img-loading" title="Đang xử lý" style="display: none">
+                        <img src="@Url.Content("~/Content/Admin/Images/loading.gif")" />
+                    </div>
+                    <div class="cate-auto auto">
+                        <table>
+                            <tr>
+                                <td class="chk"></td>
+                                <td><label>Tiêu đề nhóm</label></td>
+                            </tr>
+                            <tbody class="content">
+                                @foreach (var item in Model)
+                                {
+                                    <tr class="rows">
+                                        <td align="center">
+                                            <label class="checkbox discount">
+                                                <input name="categories" type="checkbox" value="@item.Id" class="check" @(categories != null ? (categories.Contains(item) ? "checked" : "") : "") data-parent="@(item.ParentId != null ? item.ParentId : 0)" /><i></i>
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <span class="name">
+                                                <span data-level="@item.Level" class="level level_@item.Level">
+                                                    <a href="javascript:void(0)" class="@(item.ChildrenCount > 0 ? "collapse" : "hidden")"></a>
+                                                    <span>@item.CategoryName</span>
+                                                </span>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    @*@if(count_cate > 5)
+                        {
+                            <div><a id="view_moreauto">Hiển thị thêm nhóm</a></div>
+                        }*@
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    $(function () {
+        $('#key_autocom').autocomplete({
+            source: function (request, response) {
+                $('.auto-search').show();
+                $('.auto-search .no-data').empty();
+                $('#img-loading').show();
+                $('.cate-auto input[type="checkbox"]').each(function () {
+                    if (!$(this).is(':checked')) {
+                        $(this).parents('tr.rows').empty();
+                    }
+                });
+
+                $.ajax({
+                    url: '@Url.Action("Autocomplete", "Category")',
+                    dataType: 'json',
+                    contentType: 'application/json, charset=utf-8',
+                    data: {
+                        keyword: $("#key_autocom").val().trim()
+                    },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            $('.auto-search .content').html("");
+                            $('.auto-search .content').append(item);
+                            $("#img-loading").hide();
+                        }));
+                    },
+                    error: function (xhr, status, error) {
+                        alert(error);
+                    }
+                });
+            },
+            select: function (event, ui) {
+                $('#key_autocom').val(ui.item.label);
+                return false;
+            },
+            minLength: 2
+        })
+    });
+
+
+    //$(document).on("click", ".f-delete i", function (e) {
+    //    e.preventDefault();
+    //    $(this).parents('tr.rows').remove();
+    //});
+
+</script>

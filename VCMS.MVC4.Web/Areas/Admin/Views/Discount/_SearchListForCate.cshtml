@@ -1,0 +1,23 @@
+﻿@using System.Data.Entity;
+@model ICollection<VCMS.MVC4.Data.Discount>
+@{
+    var cate = (Category)ViewBag.DiscountCategory;
+}
+<div class="list search-list-discount">
+    <div class="header">
+    </div>
+    <div class="items">
+        @foreach (var item in Model)
+        {
+            <div class="item">
+                <label class="checkbox list-discount">
+                    <input name="discounts" type="checkbox" value="@item.Id" class="check" @(cate != null ? (cate.Discounts.Contains(item) ? "checked" : "") : "") /><i></i>
+                    <span class="name">
+                        <span>@item.Name</span>
+                    </span>
+                </label>
+            </div>
+        }
+    </div>
+</div>
+

@@ -1,0 +1,87 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VCMS.MVC4.Web", "VCMS.MVC4.Web\VCMS.MVC4.Web.csproj", "{2539490A-78EF-4F7F-B8BA-AC25A347C7E9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VCMS.MVC4.Data", "VCMS.MVC4.Data\VCMS.MVC4.Data.csproj", "{F52A2024-76BB-4B04-BEDB-48D9C909F4D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VCMS.MVC4.Extensions", "VCMS.MVC4.Extensions\VCMS.MVC4.Extensions.csproj", "{39CDFBCB-476E-49DB-997F-32776E96B3CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VCMS.MVC4.Initializer", "VCMS.MVC4.Initializer\VCMS.MVC4.Initializer.csproj", "{C2244CC3-4CA7-4AA0-BCB1-6E942B101497}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VCMS.MVC4.WebBase", "VCMS.MVC4.WebBase\VCMS.MVC4.WebBase.csproj", "{7C2B0B38-32F4-4AB2-BF96-6E9A6A044213}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VCMS.MVC4.Editor", "VCMS.MVC4.Editor\VCMS.MVC4.Editor.csproj", "{C17D8669-11E9-4636-88B1-897CF055B6AA}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 6
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://viennam.visualstudio.com/
+		SccProjectUniqueName0 = VCMS.MVC4.Data\\VCMS.MVC4.Data.csproj
+		SccProjectName0 = VCMS.MVC4.Data
+		SccAuxPath0 = https://viennam.visualstudio.com
+		SccLocalPath0 = VCMS.MVC4.Data
+		SccProvider0 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccProjectUniqueName1 = VCMS.MVC4.Extensions\\VCMS.MVC4.Extensions.csproj
+		SccProjectName1 = VCMS.MVC4.Extensions
+		SccAuxPath1 = https://viennam.visualstudio.com
+		SccLocalPath1 = VCMS.MVC4.Extensions
+		SccProvider1 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccProjectUniqueName2 = VCMS.MVC4.Editor\\VCMS.MVC4.Editor.csproj
+		SccProjectName2 = VCMS.MVC4.Editor
+		SccAuxPath2 = https://viennam.visualstudio.com
+		SccLocalPath2 = VCMS.MVC4.Editor
+		SccProvider2 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccProjectUniqueName3 = VCMS.MVC4.Initializer\\VCMS.MVC4.Initializer.csproj
+		SccProjectName3 = VCMS.MVC4.Initializer
+		SccAuxPath3 = https://viennam.visualstudio.com
+		SccLocalPath3 = VCMS.MVC4.Initializer
+		SccProvider3 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccProjectUniqueName4 = VCMS.MVC4.WebBase\\VCMS.MVC4.WebBase.csproj
+		SccProjectName4 = VCMS.MVC4.WebBase
+		SccAuxPath4 = https://viennam.visualstudio.com
+		SccLocalPath4 = VCMS.MVC4.WebBase
+		SccProvider4 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccProjectUniqueName5 = VCMS.MVC4.Web\\VCMS.MVC4.Web.csproj
+		SccProjectName5 = VCMS.MVC4.Web
+		SccAuxPath5 = https://viennam.visualstudio.com
+		SccLocalPath5 = VCMS.MVC4.Web
+		SccProvider5 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2539490A-78EF-4F7F-B8BA-AC25A347C7E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2539490A-78EF-4F7F-B8BA-AC25A347C7E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2539490A-78EF-4F7F-B8BA-AC25A347C7E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2539490A-78EF-4F7F-B8BA-AC25A347C7E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F52A2024-76BB-4B04-BEDB-48D9C909F4D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F52A2024-76BB-4B04-BEDB-48D9C909F4D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F52A2024-76BB-4B04-BEDB-48D9C909F4D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F52A2024-76BB-4B04-BEDB-48D9C909F4D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39CDFBCB-476E-49DB-997F-32776E96B3CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39CDFBCB-476E-49DB-997F-32776E96B3CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39CDFBCB-476E-49DB-997F-32776E96B3CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39CDFBCB-476E-49DB-997F-32776E96B3CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2244CC3-4CA7-4AA0-BCB1-6E942B101497}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2244CC3-4CA7-4AA0-BCB1-6E942B101497}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2244CC3-4CA7-4AA0-BCB1-6E942B101497}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2244CC3-4CA7-4AA0-BCB1-6E942B101497}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C2B0B38-32F4-4AB2-BF96-6E9A6A044213}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C2B0B38-32F4-4AB2-BF96-6E9A6A044213}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C2B0B38-32F4-4AB2-BF96-6E9A6A044213}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C2B0B38-32F4-4AB2-BF96-6E9A6A044213}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C17D8669-11E9-4636-88B1-897CF055B6AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C17D8669-11E9-4636-88B1-897CF055B6AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C17D8669-11E9-4636-88B1-897CF055B6AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C17D8669-11E9-4636-88B1-897CF055B6AA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

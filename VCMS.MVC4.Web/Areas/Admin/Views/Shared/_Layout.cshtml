@@ -1,0 +1,72 @@
+﻿@using VCMS.MVC4.Web.Models
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title - VCMS Administrator</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width" />
+    @RenderSection("styles", required: false)
+    @Styles.Render("~/Content/dcaccordion/css")
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+</head>
+<body>
+    <div class="page">
+        <header>
+            <div class="content-wrapper">
+                <div class="float-left">
+                    <p class="site-title">@Html.ActionLink("vcms administrator", "Index", "Home")</p>
+                </div>
+                <div class="float-right">
+                    <section id="login">
+                        @Html.Partial("_LoginPartial")
+                    </section>
+                    <nav>
+                        @*<ul id="menu">
+                            <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                            <li>@Html.ActionLink("About", "About", "Home")</li>
+                            <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                        </ul>*@
+                    </nav>
+                </div>
+            </div>
+        </header>
+        <div id="body">
+            <section class="content-wrapper main-content clear-fix">
+                <section id="left" class="float-left clear-fix">
+                    <div class="section-content">
+                        @{Html.RenderPartial("_Menu");}
+                    </div>
+                </section>
+                <section id="main" class="float-right">
+                    <div class="section-content">
+                        <section id="breadcrumb" class="'clear-fix">
+                            @{Html.RenderPartial("_Breadcrumb");}
+                        </section>
+                        @RenderBody()
+                    </div>
+                </section>
+            </section>
+        </div>
+        <footer>
+            @*<div class="content-wrapper">
+                <div class="float-left">
+                    <p>&copy; @DateTime.Now.Year - vcms administrator</p>
+                </div>
+            </div>*@
+            @Html.Partial("_Footer")
+        </footer>
+    </div>
+    @Scripts.Render("~/bundles/dcaccordion")
+    @RenderSection("scripts", required: false)
+    <script>
+        $(function () {
+            var h = $("#left").height();
+            if (h < $("#main").height()) $("#left").height($("#main").height());
+            else $("#main").height(h);
+        })
+    </script>
+</body>
+</html>

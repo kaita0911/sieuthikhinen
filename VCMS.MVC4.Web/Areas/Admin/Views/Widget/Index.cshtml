@@ -1,0 +1,235 @@
+﻿@model ICollection<WidgetGroup>
+@using System.Data.Entity;
+@{
+    ViewBag.Title = "Quản lý Widgets";
+    ViewBag.Breadcrumb = new BreadcrumbModel()
+    {
+        Items = new List<BreadcrumbItem>()
+        {
+            new BreadcrumbItem(){Url = Url.Action("Index", "Home"), Text = "Home", IsFirst = true},
+            new BreadcrumbItem(){Url = null, Text = "Danh sách Widgets", IsLast = true},
+        }
+    };
+    var i = 1;
+    var db = new DataContext();
+    var widgets = ViewBag.Widgets as ICollection<Widget>;
+    var widgetsCustomer = ViewBag.WidgetsCustomer as ICollection<Widget>;
+
+}
+@if (Roles.IsUserInRole("Super Administrators"))
+{
+    <div class="btn-group">
+        <div class="btn-group btn create">
+            <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id="button-action">
+                <i class="fa fa-plus"></i>
+                Thêm mới
+            </a>
+            <ul class="dropdown-menu fa-ul">
+                <li>
+                    <a href="@Url.Action("Create", null, null)">
+                        <i class="fa fa-adjust fs15"></i> <span>Widget</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("CreatePlugin", null, null)">
+                        <i class="fa fa-bolt fs15"></i> <span class="hidden-xs">Plugin</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <span class="btn delete">
+            <a href="@Url.Action("Delete", null, null)" id="delete">
+                <i class="fa fa-trash-o"></i> <span class="hidden-xs">Xóa</span>
+            </a>
+        </span>
+        <span class="btn btn-primary">
+            <a href="javascript:void(0)" id="update-attribute"><i class="fa fa-puzzle-piece"></i> <span class="hidden-xs">Cập nhật thuộc tính</span></a>
+        </span>
+        <span class="btn type">
+            <a href="javascript:void(0)" id="update">
+                <i class="fa fa-sort-numeric-desc"></i>
+                <span class="hidden-xs">Cập nhật thứ tự</span>
+            </a>
+        </span>
+    </div>
+}
+<table class="table table-hover widgets">
+    <thead class="header">
+        <tr>
+            @if (Roles.IsUserInRole("Super Administrators"))
+            {
+                <th class="check">
+                    <label class="checkbox single noborder">@Html.CheckBox("chkSelectAll", false, new { id = "check-all" })<i></i></label>
+                </th>
+                <th class="code">Mã</th>
+            }
+            else
+            {
+                <th class="check">STT</th>
+            }
+            <th class="name">Tên Plugin</th>
+            @if (Roles.IsUserInRole("Super Administrators"))
+            {
+                <th class="attr">Show</th>
+                <th class="sort">Thứ tự</th>
+            }
+            <th class="action">Thao tác</th>
+        </tr>
+    </thead>
+    <tbody class="items">
+        @if (Roles.IsUserInRole("Super Administrators"))
+        {
+            foreach (var item in widgets)
+            {
+                <tr class="item">
+
+                    <td class="check">
+                        <label class="checkbox fix">@Html.CheckBox("chkSelect", false, new { value = item.Id })<i></i></label>
+                    </td>
+                    <td class="code">
+                        <a href="@Url.Action(string.Format("Edit{0}", item.WidgetType == WidgetType.WEBPLUGIN ? "Plugin" : ""), new { id = item.Id })" title="">
+                            @item.Code
+                        </a>
+                    </td>
+                    <td class="name">
+                        <a href="@Url.Action(string.Format("Edit{0}", item.WidgetType == WidgetType.WEBPLUGIN ? "Plugin" : ""), new { id = item.Id })" title="">
+                            @item.WidgetDetail[1].Title
+                            <code>
+                                @(item.WidgetType == WidgetType.HTML ? "Html Box" : item.WidgetType == WidgetType.ARTICLE ? "Article List" : item.WidgetType == WidgetType.WEBPLUGIN ? "Plugin" : "")
+                            </code>
+                        </a>
+                    </td>
+                    <td class="attr">
+                        <label class="checkbox fix">
+                            @Html.CheckBoxFor(model => item.IsCustommer, new { value = item.Id, @class = "is-customer" })<i></i>
+                        </label>
+                    </td>
+                    <td class="sort">
+                        @Html.TextBox("sort", item.WidgetsortOrder ?? 0, new { rel = item.Id })
+                    </td>
+                    <td class="action">
+                        <a href="@Url.Action(string.Format("Edit{0}", item.WidgetType == WidgetType.WEBPLUGIN ? "Plugin" : ""), new { id = item.Id })" class="edit-link" data-toggle="tooltip" data-placement="top" title="Sửa">
+                            <i class="fa fa-edit"></i> <span class="hidden-xs hidden-sm"></span>
+                        </a>                        -
+                        <a href="#" class="edit-link"><i class="fa fa-recycle"></i> <span class="hidden-xs hidden-sm">Thuộc tính</span></a>
+                    </td>
+                </tr>
+            }
+
+            foreach (var g in Model)
+            {
+                var _list = db.Widget.Include(a => a.WidgetDetail).Include(a => a.WidgetGroup).Where(a => a.WidgetGroupId != null && (int)a.WidgetGroupId == g.Id).ToList();
+                if (_list.Count > 0)
+                {
+                    <tr class="item">
+                        <td class="name" colspan="6"><label>Group: @g.Name</label></td>
+                    </tr>
+                    foreach (var item in _list)
+                    {
+                        <tr class="item">
+                            <td class="check">
+                                <label class="checkbox fix">@Html.CheckBox("chkSelect", false, new { value = item.Id })<i></i></label>
+                            </td>
+                            <td class="code">
+                                <a href="@Url.Action(string.Format("Edit{0}", item.WidgetType == WidgetType.WEBPLUGIN ? "Plugin" : ""), new { id = item.Id })" title="">
+                                    @item.Code
+                                </a>
+                            </td>
+                            <td class="name">
+                                <a href="@Url.Action(string.Format("Edit{0}", item.WidgetType == WidgetType.WEBPLUGIN ? "Plugin" : ""), new { id = item.Id })" title="">
+                                    @item.WidgetDetail[SiteConfig.LanguageId].Title
+                                    <code>
+                                        @(item.WidgetType == WidgetType.HTML ? "Html Box" : item.WidgetType == WidgetType.ARTICLE ? "Article List" : item.WidgetType == WidgetType.WEBPLUGIN ? "Plugin" : "")
+                                    </code>
+                                </a>
+                            </td>
+                            <td class="attr">
+                                <label class="checkbox fix">
+                                    @Html.CheckBoxFor(model => item.IsCustommer, new { value = item.Id, @class = "is-customer" })<i></i>
+                                </label>
+                            </td>
+                            <td class="sort">
+                                @Html.TextBox("sort", item.WidgetsortOrder ?? 0, new { rel = item.Id })
+                            </td>
+                            <td class="action">
+                                <a href="@Url.Action(string.Format("Edit{0}", item.WidgetType == WidgetType.WEBPLUGIN ? "Plugin" : ""), new { id = item.Id })" class="edit-link" data-toggle="tooltip" data-placement="top" title="Sửa">
+                                    <i class="fa fa-edit"></i> <span class="hidden-xs hidden-sm"></span>
+                                </a>
+                                -
+                                <a href="#" class="edit-link"><i class="fa fa-recycle"></i> <span class="hidden-xs hidden-sm">Thuộc tính</span></a>
+                                @if (item.WidgetType == WidgetType.WEBPLUGIN)
+                                {
+                                    <i class="fa fa-2x"></i>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+            }
+        }
+
+        else
+        {
+            foreach (var item in widgetsCustomer)
+            {
+                <tr class="item">
+                    @if (item.IsCustommer && item.WidgetType != WidgetType.ARTICLE)
+                    {
+                        <td class="check">@i.ToString()</td>
+                        <td class="title">@item.WidgetDetail[1].Title</td>
+                        <td class="action">
+                            <a href="@Url.Action(string.Format("Edit{0}", item.WidgetType == WidgetType.WEBPLUGIN ? "Plugin" : ""), new { id = item.Id })" class="edit-link" data-toggle="tooltip" data-placement="top" title="Sửa">
+                                <i class="fa fa-edit"></i> <span class="hidden-xs hidden-sm">Edit</span>
+                            </a>
+                        </td>
+                        i++;
+                    }
+                </tr>
+            }
+        }
+
+    </tbody>
+</table>
+
+@section scripts
+{
+    <script>
+        $(function () {
+            $(".is-customer").change(function () {
+                $(this).parentsUntil(".items").find(".check input[type='checkbox']").addClass("changed");
+            });
+            $("#check-all").checkAll(".item .check input[type='checkbox']");
+            $("#delete").sdelete({
+                url: '@Url.Action("Delete")',
+                selector: ".item .check input[type='checkbox']",
+            });
+            $("#update").update({
+                url: '@Url.Action("UpdateOrder")',
+                selector: ".item input[name='sort']",
+                param1: 'id',
+                param2: 'order'
+            });
+            $("#update-attribute").click(function () {
+                var json = [];
+                $(".item .check input[type='checkbox'].changed").each(
+                    function () {
+                        var isCustomer = $(this).parentsUntil(".items").find(".is-customer:checked").length > 0;
+                        json.push({ "id": $(this).val(), "isCustomer": isCustomer });
+                    });
+                if (json.length > 0) {
+                    $.ajax({
+                        url: '@Url.Action("UpdateAttributes")',
+                        type: 'POST',
+                        success: function (data) {
+                            if (data.Status == 0) {
+                                alert(data.Message);
+                                window.location.reload();
+                            }
+                        },
+                        data: "json=" + JSON.stringify(json)
+                    });
+                }
+            });
+        })
+    </script>
+}

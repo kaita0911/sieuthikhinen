@@ -1,0 +1,25 @@
+﻿@model Widget
+@{
+    var cates = Category.GetByType((int)Model.ArticleTypeId, SiteConfig.LanguageId, Model.Number, CategoryFlags.ACTIVE, 0);
+    var cate_lst = Category.GetTree(cates).Where(a => a.Level == 0).ToList();
+    <div class="widget-cate-list">
+        <div class="container">
+            <h2 class="heading hidden">@Model.Title</h2>
+            <div class="owl-carousel" data-plugin-options='{"items": 6, "singleItem": false, "autoPlay":true, "navigation": true, "pagination": false,"slideSpeed":400,"addClassActive":true,"itemsDesktop": [1199, 6],"itemsDesktopSmall": [991, 6],"itemsTablet": [768, 4],"itemsMobile": [479, 2]}' data-snap-ignore="true">
+                @foreach (var item in cate_lst)
+                {
+                    <div class="item">
+                        <figure>
+                            <a href="@Url.Action("Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.CategoryName })" title="@item.CategoryName">
+                                @Html.Image(item.ImageUrl, new ImageOptions { Width = 270, Height = 260, Watermark = SiteConfig.Watermark, Mode = ImageMode.crop, Lazy = false }, new { alt = item.CategoryName, @class = "owl" })
+                            </a>
+                        </figure>
+                        <h3 class="meta">
+                            <a href="@Url.Action("Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.CategoryName })" title="@item.CategoryName">@item.CategoryName</a>
+                        </h3>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}

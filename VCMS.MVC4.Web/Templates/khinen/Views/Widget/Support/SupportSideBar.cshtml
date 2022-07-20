@@ -1,0 +1,111 @@
+﻿@model Widget
+@{
+    var article = Article.GetByType((int)Model.ArticleTypeId, SiteConfig.SiteId, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection, Model.Includes);
+    if (article.List.Count > 0)
+    {
+
+        <div class="box-sidebar box-support">
+            @*<div class="heading">
+                <h3>@Model.Title</h3>
+            </div>*@
+            <div class="content">
+                <div class="h-info">
+                    <strong class="phone">@SiteConfig.SiteInfo.Hotline</strong>
+                    @foreach (var item in article.List)
+                    {
+                        if (Model.IncludeProperty)
+                        {
+                            var phone = item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("PHONE", StringComparison.OrdinalIgnoreCase));
+                            var skype = item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("SKYPE", StringComparison.OrdinalIgnoreCase));
+                            var viber = item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("VIBER", StringComparison.OrdinalIgnoreCase));
+                            var zalo = item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("ZALO", StringComparison.OrdinalIgnoreCase));
+
+                            <p class="netword">
+                                @if (!string.IsNullOrWhiteSpace(skype.Value))
+                                {
+                                    <a href="skype:@skype.Value?chat" class="skype" title="@skype.Value">
+                                        <span class="skype">Skype</span>
+                                    </a>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(viber.Value))
+                                {
+                                    <span class="viber" title="@viber.Value"> / Viber</span>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(zalo.Value))
+                                {
+                                    <span class="zalo" title="@zalo.Value"> / Zalo</span>
+                                }
+                            </p>
+                            <p class="info">
+                                <span>@item.ArticleName:</span>
+                                <a href="tel:@phone.Value">@phone.Value</a>
+                            </p>
+                        }
+                    }
+                </div>
+                @*<div class="j-contact">
+                    @using (Html.BeginForm("ContactAjax", "Article", FormMethod.Post, new { title = "Đăng ký tư vấn" }))
+                    {
+
+                        <div>
+                            <div class="text1">
+                                <input type="text" id="contact_name" name="contact_name" class="text-box" placeholder="Họ tên" />
+                            </div>
+                            <div class="text1">
+                                <input type="text" id="contact_phone" name="contact_phone" class="text-box" placeholder="Điện thoại" />
+                            </div>
+                            <div class="text1">
+                                <input type="text" id="contact_email" name="contact_email" class="text-box" placeholder="Email" />
+                            </div>
+                            <div class="context-c1">
+                                <textarea id="contact_body" name="contact_body" placeholder="Nội dung câu hỏi?"></textarea>
+                            </div>
+                        </div>
+                        <div class="contact-submit">
+                            <button type="submit" id="sent_contact">Gửi</button>
+                        </div>
+                    }
+                </div>*@
+            </div>
+        </div>
+    }
+}
+
+@*<script>
+    $("#sent_contact").click(function () {
+        var name = $("#contact_name");
+        if (name.val() == "") {
+            alert("Vui lòng nhập họ tên của bạn.");
+            name.focus();
+            return false;
+        }
+        
+        name = $("#contact_phone");
+        if (name.val() == "") {
+            alert("Vui lòng nhập số điện thoại của bạn.");
+            name.focus();
+            return false;
+        }
+
+        name = $("#contact_email");
+        if (name.val() == "") {
+            alert("Vui lòng nhập email của bạn.");
+            name.focus();
+            return false;
+        }
+        var expr = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+        if (!expr.test(name.val())) {
+            alert("Email bạn vừa nhập không đúng định dạng.");
+            name.focus();
+            return false;
+        }
+        
+        name = $("#contact_body");
+        if (name.val() == "") {
+            alert("Vui lòng nhập nội dung yêu cầu.");
+            name.focus();
+            return false;
+        }
+        
+    });
+</script>*@

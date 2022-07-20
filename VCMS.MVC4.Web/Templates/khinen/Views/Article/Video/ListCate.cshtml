@@ -1,0 +1,59 @@
+﻿@using (DataContext db = new DataContext())
+{
+    var type = db.ArticleTypes.FirstOrDefault(a => a.Code.Equals("VIDEO", StringComparison.OrdinalIgnoreCase));
+    if (type != null)
+    {
+        var category = Category.GetTree(Category.GetByType(type.Id, SiteConfig.LanguageId)).Where(a => a.Level == 0).ToList();
+        if (category.Count > 0)
+        {
+            <div class="h-category">
+                <h3 class="heading">
+                    Video
+                </h3>
+                <div class="row">
+                    @foreach (var item in category)
+                    {
+                        <div class="col-md-6 col-xm-6">
+                            <div class="item">
+                                <div class="item-ctn">
+                                    <div class="row">
+                                        <div class="col-md-12 col-xm-12">
+                                            <div class="name">
+                                                <a href="@Url.Action("Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.CategoryName) })">
+                                                    @item.CategoryName
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 col-xm-12">
+                                            <figure>
+                                                <a href="@Url.Action("Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.CategoryName) })">
+                                                    <img src="@Url.Content("~" + item.ImageUrl)?height=140" alt="@item.CategoryName" />
+                                                </a>
+                                            </figure>
+                                            <div class="detail">
+                                                @if (!string.IsNullOrEmpty(item.Description))
+                                                {
+                                                    <a target="_blank" href="@Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.Description, 400))">
+                                                        @Html.Locale("view_ytpage")
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="@Url.Action("Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.CategoryName) })">
+                                                        @Html.Locale("view_all")
+                                                    </a>
+                                                }
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    }
+}
+

@@ -1,0 +1,64 @@
+﻿<div class="box-footer box-footer-newsletter">
+    <h2 class="headinged">
+        @Html.Image(SiteConfig.Image("mail.png"), new ImageOptions { Width = 21, Height = 21, Lazy = false }, new { alt = "mail" })
+
+        ĐĂNG KÝ NHẬN TƯ VẤN MIỄN PHÍ
+    </h2>
+    <div class="content">
+        @*<label>Hãy gửi địa chỉ email của bạn, chúng tôi sẽ gửi cho bạn thông tin cần biết.</label>*@
+        <div class="ctn">
+            <input id="txt_Mail" class="email" type="text" name="email" placeholder="Nhập email của bạn" />
+            <input class="submit" type="submit" id="btn_Reg" value="Đăng ký" />
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        var id_key = $('#txt_Mail');
+       
+        $("#btn_Reg").click(function () {
+
+            if (id_key.val() == "") {
+                alert('Vui lòng điền địa chỉ email của bạn');
+                id_key.focus();
+                return false;
+            }
+            $.ajax({
+                url: "/Home/RegisterMail?",
+                type: "POST",
+                data: "mail=" + id_key.val(),
+                dataType: "text",
+                cache: "false",
+                success: function (result) {
+                    if (result == "Invalid") {
+                        alert('Email không đúng định dạng');
+                        id_key.val("");
+                        id_key.focus();
+                        return false;
+                    }
+                    else if (result == "Exists") {
+                        alert("Email đã tồn tại trên hệ thống.Vui lòng nhập Email khác.");
+                        id_key.val("");
+                        id_key.focus();
+                        return false;
+                    }
+                    else {
+                        id_key.val("");
+                        alert('Đăng ký email thành công');
+                        return false;
+                    }
+                }
+                //,
+                //                    error: function (data, textStatus, errorThrown) {
+                //                         alert("error\n" + data + ", " + textStatus + ", " + errorThrown);
+                //                    }
+            });
+
+
+        });
+    });
+
+</script>

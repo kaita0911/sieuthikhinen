@@ -1,0 +1,142 @@
+﻿@using System.Data.Entity;
+@using (DataContext db = new DataContext())
+{
+    var articles_address = Article.GetByTypeCode("COMPANY", SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 1, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING, ArticleIncludeFlags.PROPERTIES);
+    var article_consulting = Article.GetByTypeCode("CONSULTING", SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 5, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING, ArticleIncludeFlags.ARTICLE_TYPE).List;
+    var article_timeworking = Article.GetByTypeCode("SERVICES", SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 5, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING, ArticleIncludeFlags.ARTICLE_TYPE).List;
+
+
+    <div class="col-md-4 col-xs-12 col-sm-12">
+        <div class="box-footer box-footer-address">
+            @foreach (var item in articles_address.List)
+            {
+                var address = item["ADDRESS", SiteConfig.LanguageId];
+                var email = item["EMAIL"];
+                var phone = item["PHONE"];
+                var map = item["MAP"];
+                var fax = item["FAX"];
+                <h2 class="heading">
+                    Thông tin liên hệ
+                </h2>
+                <div class="content">
+                    @if (!string.IsNullOrEmpty(address))
+                    {
+                        <div class="item">
+                            @*<i class="fa fa-map-marker"></i>*@
+                            @Html.Image(SiteConfig.Image("home.png"), new ImageOptions { Width = 20, Height = 17, Lazy = false }, new { alt = "home" })
+                            <span class="ctn">@address</span>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(phone))
+                    {
+                        <div class="item">
+                            @*<i class="fa fa-phone"></i>*@
+                            @Html.Image(SiteConfig.Image("phone.png"), new ImageOptions { Width = 20, Height = 19, Lazy = false }, new { alt = "phone" })
+                            <span class="ctn">@Html.Phone(phone)</span>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(email))
+                    {
+                        <div class="item">
+                            @*<i class="fa fa-envelope-o"></i>*@
+                            @Html.Image(SiteConfig.Image("email.png"), new ImageOptions { Width = 20, Height = 15, Lazy = false }, new { alt = "email" })
+
+                            <span class="ctn">@Html.Email(email)</span>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(fax))
+                    {
+                        <div class="item">
+                            @*<i class="fa fa-envelope-o"></i>*@
+                            @Html.Image(SiteConfig.Image("fax.png"), new ImageOptions { Width = 20, Height = 19, Lazy = false }, new { alt = "fax" })
+
+                            <span class="ctn">@Html.Email(fax)</span>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+    <div class="col-md-2 col-xs-12 col-sm-12">
+        @*@Html.Partial("_FCategory")*@
+        <div class="box-footer box-footer-consulting">
+            <h2 class="heading">Danh mục</h2>
+            <div class="content eded">
+
+
+                <p class="item">
+                    <a href="/">
+                        <i class="fa fa-angle-double-right"></i>  Trang chủ
+                    </a>
+                </p>
+                <p class="item">
+                    <a href="/gioi-thieu.html">
+                        <i class="fa fa-angle-double-right"></i>  Giới Thiệu
+                    </a>
+                </p>
+                <p class="item">
+                    <a href="/tai-lieu-bang-gia.html">
+                        <i class="fa fa-angle-double-right"></i>  Tài liệu & Bảng giá
+                    </a>
+                </p>
+                <p class="item">
+                    <a href="/tuyen-dung.html">
+                        <i class="fa fa-angle-double-right"></i>  Tuyển dụng
+                    </a>
+                </p>
+                <p class="item">
+                    <a href="/contact.html">
+                        <i class="fa fa-angle-double-right"></i>  Liên hệ
+                    </a>
+                </p>
+
+
+
+            </div>
+        </div>
+
+
+    </div>
+    <div class="col-md-3 col-xs-12 col-sm-12">
+        @*@Html.Partial("_FConsulting")*@
+        @if (article_consulting.Count > 0)
+        {
+        <div class="box-footer box-footer-consulting">
+            <h2 class="heading">Trả Hàng & Bảo Hành</h2>
+            <div class="content eded">
+
+                @foreach (var item in article_consulting)
+                {
+                    <p class="item">
+                        <a href="@Url.Action("Detail", "Article", new { id=item.Id, code=item.ArticleType.UrlFriendly,title = item.UrlFriendly})">
+                            <i class="fa fa-angle-double-right"></i>  @item.ArticleName
+                        </a>
+                    </p>
+                }
+
+
+
+            </div>
+        </div>
+        }
+    </div>
+    <div class="col-md-3 col-xs-12 col-sm-12">
+        @*@Html.Partial("_FTimeWorking")*@
+        @if (article_timeworking.Count > 0)
+        {
+        <div class="box-footer box-footer-consulting">
+            <h2 class="heading">Trung tâm trợ giúp</h2>
+            <div class="content eded">
+                @foreach (var item in article_timeworking)
+                {
+                    <p class="item">
+                        <a href="@Url.Action("Detail", "Article", new { id=item.Id, code=item.ArticleType.UrlFriendly,title = item.UrlFriendly})">
+                            <i class="fa fa-angle-double-right"></i>  @item.ArticleName
+                        </a>
+                    </p>
+                }
+            </div>
+        </div>
+        }
+    </div>
+}

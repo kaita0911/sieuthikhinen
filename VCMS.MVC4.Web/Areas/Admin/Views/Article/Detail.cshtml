@@ -1,0 +1,113 @@
+﻿@model VCMS.MVC4.Data.Article
+
+@{
+    ViewBag.Title = "Detail";
+}
+
+<h2>Detail</h2>
+
+<fieldset>
+    <legend>Article</legend>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.DateCreated)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.DateCreated)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.DateUpdated)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.DateUpdated)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Status)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Status)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.SortOrder)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.SortOrder)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.UserCreated)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.UserCreated)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.UserLastUpdated)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.UserLastUpdated)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.ImageUrl)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.ImageUrl)
+    </div>
+
+    @*<div class="display-label">
+         @Html.DisplayNameFor(model => model.WebsiteID)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.WebsiteID)
+    </div>*@
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.ArticleTypeId)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.ArticleTypeId)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.LanguageId)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.LanguageId)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.ArticleName)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.ArticleName)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.ShortDescription)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.ShortDescription)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Description)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Description)
+    </div>
+
+    <div class="display-label">
+         @Html.DisplayNameFor(model => model.Price)
+    </div>
+    <div class="display-field">
+        @Html.DisplayFor(model => model.Price)
+    </div>
+</fieldset>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id=Model.Id }) |
+    @Html.ActionLink("Trở về danh sách", "Index")
+</p>

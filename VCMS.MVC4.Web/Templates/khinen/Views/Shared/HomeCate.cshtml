@@ -1,0 +1,123 @@
+﻿@model List<Category>
+@{
+    //var temp = (List<Article>)ViewBag.HomeArticle;
+    var i = 1;
+    <div class="box-product-tab">
+        @foreach (var sitem in Model)
+        {
+
+            //var lst = temp.Where(a => a.CurrentCategory.Id == sitem.Id);
+        <div class="citem">
+            <div class="bgcate hidden-xs" style="background: @sitem.Font">
+                <h2>
+                    <a href="@Url.Action("Detail", "Category", new {id=sitem.Id,code=sitem.ArticleType.UrlFriendly,title = sitem.UrlFriendly.ToLower() })">
+                        @sitem.CategoryName
+                    </a>
+                </h2>
+                @if (sitem.ChildrenCount > 0)
+                {
+                    <span class="ico-down down-@i"><i class="fa fa-caret-down"></i></span>
+                }
+                <ul class="c-header hidden-xs ">
+                    @foreach (var sub in sitem.Children.Where(sub => !sub.IsNew))
+                    {
+                        <li>
+                            <a href="@Url.Action("Detail", "Category", new { id = sub.Id, code = sub.ArticleType.UrlFriendly, title = sub.UrlFriendly.ToLower() })" title="@sub.CategoryName">
+                                @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(sub.CategoryName, 5))
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div class="list-menu-mb c-header hidden-lg" style="background: @sitem.Font">
+                <h2>
+                    <a href="@Url.Action("Detail", "Category", new {id=sitem.Id,code=sitem.ArticleType.UrlFriendly,title=Unichar.UnicodeStrings.UrlString(sitem.CategoryName).ToLower() })" title="@sitem.CategoryName">
+                        @sitem.CategoryName
+                    </a>
+                </h2>
+                @if (sitem.ChildrenCount > 0)
+                {
+                    <span class="ico-down down-@i"><i class="fa fa-caret-down"></i></span>
+                }
+
+                <ul class="lit-down list-@i">
+                    @foreach (var sub in sitem.Children.Where(sub => !sub.IsNew))
+                    {
+                        <li>
+                            <a href="@Url.Action("Detail", "Category", new { id = sub.Id, code = sub.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(sub.CategoryName).ToLower() })" title="@sub.CategoryName">
+                                @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(sub.CategoryName, 5))
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+
+            <div class="clearfix"></div>
+            <div class="row">
+                <div class="left-dmsp" id="rd_@sitem.Id">
+                    @Html.Image(SiteConfig.Image("loader2.gif"), new ImageOptions { Lazy = false }, new { alt = "loader", @class = "image-loader" })
+                    <div class="section" id="jsonAction_@sitem.Id" data-cateid="@sitem.Id" data-load="@Url.Action("InfinateScrollCategory", "Article", new { cateId = sitem.Id, pageSize = 8 })" data-start="700">
+                    </div>
+
+                </div>
+                @if (sitem.ImageUrl != null)
+                {
+                    <p class="img-cate">
+                        @Html.Image(sitem.ImageUrl != null ? sitem.ImageUrl.ToLower() : sitem.ImageUrl, new ImageOptions { Width = 270, Watermark = SiteConfig.Watermark, Mode = ImageMode.pad, Lazy = i > 2 ? true : false }, new { alt = sitem.CategoryName })
+                    </p>
+                }
+            </div>
+        </div>
+
+            i++;
+        }
+    </div>
+}
+
+<script>
+    $(document).ready(function () {
+        $(".ico-down").click(function () {
+            $(this).next("ul").slideToggle();
+        });
+    });
+</script>
+<script>
+    let firedEvents = [];
+
+    $(window).scroll(function () {
+
+        $("div.section").each(function () {
+            if (!firedEvents.includes(this) && $(window).scrollTop() > ($(this).offset().top - 1200)) {
+                firedEvents.push(this);
+                //alert("fire " + $(this).data("cateid"));
+                var cateid = $(this).data("cateid");
+                var rd = $("#rd_" + cateid);
+
+                var img = rd.find("img.image-loader");
+                img.css("opacity", "0");
+                $.ajax({
+                    type: 'get',
+                    url: $(this).data("load"),
+                    dataType: 'json',
+                    beforeSend: function () {
+                        img.animate({ opacity: "1" }, 800);
+                    },
+                    data: {
+                    },
+                    success: function (html) {
+                        img.remove();
+                        rd.append(html);
+
+                        return false;
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                    }
+                });
+            }
+        });
+    });
+
+
+
+</script>

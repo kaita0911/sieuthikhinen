@@ -1,0 +1,41 @@
+﻿@using (DataContext db = new DataContext())
+{
+    var articleType = db.ArticleTypes.FirstOrDefault(at => at.Code.Equals("SUPPORT", StringComparison.OrdinalIgnoreCase));
+    if (articleType != null)
+    {
+        var supports = db.Articles.Include("ArticleDetail").Include("PropertyValues.Property").OrderBy(a=>a.SortOrder).Where(a => a.ArticleTypeId == articleType.Id).ToList();//Article.GetByType(articleType.Id, SiteConfig.SiteId, SiteConfig.LanguageId, 1, 10);
+    
+    <div class="home-news last-box">
+        <div class="title">
+            <span>Hỗ trợ trực tuyến</span>
+        </div>
+        <div class="image">
+            <img src="@Url.Content("~/Content/Images/support.png")"  />
+        </div>
+        <div class="hotline">
+            Hotline : @SiteConfig.SiteInfo.Hotline
+        </div>
+        @foreach (var item in supports)
+        {
+            var name = item.PropertyValues.FirstOrDefault(pv => pv.Property.Code.Equals("Name", StringComparison.OrdinalIgnoreCase));
+            var phone = item.PropertyValues.FirstOrDefault(pv => pv.Property.Code.Equals("Phone", StringComparison.OrdinalIgnoreCase));
+            var skype = item.PropertyValues.FirstOrDefault(pv => pv.Property.Code.Equals("Skype", StringComparison.OrdinalIgnoreCase));
+            var yahoo = item.PropertyValues.FirstOrDefault(pv => pv.Property.Code.Equals("Yahoo", StringComparison.OrdinalIgnoreCase));
+            <div class="support-item">
+                <span class="support-name"><strong>@item.ArticleDetail[SiteConfig.LanguageId].ArticleName</strong>: @name.Value</span>
+                
+                <span class="support-info">@phone.Value 
+                    @if (!string.IsNullOrEmpty( yahoo.Value)){
+                    <a href="ymsgr:sendIM?@yahoo.Value">
+                        <img src="http://opi.yahoo.com/online?u=@yahoo.Value&m=g&t=0"/></a>
+                    }
+                    @if (!string.IsNullOrEmpty( skype.Value)){
+                    <a href="skype:@skype.Value?chat"><img src="@Url.Content("~/Content/images/skype.png")" /></a>
+                    }
+                </span>
+            </div>
+        }
+    </div>
+    
+    }
+}

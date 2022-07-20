@@ -1,0 +1,23 @@
+﻿@model Widget
+@{
+    <div class="box-footer footer-newsletter pull-left">
+        <h2 class="heading footer-heading">@Model.Title</h2>
+        <div class="content">
+            <p>Nhập email của bạn để nhận thông tin của <a href="@Url.Action("Index","Home")" title="">@SiteConfig.SiteInfo.DefaultDomain.Replace("www.", "")</a></p>
+            <div class="newsletter-form">
+                <div class="email">
+                    <input name="email" placeholder="Nhập địa chỉ email của bạn" />
+                </div>
+                <div class="clearfix"></div>
+                <div class="button">
+                    <button type="submit" data-submit="@Url.Action("Newsletter", "Account")" class="newsletter-button">Đăng ký</button>
+                </div>
+                @*<span class="loading-submit">
+                    <i class="fa fa-spinner fa-pulse"></i>
+                </span>*@
+                <div class="clearfix"></div>
+                <div class="result"></div>
+            </div>
+        </div>
+    </div>
+}

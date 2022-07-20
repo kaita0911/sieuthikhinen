@@ -1,0 +1,27 @@
+﻿@using (DataContext db = new DataContext())
+{
+    var type = db.ArticleTypes.FirstOrDefault(a => a.Code == "FAQ");
+    if (type != null)
+    {
+        var list = Article.GetByType(type.Id, SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 4, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING);
+        <div class="box-sidebar-3 box-faq hidden-sm hidden-xs">
+            <h2 class="heading">@Html.Locale("faq")</h2>
+            <div class="content">
+                <ul>
+                    @foreach (var item in list.List)
+                    {
+                        <li>
+                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">@item.ArticleName</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+}
+
+
+
+
+
+

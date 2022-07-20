@@ -1,0 +1,136 @@
+﻿@model ICollection<Language>
+@{
+
+    ViewBag.Title = "Danh sách ngôn ngữ";
+    ViewBag.Breadcrumb = new BreadcrumbModel()
+    {
+        Items = new List<BreadcrumbItem>()
+        {
+            new BreadcrumbItem(){Url = Url.Action("Index","Home"), Text="Home", IsFirst=true},
+            new BreadcrumbItem(){Url = Url.Action("Index","Locale"), Text="Danh sách ngôn ngữ", IsLast = true},
+
+        }
+    };
+}
+@Styles.Render("~/Content/themes/base/css")
+<div class="btn-group">
+    <span class="btn create">
+        <a href="javascript:void(0)" data-toggle="modal" data-target="#language-form"><i class="fa fa-plus"></i> <span class="hidden-xs">Thêm mới</span></a>
+    </span>
+    <span class="btn delete">
+        <a href="javascript:void(0)" id="delete"><i class="fa fa-times"></i> <span class="hidden-xs">Xóa</span></a>
+    </span>
+    <span class="btn save">
+        <a href="@Url.Action("Update", "Languge",null)" id="update"><i class="fa fa-save"></i> <span class="hidden-xs">Đặt làm mặt định</span></a>
+    </span>
+    @*<span class="btn attribute hidden-xs">
+        <a href="@Url.Action("UpdateOrder", null, null)" id="update1"><i class="fa fa-sort-numeric-desc"></i> <span class="hidden-xs">Cập nhật thứ tự</span></a>
+    </span>*@
+</div>
+<table class="table table-hover">
+    <thead class="header">
+        <tr>
+            <th class="check">
+                <label class="checkbox single noborder"><input type="checkbox" id="check-all" /><i></i></label>
+            </th>
+            <th class="hidden-xs code language">
+                @Html.Label("Mã")
+            </th>
+            <th class="title">
+                @Html.Label("Ngôn ngữ")
+            </th>
+            @*<th class="img">
+                    @Html.Label("Mặc định")
+                </th>*@
+            @*<th class="sort">
+                @Html.Label("Thứ tự")
+            </th>*@
+            <th class="action">
+                @Html.Label("Thao tác")
+            </th>
+        </tr>
+    </thead>
+    <tbody class="items">
+        @foreach (var item in Model)
+        {
+            <tr class="item">
+                <td class="check">
+                    <label class="checkbox fix"><input type="checkbox" value="@item.Id" /><i></i></label>
+                </td>
+                <td class="hidden-xs code language">@item.Code</td>
+                <td class="title">@item.DisplayName</td>
+                @*<td class="img"><input type="radio" value="@item.Id" name='default' checked="@item.IsDefault" /></td>*@
+                @*<td class="sort">
+                    @Html.TextBox("sort", item.SortOrder, new { rel = item.Id })
+                </td>*@
+                <td class="action">
+                    <a href="javascript:void(0)" data-language="@item.Id" data-toggle="modal" data-target="#language-form-edit" class="edit-link"><i class="fa fa-edit"></i> <span class="hidden-xs">Edit</span></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="modal fade" id="language-form" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    @{Html.RenderAction("Create", "Language");}
+</div>
+<div class="modal fade" id="language-form-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    @*@{Html.RenderAction("Edit", "Language");}*@
+</div>
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+        $(function () {
+            $("#check-all").checkAll(".item .check input[type='checkbox']");
+        });
+        $("#update").click(function (evt) {
+            evt.preventDefault();
+            var selected = $(".item input[type='radio']:checked").val();
+            $.ajax({
+                url: "@Url.Action("Update")",
+                data: "id=" + selected,
+                type: "post",
+                success: function (data) { alert(data.Message) }
+            })
+        });
+        $("#update1").update({
+            url: '@Url.Action("UpdateOrder")',
+            selector: ".item input[name='sort']",
+            param1: 'id',
+            param2: 'order'
+        });
+        //$("#new-language").click(function (event) {
+        //    event.preventDefault();
+        //    $("#language-form").dialog({
+        //        height: 300,
+        //        width: 350,
+        //        modal: true,
+        //        title: "Thêm mới ngôn ngữ"
+        //    });
+        //});
+
+        $(".edit-link").click(function (event) {
+            event.preventDefault();
+            $.ajax({
+                url: "@Url.Action("Edit")",
+                data: "id=" + $(this).attr("data-language"),
+                type: "get",
+                success: function (data) {
+                    $("#language-form-edit").html(data);
+                }
+
+            });
+        });
+        $("#delete").sdelete({
+            url: '@Url.Action("Delete")',
+            selector: ".item .check input[type='checkbox']",
+
+        });
+        function Success(data) {
+            $(".form form")[0].reset();
+            location.reload();
+        }
+    </script>
+}

@@ -1,0 +1,83 @@
+﻿@model RegisterModel
+@{
+    ViewBag.Title = Html.Locale("create_account").ToHtmlString();
+    ViewBag.Breadcrumb = new BreadcrumbModel { Items = new List<BreadcrumbItem> { new BreadcrumbItem { Text = Html.Locale("create_account").ToHtmlString(), Url = null, IsLast = true } } };
+}
+@using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "register-form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("returnUrl", new { returnUrl = ViewBag.ReturnUrl })
+    <div class="page-account register-s">
+        <div class="left">
+            <div class="heading">
+                <a href="" class="active">@Html.Locale("create_account")</a>
+                <a href="@Url.Action("Login", "Account", new { returnUrl = ViewContext.HttpContext.Request.Url.PathAndQuery })">@Html.Locale("account_login")</a>
+            </div>
+            <div class="content">
+                <h1>@Html.Locale("create_account")</h1>
+                <div class="form-group required">
+                    <label>@Html.Locale("account_fullname"):</label>
+                    <div class="ctn">
+                        @Html.TextBoxFor(model => model.FullName, new { @class = "form-control", placeholder = Html.Locale("account_fullname").ToHtmlString() })
+                        @Html.ValidationMessageFor(model => model.FullName, Html.Locale("account_error_fullname").ToHtmlString())
+                    </div>
+                </div>
+                <div class="form-group required">
+                    <label>@Html.Locale("account_phone"):</label>
+                    <div class="ctn">
+                        @Html.TextBoxFor(model => model.Phone, new { @class = "form-control", placeholder = Html.Locale("account_phone").ToHtmlString() })
+                        @Html.ValidationMessageFor(model => model.Phone, Html.Locale("account_error_phone").ToHtmlString())
+                    </div>
+                </div>
+                <div class="form-group required">
+                    <label>Email:</label>
+                    <div class="ctn">
+                        @Html.TextBoxFor(model => model.Email, new { @class = (ViewBag.emailError != null && ViewBag.emailError == 1 ? "form-control input-validation-error" : "form-control"), placeholder = "Email", type = "email" })
+                        @Html.ValidationMessageFor(model => model.Email, Html.Locale("account_error_email_format").ToHtmlString())
+                        <span class="field-validation-error @(ViewBag.emailError != null && ViewBag.emailError == 1 ? "" : "hidden")">@Html.Locale("account_email_is_exit")</span>
+                    </div>
+                </div>
+                <div class="form-group required">
+                    <label>@Html.Locale("account_password"):</label>
+                    <div class="ctn">
+                        @Html.TextBoxFor(model => model.Password, new { @class = "form-control", placeholder = Html.Locale("account_password2").ToHtmlString(), type = "password" })
+                        @Html.ValidationMessageFor(model => model.Password, Html.Locale("account_error_password_6").ToHtmlString())
+                    </div>
+                </div>
+                <div class="form-group required sex">
+                    <label>@Html.Locale("sex"):</label>
+                    <div class="ctn">
+                        <div class="s-item"> @Html.RadioButtonFor(model => model.Sex, "M", new { @checked = true }) <span>@Html.Locale("male")</span></div>
+                        <div class="s-item"> @Html.RadioButtonFor(model => model.Sex, "F") <span>@Html.Locale("female")</span></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>@Html.Locale("birthday"):</label>
+                    <div class="ctn">
+                        @Html.DropDownList("day", Enumerable.Range(1, 31).Select(i => new SelectListItem { Value = i.ToString(), Text = i.ToString() }), Html.Locale("day").ToString())
+                        @Html.DropDownList("month", Enumerable.Range(1, 12).Select(i => new SelectListItem { Value = i.ToString(), Text = i.ToString() }), Html.Locale("month").ToString())
+                        @Html.DropDownList("year", Enumerable.Range(1918, 100).Select(i => new SelectListItem { Value = i.ToString(), Text = i.ToString() }), Html.Locale("year").ToString())
+                        @*@Html.DropDownList("month", Enumerable.Range(1, 12).Select(i => new SelectListItem { Value = i.ToString(), Text = System.Globalization.CultureInfo.InvariantCulture.DateTimeFormat.GetMonthName(i) }), "-- Month --")*@
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox">
+                        @Html.CheckBoxFor(model => model.Newsletter)<i></i> @Html.Locale("account_newsletter")
+                    </label>
+                </div>
+                <div>
+                    <button class="btn btn-continue btn-next" type="submit">@Html.Locale("newsletter_submit")</button>
+                </div>
+                @Html.Partial("_ExternalRegister")
+            </div>
+        </div>
+        <div class="right">
+            @Html.Image(SiteConfig.Image("image_register.jpg"), new ImageOptions { Width = 371, Height = 450, Lazy = false }, new { alt = SiteConfig.SiteInfo.Title })
+        
+        </div>
+    </div>
+}
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -1,0 +1,58 @@
+﻿@using VCMS.MVC4.Web
+@model VCMS.MVC4.Data.CategoryType
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<div class="form">
+
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+        <fieldset>
+            <legend>Nhóm riêng</legend>
+            @Html.HiddenFor(model => model.Id)
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Code)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Code)
+                @Html.ValidationMessageFor(model => model.Code)
+            </div>
+            @foreach (var l in SiteConfig.Languages)
+            {
+                <div class="editor-label">
+                    @Html.Label("Tên thuộc tính - " + l.DisplayName)
+                </div>
+                <div id="tabs-@l.Id">
+                    <input type="text" name="txtName_@l.Id" value="@(Model.CategoryTypeDetail[l.Id] == null ? "" : Model.CategoryTypeDetail[l.Id].Name)" />
+                </div>
+            }
+            <div class="editor-field">
+                <label class="checkbox">
+                    @Html.CheckBoxFor(model => model.NoneType)<i></i> Dùng làm danh sách nhóm riêng.
+                </label>
+            </div>
+            <div class="toolbar">
+                <span class="button">
+                    <button type="submit" class="btn save"><i class="fa fa-save"></i> <span>Lưu</span></button>
+                </span>
+                <span class="btn back">
+                    <a href="@Url.Action("ListCateType", null, null)">
+                        <i class="fa fa-mail-reply"></i> <span>Back to List</span>
+                    </a>
+                </span>
+            </div>
+        </fieldset>
+    }
+
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+        @Scripts.Render("~/bundles/jqueryui")
+        <script type="text/javascript">
+            $(function () { $("#tabs").tabs(); });
+        </script>
+    }
+</div>
+

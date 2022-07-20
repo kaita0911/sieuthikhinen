@@ -1,0 +1,9 @@
+﻿<div class="hidden-lg hidden-md search-mobile">
+    @using (Html.BeginForm("Search", "Home", FormMethod.Get))
+    {
+        <input type="text" name="keyword" class="txt-search" placeholder="@Html.Locale("search_enterkey")" value="@ViewBag.SearchKeyword" />
+        <button type="submit" class="bt-search"><i class="fa fa-search"></i></button>
+        <input name="pageSize" type="hidden" value="10" />
+        <input name="pageIndex" type="hidden" value="1" />
+    }
+</div>

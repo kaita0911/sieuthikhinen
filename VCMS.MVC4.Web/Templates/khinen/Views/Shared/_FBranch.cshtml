@@ -1,0 +1,42 @@
+﻿@using System.Data.Entity;
+@using (DataContext db = new DataContext())
+{
+    var art = Article.GetByTypeCode("BRANCH", SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 5, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING).List;
+    var pl = "0";
+    var pt = "0";
+    var spl = "0";
+    var spt = "0";
+    var css = "";
+    <div class="box-footer f-branch">
+        <h2 class="heading">Hệ thống Thuận Phong</h2>
+        <div class="content">
+            <div class="bg-map">
+                @foreach (var item in art)
+                {
+                    var url = item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("URL", StringComparison.OrdinalIgnoreCase));
+                    var position = item.IconFont.Split(',');
+                    if (position.Count() > 0)
+                    {
+                        pl = position[0];
+                        pt = position[1];
+                        spl = position[2];
+                        spt = position[3];
+                        css = position[4];
+                    }
+                    <div class="item" style="left:@(pl)px;top:@(pt)px">
+                        <a href="@url.Value" target="_blank">
+                            <figure>
+                                @Html.Image(item.ImageUrl, new ImageOptions { Mode = ImageMode.pad, Lazy = false }, new { alt = item.ArticleName })
+                                <span style="left:@(spl)px;top:@(spt)px" class="@css">@item.ArticleName</span>
+                            </figure>
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+
+
+

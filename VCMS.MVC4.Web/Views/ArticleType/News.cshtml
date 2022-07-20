@@ -1,0 +1,8 @@
+﻿@model ICollection<VCMS.MVC4.Data.Article>
+@{
+    ViewBag.Title = ViewBag.ArticleType.Name;
+    ViewBag.Breadcrumb = new BreadcrumbModel { Items = new List<BreadcrumbItem> { new BreadcrumbItem { Text = ViewBag.ArticleType.Name, Url = null, IsLast = true } } };
+}
+
+<h1>@ViewBag.ArticleType.Name</h1>
+@Html.Partial("~/Views/Article/News/_List.cshtml", Model)

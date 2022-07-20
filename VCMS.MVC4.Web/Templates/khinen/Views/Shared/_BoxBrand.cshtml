@@ -1,0 +1,38 @@
+﻿
+<link rel="stylesheet" type="text/css" href="~/Templates/@SiteConfig.SiteCode/content/carouselengine/initcarousel-1.css">
+<script src="~/Templates/@SiteConfig.SiteCode/content/carouselengine/initcarousel-1.js"></script>
+
+@using System.Data.Entity;
+@using (DataContext db = new DataContext())
+{
+    var articleType = db.ArticleTypes.FirstOrDefault(t => t.Code == "BRAND");
+    if (articleType != null)
+    {
+        var cate = Category.GetByType(articleType.Id, SiteConfig.LanguageId);
+        <div class="box-brand">
+            <div id="amazingcarousel-container-1">
+                <div id="amazingcarousel-1" style="display:block;position:relative;width:100%;max-width:1200px;margin:0px auto 0px;">
+                    <div class="amazingcarousel-list-container">
+                        <ul class="amazingcarousel-list">
+                            @foreach (var item in cate)
+                            {
+                                <li class="amazingcarousel-item">
+                                    <div class="amazingcarousel-item-container">
+                                        <div>
+                                            <a href="@Url.Action("Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly }, null)" title="@item.CategoryName">
+                                                <img src="@Url.Content("~/UserUpload/Category/")@item.ImageUrl?height=85" />
+                                            </a>
+                                        </div>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                        <div class="amazingcarousel-prev"></div>
+                        <div class="amazingcarousel-next"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+

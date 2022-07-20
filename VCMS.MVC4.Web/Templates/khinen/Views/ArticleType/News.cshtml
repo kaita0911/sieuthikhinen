@@ -1,0 +1,6 @@
+﻿@model ArticleType
+@{
+    ViewBag.Title = Model.Name;
+    ViewBag.Breadcrumb = new BreadcrumbModel { Items = new List<BreadcrumbItem> { new BreadcrumbItem { Text = Model.Name, Url = null, IsLast = true } } };
+}
+@Html.Action("ViewByType", "Article", new { typeId = Model.Id, viewPath = "News/_List", pageSize = 14, sortOrder = ArticleSortOrder.SORT_ORDER, direction = VCMS.MVC4.Data.SortDirection.DESCENDING, includeFlags = ArticleIncludeFlags.ARTICLE_TYPE | ArticleIncludeFlags.ARTICLE_DETAIL })

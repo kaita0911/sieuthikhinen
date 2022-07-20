@@ -1,0 +1,17 @@
+﻿@{
+    <div class="box-footer footer-newsletter">
+        <div class="form_">
+            <div class="newsletter-form">
+                <h2 class="title-footer">@Html.Locale("heading_newsletter")</h2>
+                <div class="content"><span>Nhập email của bạn để nhận email của <b>@SiteConfig.SiteInfo.DefaultDomain</b></span></div>
+                <input name="email" placeholder="@Html.Locale("Enter your e-mail")" />
+                <button type="submit" data-submit="@Url.Action("Newsletter", "Account")" class="newsletter-button">
+                    @Html.Locale("REGISTER")
+                </button>
+
+                <div class="clearfix"></div>
+                <div class="result"></div>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,128 @@
+﻿@using VCMS.MVC4.Web
+@using System.Text.RegularExpressions
+@using System.Data.Entity
+@{
+    var db = new DataContext();
+    var menuItems = MenuItem.GetMenu(SiteConfig.SiteId, SiteConfig.LanguageId);
+    var i = 1;
+    string code = "";
+    string action = "";
+    if (ViewContext.RouteData.Values["code"] != null)
+    {
+        code = ViewContext.RouteData.Values["code"].ToString().ToLower();
+    }
+    if (ViewContext.RouteData.Values["action"] != null)
+    {
+        action = ViewContext.RouteData.Values["action"].ToString().ToLower();
+    }
+}
+
+<div id="pav-mainnav" class="wrap-menu">
+    <div class="navbar navbar-default" role="navigation">
+        <a href="javascript:;" data-target=".navbar-collapse" data-toggle="collapse" class="navbar-toggle">
+            <i class="fa fa-windows"></i>
+            <span class="hidden-lg hidden-md">Menu</span>
+        </a>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav megamenu">
+                <li class="dropdown">
+                    <i class="fa fa-home visible-sm visible-xs"></i>
+                    <a href="@Url.Action("Index","Home")">
+                        <span>Trang chủ</span>
+                    </a>
+                </li>
+                @foreach (var item in menuItems)
+                {
+                    <li class="dropdown static  order-@i @(code == item.ArticleType.UrlFriendly.ToLower() ? "active" : "")">
+                        <i class="fa fa-home visible-sm visible-xs"></i>
+                        @if (item.ItemType == MenuItemType.LINK)
+                        {
+                            <a href="@item.Url">
+                                <span class="menu-title">@item.ItemText</span>
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("Index", "ArticleType", new { code=item.ArticleType.UrlFriendly})">
+                                <span class="menu-title">@item.ItemText</span>
+                            </a>
+                            if (item.HasSubMenu)
+                            {
+                                var categories = Category.GetByType(item.ArticleTypeId ?? 0, SiteConfig.SiteId, SiteConfig.LanguageId).OrderBy(c => c.SortOrder).ToList();
+                                if (categories.Count > 0)
+                                {
+                                    var submenu = Category.GetTree(categories).Where(a => a.Level == 0).ToList();
+                                    var j = 1;
+                                    <div class="dropdown-menu">
+                                        <ul class="dropdown-menu-inner">
+                                            @foreach (var sub in submenu)
+                                            {
+                                                <li class="dropdown item-p">
+                                                    @if (sub.ImageUrl != null)
+                                                    {
+                                                        <img src="@Url.Content("~/UserUpload/Category/")@sub.ImageUrl?width=45" class="icon-p hidden-xs hidden-sm" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <img src="@Url.Content("~/Templates/"+ SiteConfig.SiteCode +"/Content/images/icon-dental.png")?width=45" class="icon-p hidden-xs hidden-sm" />
+                                                    }
+                                                    <a href="@Url.Action("Detail", "Category", new { id = sub.Id, code = sub.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(sub.CategoryName) })">
+                                                        <span class="name-p">@sub.CategoryName</span>
+                                                    </a>
+                                                    @*@if (item.ArticleType.Code != "LOCATION")
+                                                        {
+                                                            if (j < submenu.Count())
+                                                            {
+                                                                <span class="hidden-sm hidden-xs">|</span>
+                                                            }
+                                                        }*@
+                                                    @if (sub.ChildrenCount > 0 && item.ArticleType.Code == "PRODUCT")
+                                                    {
+                                                        @Html.Partial("_SubmenuTop", sub)
+                                                    }
+                                                </li>
+                                                    j++;
+                                            }
+                                        </ul>
+
+                                    </div>
+                                }
+                            }
+                            @*if(item.ArticleType.Code == "ABOUTUS")
+                                {
+                                    var article = Article.GetByType(item.ArticleType.Id, SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 5, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.DESCENDING);
+                                    if (article.List.Count > 0)
+                                    {
+                                        <div class="dropdown-menu">
+                                            <ul class="dropdown-menu-inner">
+                                                @foreach (var sub in article.List)
+                                                {
+                                                    <li class="dropdown">
+                                                        <a href="@Url.Action("Detail", "Article", new { id = sub.Id, code = sub.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(sub.ArticleName) })">
+                                                            <span class="menu-title">@VNS.Web.Helpers.HTMLHelper.ReadBlock(sub.ArticleName, 10)</span>
+                                                        </a>
+                                                    </li>
+                                                }
+
+                                            </ul>
+                                        </div>
+                                    }
+                                }*@
+                        }
+
+                    </li>
+                        i++;
+                }
+                <li class="dropdown">
+                    <i class="fa fa-home visible-sm visible-xs"></i>
+                    <a href="@Url.Action("Contact","Home")">
+                        <span>Liên hệ</span>
+                    </a>
+                </li>
+            </ul><div class="search pull-right">
+                @Html.Partial("_SearchBox")
+            </div>
+        </div>
+    </div>
+
+</div>

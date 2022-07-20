@@ -1,0 +1,51 @@
+﻿@model VCMS.MVC4.Data.Article
+
+
+<div class="product-detail clear-fix" itemscope itemtype="http://schema.org/Product">
+    <h1 class="name" itemprop="name">@Model.ArticleName</h1>
+    <div class="clear-fix">
+        <div class="image">
+            <div class="main-image">
+                <img itemprop="image" src="@Url.Content("~/UserUpload/Article/")@Model.ImageUrl" alt="@Model.ArticleName" />
+            </div>
+        </div>
+        <div class="headline" itemprop="headline">
+            @Html.Raw(VNS.Web.Helpers.HTMLHelper.RemoveStyleAttribute(Model.ShortDescription,"font,font-family,font-size"))
+        </div>
+    </div>
+    <h4>Chi tiết sản phẩm</h4>
+    <div class="description" itemprop="description">
+        @if (Model.Description.Trim().Length == 0)
+        {
+            <div>Sản phẩm <strong>@Model.ArticleName</strong> chưa được cập nhật nội dung. Vui lòng trở lại vào dịp khác. Chân thành cảm ơn.</div> 
+        }
+        else
+        {
+        @Html.Raw(VNS.Web.Helpers.HTMLHelper.RemoveStyleAttribute(Model.Description,"font,font-family,font-size"))
+        }
+    </div>
+    <h4>Từ khóa</h4>
+    <div class="description" >
+       
+            <div>Từ khóa liên quan <strong>@Model.ArticleName</strong> : <span class="keywords" itemprop="keywords">@(Model.SEOKeywords.StartsWith(",")?Model.SEOKeywords.Remove(0):Model.SEOKeywords)</span></div> 
+        
+    </div>
+    @if (Model.Attachments.Count>0)
+    {
+     <h4>File đính kèm</h4>
+    <div class="description" >
+       
+            <div>Download file đính kèm sản phẩm <strong>@Model.ArticleName</strong> :
+                <ul class="attachment-list">
+                    @foreach (var file in Model.Attachments)
+                    {
+                       <li> @Html.ActionLink(file.OriginalFileName,"Viewer","ArticleFile",new{id=file.Id},null)</li>
+                    }
+                </ul>
+            </div> 
+        
+    </div>
+    }
+</div>
+
+

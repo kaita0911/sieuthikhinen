@@ -1,0 +1,66 @@
+﻿@model IEnumerable<VCMS.MVC4.Data.CategoryType>
+
+@{
+    ViewBag.Title = "Danh sách loại bài viết";
+    ViewBag.Breadcrumb = new BreadcrumbModel()
+    {
+        Items = new List<BreadcrumbItem>()
+        {
+            new BreadcrumbItem(){Url = Url.Action("Index","Home"), Text = "Home", IsFirst = true},
+            new BreadcrumbItem(){Url = null, Text = "Loại bài viết", IsLast = true},
+        }
+    };
+}
+<div class="btn-group">
+    <span class="btn create">
+        <a href="@Url.Action("CreateCateType",null,null)"><i class="fa fa-plus"></i> <span class="hidden-xs">Thêm mới</span></a>
+    </span>
+    <span class="btn delete">
+        <a href="@Url.Action("DeleteCateType", null, null)" id="delete"><i class="fa fa-trash-o"></i> <span class="hidden-xs">Xóa</span></a>
+    </span>
+</div>
+<table class="table table-hover">
+    <thead class="header">
+        <tr>
+            <th class="check">
+                <label class="checkbox single noborder"><input type="checkbox" id="check-all" /><i></i></label>
+            </th>
+            <th class="code">
+                @Html.Label("Mã")
+            </th>
+            <th class="name">
+                @Html.Label("Tên")
+            </th>
+            <th class="action">
+                @Html.Label("Thao tác")
+            </th>
+        </tr>
+    </thead>
+    <tbody class="items">
+        @foreach (var item in Model)
+        {
+            <tr class="item">
+                <td class="check">
+                    <label class="checkbox fix"><input type="checkbox" value="@item.Id" /><i></i></label>
+                </td>
+                <td class="code">@Html.DisplayFor(modelItem => item.Code)</td>
+                <td class="name">@Html.DisplayFor(modelItem => item.CategoryTypeDetail[1].Name)</td>
+                <td class="action">
+                    <a href="@Url.Action("EditCateType", null, new {id=item.Id })"><i class="fa fa-edit"></i> <span class="hidden-xs">Edit</span></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@section Scripts
+{
+    <script type="text/javascript">
+        $(function () {
+            $("#check-all").checkAll(".item .check input[type='checkbox']");
+            $("#delete").sdelete({
+                url: '@Url.Action("DeleteCateType")',
+                selector: ".item .check input[type='checkbox']",
+            });
+        })
+    </script>
+}

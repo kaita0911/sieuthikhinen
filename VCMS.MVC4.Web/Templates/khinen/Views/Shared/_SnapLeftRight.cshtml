@@ -1,0 +1,158 @@
+﻿@using (DataContext db = new DataContext())
+{
+    //var menusitemap = ArticleType.GetBySiteMap(SiteConfig.SiteId, SiteConfig.LanguageId).OrderBy(m =>m.SortOrder).ToList();
+    var menusitemap = MenuItem.GetMenu(SiteConfig.LanguageId);
+    var company_list = Article.GetByTypeCode("COMPANY", SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 5, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING, ArticleIncludeFlags.PROPERTIES).List;
+    string code = "";
+    string action = "";
+    if (ViewContext.RouteData.Values["code"] != null)
+    {
+        code = ViewContext.RouteData.Values["code"].ToString().ToLower();
+    }
+    if (ViewContext.RouteData.Values["action"] != null)
+    {
+        action = ViewContext.RouteData.Values["action"].ToString().ToLower();
+    }
+    <div class="snap-drawers">
+        <div class="snap-drawer snap-drawer-left hidden-lg hidden-md hidden">
+            <div class="h-close">
+                <a class="close-sidebar">
+                    <i class="fa fa-arrow-circle-left"></i>
+                </a>
+            </div>
+            <div class="sidebar-header-left">
+                <a class="close-sidebar" href="#"><i class="fa fa-times"></i></a>
+            </div>
+            <div class="sidebar-menu">
+                <ul class="menu-header">
+                    <li class="menu-drop">
+                        <a class="menu-item @(action != "contact" && code == "" ? "active" : "")" href="@Url.Action("Index","Home")" title="">
+                            <i class="fa fa-home"></i>
+                            <em>@Html.Locale("home")</em>
+                        </a>
+                    </li>
+                    @if (menusitemap.Count > 0)
+                    {
+                        int i = 0;
+                        foreach (var item in menusitemap)
+                        {
+                            var _listcategory = Category.GetByType(item.ArticleTypeId ?? 0, SiteConfig.LanguageId).OrderBy(c => c.SortOrder).ToList();
+                            <li class="menu-drop @(item.ArticleType.Code.ToLower())">
+                                <a class="menu-item  @(item.ArticleType.UrlFriendly.ToLower() == code ? "active" : "")" href="@Url.Action("Index", "ArticleType", new { code = item.ArticleType.UrlFriendly })" title="@item.ItemText">
+                                    <i class="fa @item.Icon"></i>
+                                    <em>@item.ItemText</em>
+                                </a>
+                                @if (_listcategory.Count > 0)
+                                {
+                                    var submenu = Category.GetTree(_listcategory).Where(a => a.Level == 0).ToList();
+                                    <div id="collapse-@item.Id" class="panel-collapse collapse">
+                                        <ul class="snap-category aitem-@item.Id sub-menu">
+                                            @foreach (var sitem in submenu)
+                                            {
+                                                <li>
+                                                    <a class="navigation-sitem" href="@Url.Action("Detail", "Category", new { id = sitem.Id, code = sitem.ArticleType.UrlFriendly, title = sitem.UrlFriendly })" title="@sitem.CategoryName">
+                                                        @sitem.CategoryName
+                                                    </a>
+                                                    @if (sitem.ChildrenCount > 0)
+                                                    {
+                                                        <ul class="sh-snap-menu sub-menu uitem-@sitem.Id">
+                                                            @foreach (var ssitem in sitem.Children.Where(sc => !sc.IsNew))
+                                                            {
+                                                                <li>
+                                                                    <a class="navigation-sitem" href="@Url.Action("Detail", "Category", new { id = ssitem.Id, code = ssitem.ArticleType.UrlFriendly, title = ssitem.UrlFriendly })" title="@ssitem.CategoryName">
+                                                                        @ssitem.CategoryName
+                                                                    </a>
+                                                                    <ul class="sub-menu">
+                                                                        @foreach (var sssitem in ssitem.Children.Where(sc => !sc.IsNew))
+                                                                        {
+                                                                            <li>
+                                                                                <a class="navigation-sitem" href="@Url.Action("Detail", "Category", new { id = sssitem.Id, code = sssitem.ArticleType.UrlFriendly, title = sssitem.UrlFriendly })" title="@ssitem.CategoryName">
+                                                                                    @sssitem.CategoryName
+                                                                                </a>
+                                                                            </li>
+                                                                        }
+                                                                    </ul>
+                                                                </li>
+                                                            }
+                                                        </ul>
+                                                    }
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                }
+                            </li>
+                            i++;
+                        }
+                    }
+                    @*<li class="menu-drop">
+                        <a class="menu-item @(action == "contact" && code == "" ? "active" : "")" href="@Url.Action("Contact","Home")" title="">
+                            <i class="fa fa-envelope-o"></i>
+                            <em>@Html.Locale("contact")</em>
+                        </a>
+                    </li>*@
+                </ul>
+            </div>
+            @if (SiteConfig.Languages.Count > 1)
+            {
+                <p class="sidebar-divider">@Html.Locale("select_lang")</p>
+                <div class="sidebar-menu">
+                    @foreach (var item in SiteConfig.Languages)
+                    {
+                        <a class="menu-item" href="@Url.Action("Index", "Language", new { id = item.Id })" title="@item.Code">
+                            <i class="fa fa-star language-@item.Code"></i>
+                            <em>@item.DisplayName</em>
+                        </a>
+                    }
+                </div>
+            }
+            @foreach (var item in company_list)
+            {
+                //var address = item["ADDRESS", SiteConfig.LanguageId];
+                //var phone = item["PHONE"];
+                //var mail = item["EMAIL"];
+                <p class="sidebar-divider">@item.ArticleName</p>
+
+            }
+            @*<p class="sidebar-divider">@Html.Locale("contact")</p>*@
+            <div class="info-item">
+                <i class="fa fa-phone red"></i>
+                <strong>Hotline</strong>
+                <em>@SiteConfig.SiteInfo.Hotline</em>
+            </div>
+            <div class="info-item">
+                <i class="fa fa-envelope green"></i>
+                <strong>Email</strong>
+                <em>@SiteConfig.SiteInfo.Email</em>
+            </div>
+            <div class="sidebar-menu pull-left" style="margin-top: 25px;">
+                <a class="menu-item" href="tel:@SiteConfig.SiteInfo.Hotline.Replace(" ","")">
+                    <i class="fa fa-phone"></i>
+                    <em>@Html.Locale("call_us")</em>
+                </a>
+                <a class="menu-item" href="sms:@SiteConfig.SiteInfo.Hotline.Replace(" ","")">
+                    <i class="fa fa-comment-o"></i>
+                    <em>@Html.Locale("message")</em>
+                </a>
+                <a class="menu-item" href="mailto:@SiteConfig.SiteInfo.Email?subject=@SiteConfig.SiteInfo.Title.Replace(" ","")">
+                    <i class="fa fa-envelope-o"></i>
+                    <em>Mail</em>
+                </a>
+            </div>
+
+            <br />
+            <p class="sidebar-footer">Copyright 2011. All rights reserved</p>
+        </div>
+        <div id="footer-fixed"></div>
+    </div>
+}
+<script>
+
+    function toggleByClass(className) {
+        $('.sh-snap-menu').not('.uitem-' + className).show(200);
+        $('.sh-item').not('.iitem-' + className).removeClass('fa-minus');
+
+        $('.iitem-' + className).toggleClass('fa-minus');
+        $(".uitem-" + className).toggle();
+    }
+</script>

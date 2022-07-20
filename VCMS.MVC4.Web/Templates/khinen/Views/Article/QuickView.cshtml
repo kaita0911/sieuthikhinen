@@ -1,0 +1,31 @@
+﻿@model VCMS.MVC4.Data.Article
+@using System.Data.Entity;
+@{
+    Layout = "~/Templates/"+SiteConfig.SiteInfo.Code+"/Views/Shared/_LayoutQuickView.cshtml";
+    ViewBag.Title = Model.ArticleName;
+    ViewBag.Keywords = Model.SEOKeywords;
+    ViewBag.Description = Model.SEODescription;
+    var articleType = Model.ArticleType;
+    articleType.LanguageId = SiteConfig.LanguageId;
+    if (Model.ImageUrl != null)
+    {
+        ViewBag.Image = "http://" + Request.Url.Host.ToString() + Model.ImageUrl;
+    }
+    ViewBag.Short = Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(VNS.Web.Helpers.HTMLHelper.GetInnerText(!string.IsNullOrWhiteSpace(Model.ShortDescription) ? Model.ShortDescription : Model.Description), 50));
+    string viewName = null;
+    if (articleType != null)
+    {
+        if (ViewEngines.Engines.FindView(ViewContext.Controller.ControllerContext, articleType.Code + "/Detail", null).View != null)
+        {
+            viewName = articleType.Code + "/QuickView";
+        }
+    }
+}
+@if (viewName != null)
+{
+    @Html.Partial(viewName, Model)
+}
+else
+{
+}
+

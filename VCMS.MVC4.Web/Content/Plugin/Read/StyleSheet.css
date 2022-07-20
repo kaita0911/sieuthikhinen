@@ -1,0 +1,370 @@
+﻿body {
+    /*background: #e7e7e7 url(http://www.socwall.com/images/wallpapers/5595-1920x1200.jpg);*/
+    background: #fff url(bg_read_book.jpg) repeat-x center top;
+    font-family: Tahoma;
+    overflow: hidden;
+}
+
+.f-button {
+    text-align: center;
+}
+
+    .f-button .login {
+        color: #fff;
+        background-color: #4c2f18;
+        border-radius: 15px;
+        padding: 3px 17px;
+        display: inline-block;
+        text-transform: uppercase;
+        text-decoration: none;
+        font-size: 12px;
+        margin-top: 20px;
+    }
+
+    .f-button .back-detail {
+        color: #4c2f18;
+        background-color: #fcd000;
+        border-radius: 15px;
+        padding: 3px 17px;
+        display: inline-block;
+        text-transform: uppercase;
+        text-decoration: none;
+        font-size: 12px;
+        margin-top: 20px;
+    }
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.sample-flipbook {
+    position: relative;
+    min-height: 100%;
+    height: 100%;
+    -webkit-transition: margin-left 0.2s;
+    -moz-transition: margin-left 0.2s;
+    -ms-transition: margin-left 0.2s;
+    -o-transition: margin-left 0.2s;
+    transition: margin-left 0.2s;
+}
+
+    .sample-flipbook .inner {
+        width: 1040px;
+        margin: 0 auto;
+        position: relative;
+        padding: 12px 0 0 25px;
+    }
+
+    .sample-flipbook .bar {
+        height: 40px;
+        line-height: 40px;
+        margin-bottom: 30px;
+        text-align: center;
+        background: #fcd000;
+        opacity: .8;
+    }
+
+        .sample-flipbook .bar .inner {
+            width: 1040px;
+            margin: 0 auto;
+            position: relative;
+            padding: 0;
+        }
+
+.pagecontent {
+    padding-bottom: 40px;
+}
+
+#readcontentbook {
+    height: 540px;
+}
+
+.bg_book {
+    background: url(book_bg.png) no-repeat;
+}
+
+.bar .share {
+    float: left;
+    width: 50%;
+    text-align: right;
+}
+
+.bar a {
+    color: #333;
+    float: right;
+    text-decoration: none;
+}
+
+.bar i {
+    font-size: 18px;
+    margin: 11px 15px;
+    opacity: 1;
+    color: #fff;
+    cursor: pointer;
+}
+
+    .bar i:hover {
+        color: #000;
+        opacity: 0.9;
+    }
+
+.bar .find {
+    float: left;
+    width: 50%;
+}
+
+.bar select {
+    color: #4c2f18;
+    font-size: 13px;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-top: 6px;
+    float: left;
+}
+
+.footerbook .items {
+    float: left;
+    margin: 3px 10px 0 10px;
+}
+
+    .footerbook .items span {
+        color: #4c2f18;
+    }
+
+.footerbook {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 40px;
+    line-height: 45px;
+    text-align: center;
+    background: #fcd000;
+    opacity: .8;
+}
+
+    .footerbook .inner {
+        width: 1040px;
+        margin: 0 auto;
+        position: relative;
+        padding: 0;
+        font-size: 13px;
+    }
+
+    .footerbook p {
+        color: #4c2f18;
+    }
+
+.bold {
+    font-weight: bold;
+}
+
+.footerbook p i {
+    color: #4c2f18;
+}
+
+.sample-flipbook .bookpage {
+    position: absolute;
+    bottom: -15px;
+    right: 205px;
+    width: 39px;
+    height: 39px;
+}
+
+.sample-flipbook .contentbook {
+    margin: 20px 20px 26px 30px;
+    line-height: 30px;
+    text-align: justify;
+    overflow: hidden;
+    height: 446px;
+    width: 98%;
+    font-family: Times New Roman;
+    font-size: 20px;
+}
+
+    .sample-flipbook .contentbook p {
+        text-align: justify;
+    }
+
+.sample-flipbook .hard {
+    background: #ccc;
+}
+
+.sample-flipbook .head {
+    background: #ccc url(images/book_first.png);
+    position: relative;
+}
+
+    .sample-flipbook .head .namebook, .sample-flipbook .footer .namebook {
+        position: absolute;
+        width: 90%;
+        height: 120px;
+        top: 200px;
+        left: 0;
+        color: #fff;
+        line-height: 60px;
+        font-size: 50px;
+        font-weight: bold;
+        text-align: center;
+        padding-left: 30px;
+    }
+
+.sample-flipbook .footer .namebook {
+    color: #000;
+}
+
+.head .namebook .shadow, .footer .namebook .shadow {
+    -webkit-text-shadow: 2px -2px 5px rgb(1, 15, 15);
+    -moz-text-shadow: 2px -2px 5px rgb(1, 15, 15);
+    -o-text-shadow: 2px -2px 5px rgb(1, 15, 15);
+    -ms-text-shadow: 2px -2px 5px rgb(1, 15, 15);
+    text-shadow: 2px -2px 5px rgb(1, 15, 15);
+}
+
+.sample-flipbook .footer {
+    background: #f0f0f0;
+    position: relative;
+}
+
+.sample-flipbook .page {
+    background-color: white;
+    line-height: 25px;
+    font-size: 20px;
+}
+
+.sample-flipbook .page-wrapper {
+    -webkit-perspective: 2000px;
+    -moz-perspective: 2000px;
+    -ms-perspective: 2000px;
+    -o-perspective: 2000px;
+    perspective: 2000px;
+}
+
+.sample-flipbook .hard {
+    background: #ccc !important;
+    color: #333;
+    -webkit-box-shadow: inset 0 0 5px #ffc;
+    -moz-box-shadow: inset 0 0 5px #ffc;
+    -o-box-shadow: inset 0 0 5px #ffc;
+    -ms-box-shadow: inset 0 0 5px #ffc;
+    box-shadow: inset 0 0 5px #ffc;
+    font-weight: bold;
+}
+
+.sample-flipbook .odd {
+    -webkit-box-shadow: inset 0 0 5px #ffc;
+    -moz-box-shadow: inset 0 0 5px #ffc;
+    -o-box-shadow: inset 0 0 5px #ffc;
+    -ms-box-shadow: inset 0 0 5px #ffc;
+    box-shadow: inset 0 0 5px #ffc;
+}
+
+.sample-flipbook .even {
+    background: -webkit-gradient(linear, left top, right top, color-stop(0.95, #fff), color-stop(1, #dadada));
+    background-image: -webkit-linear-gradient(left, #fff 95%, #dadada 100%);
+    background-image: -moz-linear-gradient(left, #fff 95%, #dadada 100%);
+    background-image: -ms-linear-gradient(left, #fff 95%, #dadada 100%);
+    background-image: -o-linear-gradient(left, #fff 95%, #dadada 100%);
+    background-image: linear-gradient(left, #fff 95%, #dadada 100%);
+    -webkit-box-shadow: inset 0 0 5px #666;
+    -moz-box-shadow: inset 0 0 5px #666;
+    -o-box-shadow: inset 0 0 5px #666;
+    -ms-box-shadow: inset 0 0 5px #666;
+    box-shadow: inset 0 0 5px #666;
+}
+
+shadow {
+    -webkit-box-shadow: inset 0 0 5px #666;
+    -moz-box-shadow: inset 0 0 5px #666;
+    -o-box-shadow: inset 0 0 5px #666;
+    -ms-box-shadow: inset 0 0 5px #666;
+    box-shadow: inset 0 0 5px #666;
+}
+
+.bar i.icon-first {
+    background: url(../images/black_fisrt.png) no-repeat;
+}
+
+.footerbook img.icon_dup, .bar img.icon_dup {
+    width: 25px;
+    vertical-align: middle;
+    margin: 0 10px 7px;
+}
+
+.footerbook img.icon_dup2, .bar img.icon_dup2 {
+    width: 22px;
+    vertical-align: middle;
+    margin: 0 20px 7px 10px;
+}
+
+.footerbook img.icon_dup3, .bar img.icon_dup3 {
+    width: 30px;
+    vertical-align: middle;
+    margin: 0 0px 7px 20px;
+}
+
+.icon_dup, .icon_dup2, .icon_dup3 {
+    cursor: pointer;
+}
+
+.btn_chucnang button {
+    margin-right: 10px;
+}
+
+button.blue1 {
+    background-clip: padding-box;
+    background-color: #00b1dd;
+    border: medium none;
+    border-radius: 2px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    height: 35px;
+    width: 110px;
+}
+
+button.orange {
+    background-clip: padding-box;
+    background-color: #f9b517;
+    border: medium none;
+    border-radius: 2px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    height: 35px;
+    width: 110px;
+}
+
+.orange {
+    background-color: #f9b517 !important;
+}
+
+button.gray {
+    background-clip: padding-box;
+    background-color: #6f6f6f;
+    border: medium none;
+    border-radius: 2px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    height: 35px;
+    width: 110px;
+}
+
+.gray {
+    background-color: #6f6f6f !important;
+}
+
+.titleEnd {
+    font-weight: bold;
+    margin-top: 20px;
+    font-size: 20px;
+}
+
+.messageg_text {
+    color: #ff0000;
+    padding: 0 10px;
+}

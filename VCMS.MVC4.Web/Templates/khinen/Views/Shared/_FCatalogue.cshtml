@@ -1,0 +1,43 @@
+﻿@using System.Data.Entity;
+@using (DataContext db = new DataContext())
+{
+    var articleType = db.ArticleTypes.FirstOrDefault(t => t.Code == "CATALOGUE");
+    if (articleType != null)
+    {
+        var lstCate = Category.GetByType(articleType.Id, SiteConfig.SiteId, SiteConfig.LanguageId);
+        if (lstCate.Count > 0)
+        {
+            <div class="f-catalogue">
+                <div class="row">
+                    @foreach (var itemCate in lstCate)
+                    {
+                        var lstArt = Article.GetByCategory(itemCate.Id, SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 4, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING);
+                        <div class="col-lg-3 col-md-6 col-sm-12 col-xs-12">
+                            <div class="item-cate">
+                                <div class="cate-name">
+                                    <a href="@Url.Action("Detail", "Category", new { id = itemCate.Id, code = itemCate.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(itemCate.CategoryName) }, null)" title="@itemCate.CategoryName">@itemCate.CategoryName</a>
+                                </div>
+                                <div class="cate-ctn">
+                                    @foreach (var item in lstArt.List)
+                                    {
+                                        <div class="items">
+                                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })">@item.ArticleName</a>
+                                        </div>
+                                    }
+                                    @if (lstArt.TotalItemCount > 4)
+                                    {
+                                        <div class="view-more">
+                                            <a href="@Url.Action("Detail", "Category", new { id = itemCate.Id, code = itemCate.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(itemCate.CategoryName) }, null)">Xem thêm</a>
+                                        </div>
+                                    }
+
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    }
+}
+

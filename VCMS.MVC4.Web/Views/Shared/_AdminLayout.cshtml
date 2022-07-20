@@ -1,0 +1,62 @@
+﻿@using VCMS.MVC4.Web.Areas.Admin.Models
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title - VCMS Administrator</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    @RenderSection("styles", required: false)
+    @Styles.Render("~/Content/admincss")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+</head>
+<body class="menu-ontop">
+    <header id="header">
+        <div id="logo">
+            <p class="site-title">@Html.ActionLink("vcms administrator", "Index", "Home")</p>
+        </div>
+        <div id="login" class="pull-right">
+            @Html.Partial("_LoginPartial")
+        </div>
+    </header>
+    <aside id="left-panel">
+        @{Html.RenderPartial("_Menu");}
+    </aside>
+    <div id="main" role="main">
+        <div id="ribbon">
+            <div id="hide-menu" class="btn-header pull-left hidden-lg hidden-md">
+                <span> <a href="javascript:void(0);" data-action="toggleMenu" title="Collapse Menu"><i class="fa fa-cog"></i></a> </span>
+            </div>
+            @{Html.RenderPartial("_Breadcrumb");}
+        </div>
+        <div id="content">
+            @RenderBody()
+        </div>
+    </div>
+    <footer>
+        <div class="content-wrapper" >
+            <div class="float-left">
+                <p>&copy; @DateTime.Now.Year - vcms administrator</p>
+            </div>
+        </div>
+    </footer>
+    @Scripts.Render("~/bundles/admin")
+    @Scripts.Render("~/bundles/dcaccordion")
+    @RenderSection("scripts", required: false)
+    <script>
+        $(window).load(function () {
+            var h = $("#left-panel").height()+250;
+            if (h < $("#main").height()) {
+                $("#left-panel").height($("#main").height());
+                $("#main").height($("#left-panel").height());
+            }
+            else {
+                $("#main").height(h);
+                $("#left-panel").height($("#main").height());
+            }
+        });
+        $('.action a').tooltip()
+    </script>
+</body>
+</html>

@@ -1,0 +1,310 @@
+﻿@model Widget
+@{
+    var type = ArticleType.GetById((int)Model.ArticleTypeId, SiteConfig.LanguageId);
+    var cate_lst = Category.GetByType((int)Model.ArticleTypeId, SiteConfig.LanguageId, 0, CategoryFlags.NEW, 0);
+    var articles = Article.GetByCategories(cate_lst.Select(c => c.Id).ToArray(), SiteConfig.LanguageId, Model.Attribute, Model.Number, Model.SortOrder, Model.SortDirection, Model.Includes);
+    int i = 1;
+    int j = 1;
+    <div class="box-home box-product-tab">
+        <h2 class="heading">
+            <a href="@Url.Action("Index", "ArticleType", new { code = type.UrlFriendly })">
+                <span>@Model.Title</span>
+            </a>
+        </h2>
+        <div class="tab-detail">
+            <div class="heading">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    @foreach (var item in cate_lst.Take(4))
+                    {
+                        <li role="presentation" class="@(i == 1?"active":"")">
+                            <a href="#detail-@item.Id" aria-controls="detail-@item.Id" role="tab" data-toggle="tab">@item.CategoryName</a>
+                        </li>
+                        i++;
+                    }
+                    @*<li role="presentation" class="active">
+                            <a href="#detail-0" aria-controls="detail-0" role="tab" data-toggle="tab">@Html.Locale("new_product")</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#detail-1" aria-controls="detail-1" role="tab" data-toggle="tab">@Html.Locale("discount_product")</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#detail-2" aria-controls="detail-2" role="tab" data-toggle="tab">@Html.Locale("hot_product")</a>
+                        </li>*@
+                </ul>
+                <!-- Tab panes -->
+            </div>
+            <div class="tab-content">
+                @foreach (var citem in cate_lst)
+                {
+                    var article = articles.Where(a => a.CurrentCategory.Id == citem.Id);
+                    <div role="tabpanel" class="tab-pane fade in  @(j == 1?"active":"")" id="detail-@citem.Id">
+                        <div class="content">
+                            <div class="row">
+                                @foreach (var item in article)
+                                {
+                                    <div class="col-md-3 col-sm-6 col-xs-6">
+                                        <div class="box-block box-product">
+                                            @if (!Model.HiddenImage)
+                                            {
+                                                <figure>
+                                                    <a class="banner-cubic-1" href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                                                        @Html.Image(item.ImageUrl, new ImageOptions { Width = 270, Height = 290, Watermark = SiteConfig.Watermark, Mode = ImageMode.crop, Lazy = false }, new { alt = item.ArticleName })
+                                                    </a>
+                                                    @*<div class="detail">
+                                    <div class="border">
+                                        <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })">
+                                            @Html.Locale("view_detail")
+                                        </a>
+                                    </div>
+                                </div>*@
+                                                </figure>
+                                            }
+                                            <div class="meta">
+                                                <div class="clearfix"></div>
+                                                <h3>
+                                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">@item.ArticleName</a>
+                                                </h3>
+                                                @if (Model.ShowDescription)
+                                                {
+                                                    <div class="s-desc">
+                                                        @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, 20))
+                                                    </div>
+                                                }
+                                                <div class="price-all pull-left">
+                                                    @if (item.DiscountPrice > 0)
+                                                    {
+                                                        <span class="price">@Html.DiscountPrice(item.ItemPrice)</span>
+                                                        <span class="price-old">@Html.Price(item.ItemPrice)</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="@Url.Action("Contact", "Home", new { id = item.Id })">
+                                                            <span class="lbl">@Html.Locale("price"):</span>
+                                                            <span class="price">@Html.Price(item.ItemPrice)</span>
+                                                        </a>
+                                                    }
+                                                </div>
+                                                @*<div class="action pull-right">
+                                @if (item.Price > 0)
+                                {
+                                    <a href="@Url.Action("AddToCart", "ShoppingCart", new { id = item.Id })" class="cart" rel="nofollow">
+                                        @Html.Locale("cart_checkout")
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("Contact", "Home", new { id=item.Id})" class="cart" rel="nofollow">@Html.Locale("contact")</a>
+                                }
+                            </div>*@
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                            @if (Model.ShowViewMore)
+                            {
+                                <div class="view-all">
+                                    <a href="@Url.Action("Detail", "Category", new { id = citem.Id, code = citem.ArticleType.UrlFriendly, title = citem.CategoryName })" title="@citem.CategoryName">
+                                        Xem thêm >>
+                                    </a>
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+                    j++;
+                }
+                @*<div role="tabpanel" class="tab-pane fade in active" id="detail-0">
+                        <div class="content">
+                            <div class="row">
+                                @foreach (var item in new_article.List)
+                                {
+                                    <div class="col-md-3 col-sm-6 col-xs-6">
+                                        <div class="box-block box-product">
+                                            @if (!Model.HiddenImage)
+                                            {
+                                                <figure>
+                                                    <a class="banner-cubic-1" href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                                                        @Html.Image(item.ImageUrl, new ImageOptions { Width = 270, Height = 290, Watermark = SiteConfig.Watermark, Mode = ImageMode.crop, Lazy = false }, new { alt = item.ArticleName })
+                                                    </a>
+                                                    <div class="detail">
+                                                        <div class="border">
+                                                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })">
+                                                                @Html.Locale("view_detail")
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </figure>
+                                            }
+                                            <div class="meta">
+                                                <div class="clearfix"></div>
+                                                <h3>
+                                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">@item.ArticleName</a>
+                                                </h3>
+                                                @if (Model.ShowDescription)
+                                                {
+                                                    <div class="s-desc">
+                                                        @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, 20))
+                                                    </div>
+                                                }
+                                                <div class="price-all pull-left">
+                                                    @if (item.DiscountPrice > 0)
+                                                    {
+                                                        <span class="price">@Html.DiscountPrice(item.ItemPrice)</span>
+                                                        <span class="price-old">@Html.Price(item.ItemPrice)</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="price">@Html.Locale("price"): @Html.Price(item.ItemPrice)</span>
+                                                    }
+                                                </div>
+                                                <div class="action pull-right">
+                                                    @if (item.Price > 0)
+                                                    {
+                                                        <a href="@Url.Action("AddToCart", "ShoppingCart", new { id = item.Id })" class="cart" rel="nofollow">
+                                                            @Html.Locale("cart_checkout")
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="@Url.Action("Contact", "Home", new { id=item.Id})" class="cart" rel="nofollow">@Html.Locale("contact")</a>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade in" id="detail-1">
+                        <div class="content">
+                            <div class="row">
+                                @foreach (var item in discount_article)
+                                {
+                                    <div class="col-md-3 col-sm-6 col-xs-6">
+                                        <div class="box-block box-product">
+                                            @if (!Model.HiddenImage)
+                                            {
+                                                <figure>
+                                                    <a class="banner-cubic-1" href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                                                        @Html.Image(item.ImageUrl, new ImageOptions { Width = 270, Height = 290, Watermark = SiteConfig.Watermark, Mode = ImageMode.crop, Lazy = false }, new { alt = item.ArticleName })
+                                                    </a>
+                                                    <div class="detail">
+                                                        <div class="border">
+                                                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })">
+                                                                @Html.Locale("view_detail")
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </figure>
+                                            }
+                                            <div class="meta">
+                                                <div class="clearfix"></div>
+                                                <h3>
+                                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">@item.ArticleName</a>
+                                                </h3>
+                                                @if (Model.ShowDescription)
+                                                {
+                                                    <div class="s-desc">
+                                                        @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, 20))
+                                                    </div>
+                                                }
+                                                <div class="price-all pull-left">
+                                                    @if (item.DiscountPrice > 0)
+                                                    {
+                                                        <span class="price">@Html.DiscountPrice(item.ItemPrice)</span>
+                                                        <span class="price-old">@Html.Price(item.ItemPrice)</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="price">@Html.Locale("price"): @Html.Price(item.ItemPrice)</span>
+                                                    }
+                                                </div>
+                                                <div class="action pull-right">
+                                                    @if (item.Price > 0)
+                                                    {
+                                                        <a href="@Url.Action("AddToCart", "ShoppingCart", new { id = item.Id })" class="cart" rel="nofollow">
+                                                            @Html.Locale("cart_checkout")
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="@Url.Action("Contact", "Home", new { id=item.Id})" class="cart" rel="nofollow">@Html.Locale("contact")</a>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade in" id="detail-2">
+                        <div class="content">
+                            <div class="row">
+                                @foreach (var item in hot_article.List)
+                                {
+                                    <div class="col-md-3 col-sm-6 col-xs-6">
+                                        <div class="box-block box-product">
+                                            @if (!Model.HiddenImage)
+                                            {
+                                                <figure>
+                                                    <a class="banner-cubic-1" href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                                                        @Html.Image(item.ImageUrl, new ImageOptions { Width = 270, Height = 290, Watermark = SiteConfig.Watermark, Mode = ImageMode.crop, Lazy = false }, new { alt = item.ArticleName })
+                                                    </a>
+                                                    <div class="detail">
+                                                        <div class="border">
+                                                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })">
+                                                                @Html.Locale("view_detail")
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </figure>
+                                            }
+                                            <div class="meta">
+                                                <div class="clearfix"></div>
+                                                <h3>
+                                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">@item.ArticleName</a>
+                                                </h3>
+                                                @if (Model.ShowDescription)
+                                                {
+                                                    <div class="s-desc">
+                                                        @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, 20))
+                                                    </div>
+                                                }
+                                                <div class="price-all pull-left">
+                                                    @if (item.DiscountPrice > 0)
+                                                    {
+                                                        <span class="price">@Html.DiscountPrice(item.ItemPrice)</span>
+                                                        <span class="price-old">@Html.Price(item.ItemPrice)</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="price">@Html.Locale("price"): @Html.Price(item.ItemPrice)</span>
+                                                    }
+                                                </div>
+                                                <div class="action pull-right">
+                                                    @if (item.Price > 0)
+                                                    {
+                                                        <a href="@Url.Action("AddToCart", "ShoppingCart", new { id = item.Id })" class="cart" rel="nofollow">
+                                                            @Html.Locale("cart_checkout")
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="@Url.Action("Contact", "Home", new { id=item.Id})" class="cart" rel="nofollow">@Html.Locale("contact")</a>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>*@
+            </div>
+        </div>
+    </div>
+}

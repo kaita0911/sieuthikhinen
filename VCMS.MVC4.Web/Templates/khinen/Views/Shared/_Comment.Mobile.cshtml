@@ -1,0 +1,301 @@
+﻿@{
+    ViewBag.ArticleID = Model.Id;
+    ViewBag.Login = 0;
+    var lstcomment = new PagedList<Comment>();
+
+    if (Roles.IsUserInRole("Super Administrators") || Roles.IsUserInRole("Administrators"))
+    {
+        lstcomment = Comment.ViewByArticle(Model.Id, 1, 10, CommentSortOrder.DATE_CREATED, CommentStatus.ALL);
+        ViewBag.UserID = SiteConfig.UserId;
+        ViewBag.UserDisplayName = SiteConfig.CurrentUser.DisplayName;
+        ViewBag.UserMail = SiteConfig.CurrentUser.Email;
+    }
+    else
+    {
+        lstcomment = Comment.ViewByArticle(Model.Id);
+    }
+
+    @Html.Partial("_CommentCreate")
+    
+    <div class="col-xs-12">
+        <div class="cm-sortorder">
+            <i class="fa fa-sort-amount-desc" aria-hidden="true"></i> Sắp xếp theo :
+            <span class="sort active" data-sort="@((int)CommentSortOrder.DATE_CREATED)">Mới nhất</span>
+            <span class="sort" data-sort="@((int)CommentSortOrder.LIKE_NUMBER)">Hay nhất</span>
+        </div>
+    </div>
+    
+    <div class="col-xs-12">
+        <div class="list-comment" id="list-comment">
+            @Html.Partial("_CommentList", lstcomment)
+        </div>
+    </div>
+}
+
+
+
+
+<script type="text/javascript">
+    //-------define gobal variable
+    // flag use for change sort comment
+    var sort = '@((int)CommentSortOrder.DATE_CREATED)';
+
+    //-------first load
+    $(window).ready(function () {
+        $(".timeago").timeago();
+    });
+
+
+    //------define function
+    function timeagocall() {
+       // $('.timeago').livequery(function () {
+       //     $(this).timeago();
+       // });
+    }
+
+    function loadComment(url) {
+        if (url != null) {
+            $(".list-comment").load(url);
+        }
+        else {
+            if (sort == 0) {
+                $(".list-comment").load('@Html.Raw(Url.Action("ViewByArticle", "Comment", new { articleId = ViewBag.ArticleID,pageIndex= 1,pagesize=10 , sortOrder = CommentSortOrder.DATE_CREATED}))');
+            }
+            else {
+                $(".list-comment").load('@Html.Raw(Url.Action("ViewByArticle", "Comment", new { articleId = ViewBag.ArticleID,pageIndex= 1,pagesize=10 , sortOrder = CommentSortOrder.LIKE_NUMBER}))');
+            }
+        }
+
+        timeagocall();
+        //$('html, body').animate({
+        //    scrollTop: $(".list-comment").offset().top - 100
+        //}, 500);
+
+    };
+
+    function AjaxAction(url, data, beforeSend, complete, success) {
+        $.ajax({
+            url: url,
+            type: 'post',
+            data: data,
+            datatype: 'json',
+            beforeSend: beforeSend,
+            complete: complete,
+            success: success,
+            error: function (xhr, status, error) {
+                alert(xhr.responseText);
+            }
+
+        });
+    };
+
+    //function fillCommentForm(f) {
+    //    var userId = f.find('input[name="userId"]').val();
+    //    var displayname = f.find('input[name="name"]').val();
+    //    var mail = f.find('input[name="email"]').val();
+    //    var articleId = f.find('input[name="articleId"]').val();
+    //    var typeId = f.find('input[name="articleTypeId"]').val();
+
+    //    $('.comment-reply-form').livequery(function () {
+    //        if (userId != "") {
+    //            $(".comment-reply-form").find('input[name="userId"]').val(userId);
+    //            $(".comment-reply-form").find('input[name="name"]').val(displayname);
+    //            $(".comment-reply-form").find('input[name="email"]').val(mail);
+    //        }
+    //        $(".comment-reply-form").find('input[name="articleId"]').val(articleId);
+    //        $(".comment-reply-form").find('input[name="articleTypeId"]').val(typeId);
+    //    });
+    //};
+
+    function commentValid(f) {
+        var res = f.find(".result-valid");
+
+        var input = f.find('.message');
+        if (input.val() == "") {
+            res.html("Vui lòng nhập nội dung.");
+            input.focus();
+            return false;
+        }
+
+        var input = f.find('input[name="name"]');
+        if (input.val() == "") {
+            res.html("Vui lòng nhập họ tên của bạn.");
+            input.focus();
+            return false;
+        }
+
+        var input = f.find('input[name="email"]');
+        if (input.val() == "") {
+            res.html("Vui lòng nhập email của bạn.");
+            input.focus();
+            return false;
+        }
+
+        var expr = /^([a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+(\.[a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)*|"((([ \t]*\r\n)?[ \t]+)?([\x01-\x08\x0b\x0c\x0e-\x1f\x7f\x21\x23-\x5b\x5d-\x7e\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|\\[\x01-\x09\x0b\x0c\x0d-\x7f\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))*(([ \t]*\r\n)?[ \t]+)?")@@(([a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.)+([a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.?$/i;
+        if (!expr.test(input.val())) {
+            res.html("Email bạn vừa nhập không đúng định dạng.")
+            input.focus();
+            return false;
+        }
+
+        return true;
+
+    };
+
+    function createComment(f) {
+        if (commentValid(f)) {
+            var url = '@Url.Action("CreateAjax", "Comment")';
+            var datasend = f.serialize();
+            var complete = function () {
+                if (f.find('input[name="userId"]').val() != "") {
+                    f.find('.message').val("");
+                }
+                else {
+                    f[0].reset();
+                }
+                $(".result-valid").text("");
+            };
+            var success = function (data) {
+                if (data.Status == 1) {
+                    if (f.find('input[name="userId"]').val() == "") {
+                        alert("Cảm ơn bạn đã tham gia bình luận. Nội dung bình luận của bạn sẽ được kiểm duyệt.")
+                        $(".comment-reply-form").remove();
+                    }
+                    else {
+                        loadComment();
+                    }
+
+                }
+                //fillCommentForm(f);
+            };
+            AjaxAction(url, datasend, null, complete, success);
+        }
+    };
+
+
+    //-------- action
+    $(document).on('click', '.list-comment .pager a', function () {
+        event.preventDefault();
+        var t = $(this);
+        if (!t.hasClass('acticve')) {
+            var url = t.attr('href');
+            loadComment(url);
+        }
+    });
+
+    // create comment
+    $(document).on('click', '.comment-create', function () {
+        var f = $(this).closest('form');
+        createComment(f);
+    });
+
+    //change sort comment
+    $(document).on('click', '.cm-sortorder .sort', function () {
+        var t = $(this);
+        sort = t.attr('data-sort');
+        loadComment();
+        $('.cm-sortorder .sort').removeClass('active');
+        t.addClass('active');
+    });
+
+    // show more comment
+    $(document).on('click', '.cm-view_more', function () {
+        var t = $(this);
+        var listcm = t.closest('.list-comment-reply');
+        t.remove();
+        listcm.find('.box-comment-reply').removeClass('hidden');
+    });
+
+
+    // click reply to show form
+    $(document).on('click', '.cm-reply', function () {
+        var div = $(this).closest('.box-comment');
+        var id = div.attr('data-id');
+        var name = div.attr('data-name');
+
+        $(".comment-reply-form").remove();
+        var html_form = $('.comment-create-form').clone();
+
+        html_form.attr("class", "comment-reply-form");
+        html_form.find('.result-valid').text("");
+
+        var div_reply = div.find('.list-comment-reply');
+        if (div_reply.length > 0) {
+            div_reply.append(html_form);
+        }
+        else {
+            div.append(html_form);
+        }
+
+        if (id != null) {
+            $(".comment-reply-form").find('input[name="parentId"]').val(id);
+            $(".comment-reply-form").find('.message').val("@@" + name + " :");
+            $('html, body').animate({
+                scrollTop: $(".comment-reply-form").offset().top - 100
+            }, 500);
+            $(".comment-reply-form").find('.message').focus();
+
+        }
+    });
+
+
+    // click like
+    $(document).on('click', '.cm-like', function () {
+        var t = $(this);
+        var like_check = t.attr("data-like");
+        if (like_check == 0) {
+            var id = t.closest('.cm-info').attr('data-id');
+            var datasend = { id: id };
+            var url = '@Url.Action("Like", "Comment")';
+            var success = function (data) {
+                if (data.Status == 1) {
+                    t.attr("data-like", 1)
+                    t.find(".like-number").html('('+data.likenumber+')');
+                }
+            }
+            AjaxAction(url, datasend, null, null, success);
+        }
+
+    });
+
+    // delete comment
+    $(document).on('click', '.cm-delete', function () {
+        var t = $(this);
+        var id = t.closest('.cm-info').attr('data-id');
+        var datasend = { id: id };
+        var url = '@Url.Action("Delete", "Comment")';
+        var success = function (data) {
+            if (data.Status == 1) {
+                if (data.Status == 1) {
+                    alert("Bình luận này đã được gỡ bỏ.");
+                    loadComment();
+                }
+            }
+        }
+        if (confirm("Bạn muốn xóa bình luận này?")) {
+            AjaxAction(url, datasend, null, null, success);
+        }
+    });
+
+    // change status commnet
+    $(document).on('click', '.cm-status', function () {
+        var t = $(this);
+        var id = t.closest('.cm-info').attr('data-id');
+        var status = '@CommentStatus.ACTIVE';
+        var datasend = {
+            id: id,
+            status: status
+        };
+        var url = '@Url.Action("ChangeStatus", "Comment")';
+        var success = function (data) {
+            if (data.Status == 1) {
+                if (data.Status == 1) {
+                    loadComment();
+                }
+            }
+        }
+        AjaxAction(url, datasend, null, null, success);
+    });
+
+
+</script>

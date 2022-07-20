@@ -1,0 +1,46 @@
+﻿@using (DataContext db = new DataContext())
+{
+    var type = ArticleType.GetIdByCode("SUPPORT");
+    if (type > 0)
+    {
+        var support = Article.GetByType(type, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 1, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.DESCENDING, ArticleIncludeFlags.ARTICLE_DETAIL | ArticleIncludeFlags.ARTICLE_TYPE | ArticleIncludeFlags.PROPERTIES);
+        if (support.List.Count > 0)
+        {
+            <section id="support" class="hidden-sm hidden-xs">
+                @*<div class="support">
+                        @Html.Image(SiteConfig.Image("hotro.png"), new ImageOptions { Width = 60, Height = 153, Lazy = false }, new { alt = "support" })
+                    </div>*@
+                <div class="box-content">
+                    @*<div class="hot-line">
+                            <span>Hotline</span>
+                            <span class="phone-number">@SiteConfig.SiteInfo.Hotline</span>
+                        </div>*@
+                    @*<div class="clearfix"></div>*@
+                    <ul class="supports">
+                        @foreach (var item in support.List)
+                        {
+                            //var skype = item.PropertyValues.FirstOrDefault(pv => pv.Property.Code.Equals("SKYPE", StringComparison.OrdinalIgnoreCase));
+                            var zalo = item.PropertyValues.FirstOrDefault(pv => pv.Property.Code.Equals("ZALO", StringComparison.OrdinalIgnoreCase));
+                            <li class="item">
+                                <p>
+                                    <span>@item.ArticleName:</span>
+                                    @if (!string.IsNullOrWhiteSpace(zalo.Value))
+                                    {
+                                        <a href="http://zalo.me/@zalo.Value" title="@zalo.Value" target="_blank">
+                                            <span class="zalo"></span>
+                                        </a>
+                                    }
+                                    @*@if (!string.IsNullOrWhiteSpace(skype.Value))
+                                        {
+                                            <a href="skype:@skype.Value?chat" class="skype" title="@skype.Value"></a>
+                                        }*@
+                                </p>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </section>
+        }
+    }
+
+}

@@ -1,0 +1,226 @@
+﻿<script src="https://www.google.com/recaptcha/api.js"></script>
+@model ContactModel
+@{
+    ViewBag.Title = Html.Locale("contact");
+    ViewBag.Breadcrumb = new BreadcrumbModel { Items = new List<BreadcrumbItem> { new BreadcrumbItem { Text = ViewBag.Title.ToString(), Url = null, IsLast = true } } };
+    Layout = "_LayoutContact.cshtml";
+    var db = new DataContext();
+}
+
+<article class="article" itemscope itemtype="http://schema.org/Article">
+    <div class="box-contact">
+        <div class="row">
+            @{
+                var list = Article.GetByType(db.ArticleTypes.FirstOrDefault(a => a.Code == "COMPANY").Id, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 1, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING).List;
+                var art = list.FirstOrDefault();
+                if (ViewBag.Result != null)
+                {
+                    <section class="success-contact font-boll" id="success">
+                        <div class="alert alert-success fade in">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            @if (ViewBag.Result != null && (int)ViewBag.Result == 0)
+                            {
+                                <span class="message">@Html.Locale("contact_response_ok")</span>
+                            }
+                            else if ((int)ViewBag.Result == 2)
+                            {
+                                <span class="error">@Html.Locale("Chưa check chọn reCaptcha")</span>
+                            }
+                            else if (ViewBag.Result != null && (int)ViewBag.Result == -1)
+                            {
+                                <span class="error">@ViewBag.Message</span>
+                            }
+                        </div>
+                    </section>
+                }
+                foreach (var item in list)
+                {
+                    var address = item["ADDRESS"];
+                    var email = item["EMAIL"];
+                    var phone = item["PHONE"];
+                    var fax = item["FAX"];
+                    var maps = item["MAP"];
+                    <div class="col-md-12">
+                        <div class="maps">
+                            @if (art != null)
+                            {
+                                @Html.Raw(maps)
+                            }
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h2 class="heading">@Html.Locale("contact_info_custommer")</h2>
+
+
+
+                        <div class="box-companny">
+                            <h2 class="title">
+                                <span class="ctn">
+                                    @item.ArticleName
+                                </span>
+                            </h2>
+                            <div class="content">
+                                @if (!string.IsNullOrEmpty(address))
+                                {
+                                    <div class="item">
+                                        @*<i class="fa fa-map-marker"></i>*@
+                                        <strong>@Html.Locale("address"):</strong> @address
+                                    </div>
+                                }
+                                @if (!string.IsNullOrEmpty(phone))
+                                {
+                                    <div class="item">
+                                        @*<i class="fa fa-phone"></i>*@
+                                        <strong>@Html.Locale("phone"):</strong> @Html.Phone(phone) @*&nbsp;&nbsp;&nbsp; ;&nbsp;Fax: @Html.Phone(fax.Value)*@
+                                    </div>
+                                }
+
+                                @if (!string.IsNullOrEmpty(email))
+                                {
+                                    <div class="item">
+                                        @*<i class="fa fa-envelope"></i>*@
+                                        <strong>Email:</strong> @Html.Email(email)
+                                    </div>
+                                }
+                                @if (!string.IsNullOrEmpty(fax))
+                                {
+                                    <div class="item">
+                                        @*<i class="fa fa-fax"></i>*@
+                                        <strong>@Html.Locale("Fax"):</strong> @fax
+                                    </div>
+                                }
+                                @*@if (!string.IsNullOrEmpty(tax_code.Value))
+                                    {
+                                        <span class="label">
+                                            <strong>@Html.Locale("tax_code"):</strong> @tax_code.Value
+                                        </span>
+                                    }*@
+                                @*@if (!string.IsNullOrEmpty(website.Value))
+                                    {
+                                        <span class="label">
+                                            <i class="fa fa-envelope"></i>
+                                            <strong>Website:</strong> <a href="/">@website.Value</a>
+                                        </span>
+                                    }*@
+                                @*<span class="label"><i class="fa fa-mobile"></i><strong>@Html.Locale("Hotline"):</strong> @Html.Phone(SiteConfig.SiteInfo.Hotline)</span>*@
+                            </div>
+                            <div class="description">
+                                @Html.Raw(item.ShortDescription)
+                            </div>
+                        </div>
+
+                    </div>
+                }
+
+                <div class="col-md-6">
+                    <div class="form-contact">
+                        <h2 class="heading">@Html.Locale("contact_send_info")</h2>
+                        @using (Html.BeginForm())
+                        {
+                            <div class="ctn">
+                                <div class="item">
+                                    <span>*@Html.Locale("contact_name"):</span>
+                                    @Html.EditorFor(model => model.Name)
+                                </div>
+
+                                <div class="item">
+                                    <span>*@Html.Locale("phone"):</span>
+                                    @Html.EditorFor(model => model.Phone)
+                                    <p id="phone_error_contact" class="error an">Không đúng định dạng. Vui lòng nhập lại !</p>
+                                </div>
+                                <div class="item">
+                                    <span>*Email:</span>
+                                    @Html.EditorFor(model => model.Email)
+                                </div>
+                                <div class="item">
+                                    <span>*@Html.Locale("contact_subject"):</span>
+                                    @Html.EditorFor(model => model.Subject)
+                                </div>
+                                <div class="item">
+                                    <span>*@Html.Locale("contact_body"):</span>
+                                    @Html.TextAreaFor(model => model.Body)
+                                </div>
+                                <div class="item captcha">
+                                    @*<span>@Html.Locale("cap_cha"):</span>
+                                        @Html.EditorFor(model => model.CaptCha)
+                                        <img src="@Url.Action("ShowCaptchaImage","Install")" />*@
+                                    <div class="g-recaptcha" data-sitekey="6LfDIs4fAAAAAPhFPfhWcQotV5wI6VXUk-D_05Zu" data-callback="verifyRecaptchaCallback" data-expired-callback="expiredRecaptchaCallback"></div>
+                                </div>
+                            </div>
+                            <div class="contact-submit">
+                                <button type="submit" class="bt-submit" id=""><i class="vns-genius"></i> @Html.Locale("contact_send")</button>
+                                <button type="button" class="bt-clear"><i class="vns-refresh-2"></i> @Html.Locale("contact_cancel")</button>
+                            </div>
+                        }
+                        @if (ViewBag.Result != null && (int)ViewBag.Result == 0)
+                        {
+                            <script>
+                                $(".form-contact input, .form-contact textarea").val("");
+                            </script>
+                        }
+                    </div>
+                </div>
+
+            }
+        </div>
+    </div>
+    @section Scripts{
+        @Scripts.Render("~/bundles/jqueryval")
+    }
+</article>
+
+<script>
+    $(document).ready(function () {
+        $(".bt-clear").click(function () {
+            $(".form-contact input, .form-contact textarea").val("");
+            return false;
+        });
+    });
+    function validatePhoneNumber_contact(input_str) {
+        var re_contact = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+
+        return re_contact.test(input_str);
+    }
+    $(".contact-submit .bt-submit").click(function () {
+        //var _phoneed = $("#Phone");
+        var _phoneed = document.getElementById('Phone').value;
+        if (!validatePhoneNumber_contact(_phoneed)) {
+            document.getElementById('phone_error_contact').classList.remove('an');
+            return false;
+        } else {
+            document.getElementById('phone_error_contact').classList.add('an');
+            return true;
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"
+        asyncdefer></script>
+<script type="text/javascript">
+    var onloadCallback = function () {
+        grecaptcha.render('dvCaptcha', {
+            'sitekey': '<%=ReCaptcha_Key %>',
+            'callback': function (response) {
+                $.ajax({
+                    type: "POST",
+                    url: "Default.aspx/VerifyCaptcha",
+                    data: "{response: '" + response + "'}",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (r) {
+                        var captchaResponse = jQuery.parseJSON(r.d);
+                        if (captchaResponse.success) {
+                            $("[id*=txtCaptcha]").val(captchaResponse.success);
+                            $("[id*=rfvCaptcha]").hide();
+                        } else {
+                            $("[id*=txtCaptcha]").val("");
+                            $("[id*=rfvCaptcha]").show();
+                            var error = captchaResponse["error-codes"][0];
+                            $("[id*=rfvCaptcha]").html("RECaptcha error. " + error);
+                        }
+                    }
+                });
+            }
+        });
+    };
+</script>

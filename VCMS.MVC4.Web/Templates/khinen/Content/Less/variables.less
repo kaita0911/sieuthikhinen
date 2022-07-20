@@ -1,0 +1,326 @@
+@cubic-button:              cubic-bezier(0.175, 0.885, 0.32, 1.275);
+@cubic-adv:                 cubic-bezier(0.455, 0.030, 0.515, 0.955);
+@font-icon-patch:           "../fonts/Icon";
+
+//== Color
+//
+//##
+
+@turquoise:                 #1abc9c;
+@green-sea:                 #16a085;
+
+@emerald:                   #2ecc71;
+@nephritis:                 #27ae60;
+
+@peter-river:               #3498db;
+@belize-hole:               #2980b9;
+
+@amethyst:                  #9b59b6;
+@wisteria:                  #8e44ad;
+
+@wet-asphalt:               #34495e;
+@midnight-blue:             #2c3e50;
+
+@sun-flower:                #f1c40f;
+@orange:                    #f39c12;
+
+@carrot:                    #e67e22;
+@pumpkin:                   #d35400;
+
+@alizarin:                  #e74c3c;
+@pomegranate:               #c0392b;
+
+@clouds:                    #ecf0f1;
+@silver:                    #bdc3c7;
+
+@concrete:                  #95a5a6;
+@asbestos:                  #7f8c8d;
+
+// Grays
+@gray:                      @concrete;
+@gray-light:                @silver;
+@inverse:                   white;
+
+@brand-primary:             @wet-asphalt;
+@brand-secondary:           @turquoise;
+@brand-success:             @emerald;
+@brand-warning:             @sun-flower;
+@brand-danger:              @alizarin;
+@brand-info:                @peter-river;
+
+// Social colors
+@social-pinterest:          #cb2028;
+@social-linkedin:           #0072b5;
+@social-stumbleupon:        #ed4a13;
+@social-googleplus:         #2d2d2d;
+@social-facebook:           #2f4b93;
+@social-twitter:            #00bdef;
+
+@local-path:                "images/";
+
+@border-radius-none:        0px;
+@border-radius-base:        0px;
+@border-radius-large:       6px;
+@border-radius-small:       3px;
+
+//== Button
+//
+//##
+
+@btn-line-height-base:       1.4;   // ~21px
+@btn-line-height-hg:         1.227; // ~27px
+@btn-line-height-lg:         1.471; // ~25px
+@btn-line-height-sm:         1.385; // ~16px
+@btn-line-height-xs:         1.083; // ~13px
+
+@font-size-base:            13px;
+
+@btn-font-size-base:         @font-size-base;
+@btn-font-size-xs:           ceil((@font-size-base * 0.8));
+@btn-font-size-sm:           floor((@font-size-base * 0.867));
+@btn-font-size-lg:           ceil((@font-size-base * 1.133));
+@btn-font-size-hg:           floor((@font-size-base * 1.467));
+
+@btn-font-weight:            normal;
+
+@btn-default-color:          @inverse;
+@btn-default-bg:             @gray-light;
+@btn-hover-bg:               mix(@gray-light, white, 80%);
+@btn-active-bg:              mix(@gray-light, black, 85%);
+
+@btn-primary-hover-bg:       mix(@brand-secondary, white, 80%);
+@btn-primary-active-bg:      mix(@brand-secondary, black, 85%);
+
+@btn-info-hover-bg:          mix(@brand-info, white, 80%);
+@btn-info-active-bg:         mix(@brand-info, black, 85%);
+
+@btn-success-hover-bg:       mix(@brand-success, white, 80%);
+@btn-success-active-bg:      mix(@brand-success, black, 85%);
+
+@btn-danger-hover-bg:        mix(@brand-danger, white, 80%);
+@btn-danger-active-bg:       mix(@brand-danger, black, 85%);
+
+@btn-warning-hover-bg:       overlay(@brand-warning, darken(white, 37.5%));
+@btn-warning-active-bg:      mix(@brand-warning, black, 85%);
+
+@btn-inverse-hover-bg:       overlay(@brand-primary, darken(white, 37.5%));
+@btn-inverse-active-bg:      mix(@brand-primary, black, 85%);
+
+@btn-link-disabled-color:    @gray-light;
+@cursor-disabled:            not-allowed;
+
+@ease:                       ease;
+@ease-in:                    ease-in;
+@ease-in-out:                ease-in-out;
+@ease-out:                   ease-out;
+@linear:                     liner;
+
+@btn-default-color:          @inverse;
+@btn-default-bg:             @gray-light;
+
+@btn-hover-bg:               mix(@gray-light, white, 80%);
+@btn-active-bg:              mix(@gray-light, black, 85%);
+
+//== line height
+//
+//##
+
+@line-height-base:          1.72222; // 31/18
+@line-height-computed:      floor((@font-size-base * @line-height-base)); // ~31px
+
+//== Code
+//
+//##
+
+@code-color:                  #c7254e;
+@code-bg:                     #f9f2f4;
+
+@kbd-color:                   @inverse;
+@kbd-bg:                      @brand-primary;
+
+@pre-bg:                      @inverse;
+@pre-color:                   inherit;
+@pre-border-color:            mix(@brand-primary, @inverse, 12%);
+@pre-scrollable-max-height:   340px;
+@pre-border-radius:           @border-radius-large;
+
+
+@component-font-size-base:  ceil((@font-size-base)); // ~15px
+
+//== Caret
+//
+//##
+@caret-width-base:          4px;
+/*@caret-width-base-vertical: (@caret-width-base + 2);*/
+@caret-width-base-vertical: @caret-width-base;
+@caret-width-xs:            2px;
+/*@caret-width-xs-vertical:   (@caret-width-xs + 2);*/
+@caret-width-xs-vertical:   @caret-width-xs;
+
+//== Dropdown
+//
+//##
+@zindex-dropdown:                1000;
+@dropdown-border-radius:         @border-radius-base;
+
+@dropdown-bg:                    desaturate(lighten(@brand-primary, 67%), 20%);
+
+@dropdown-link-color:            mix(darken(@brand-primary, 5%), @inverse, 75%);
+@dropdown-link-hover-color:      darken(@dropdown-link-color, 5%);
+@dropdown-link-hover-bg:         fade(desaturate(lighten(@brand-primary, 52%), 21%), 50%);
+
+@dropdown-link-active-color:     @inverse;
+@dropdown-link-active-bg:        @brand-secondary;
+
+@dropdown-link-disabled-color:   @gray-light;
+
+@dropdown-divider-bg:            fade(@dropdown-link-hover-bg, 50%);
+
+@dropdown-header-color:          @midnight-blue;
+
+
+// Inverted dropdown
+//
+
+@dropdown-inverse-bg:                    white;
+
+
+@dropdown-inverse-link-color:            #444;
+@dropdown-inverse-link-hover-color:      @midnight-blue;
+@dropdown-inverse-link-hover-bg:         @clouds;
+
+@dropdown-inverse-link-active-color:     @midnight-blue;
+@dropdown-inverse-link-active-bg:        @clouds;
+
+@dropdown-inverse-link-disabled-color:   fade(@dropdown-inverse-link-color, 50%);
+
+@dropdown-inverse-divider-bg:            @dropdown-inverse-link-hover-bg;
+
+@dropdown-inverse-header-color:          @midnight-blue;
+
+@component-offset-horizontal: 180px;
+
+@text-muted:                  @gray-light;
+@abbr-border-color:           @gray-light;
+@headings-small-color:        mix(@brand-primary, @inverse, 12%);
+@blockquote-small-color:      inherit;
+@blockquote-border-color:     mix(@brand-primary, @inverse, 12%);
+@page-header-border-color:    mix(@brand-primary, @inverse, 12%);
+@dl-horizontal-offset:        @component-offset-horizontal;
+
+@hr-border:                   mix(@brand-primary, @inverse, 63%);
+
+@state-success-text:          @brand-success;
+@state-success-bg:            #dff0d8;
+@state-success-border:        darken(spin(@state-success-bg, -10), 5%);
+
+@state-info-text:             @brand-info;
+@state-info-bg:               #d9edf7;
+@state-info-border:           darken(spin(@state-info-bg, -10), 7%);
+
+@state-warning-text:          @brand-warning;
+@state-warning-bg:            #fcf8e3;
+@state-warning-border:        darken(spin(@state-warning-bg, -10), 5%);
+
+@state-danger-text:           @brand-danger;
+@state-danger-bg:             #f2dede;
+@state-danger-border:         darken(spin(@state-danger-bg, -10), 5%);
+
+
+
+//== Tags Input
+//
+//##
+
+@tagsinput-container-bg:                    @inverse;
+@tagsinput-container-border-color:          mix(@inverse, @brand-primary, 90%);
+@tagsinput-container-border-radius:         @border-radius-large;
+
+@tagsinput-input-color:                     @brand-primary;
+
+@tagsinput-tag-bg:                          mix(@inverse, @brand-primary, 90%);
+@tagsinput-tag-color:                       mix(@brand-primary, @inverse, 65%);
+@tagsinput-tag-hover-bg:                    mix(@brand-secondary, black, 85%);
+@tagsinput-tag-hover-color:                 @inverse;
+@tagsinput-tag-icon-color:                  @inverse;
+@tagsinput-tag-border-radius:               @border-radius-base;
+
+@tagsinput-primary-container-border-color:  @brand-secondary;
+@tagsinput-primary-tag-bg:                  @brand-secondary;
+@tagsinput-primary-tag-color:               @inverse;
+@tagsinput-primary-tag-hover-bg:            mix(@brand-secondary, black, 85%);
+@tagsinput-primary-tag-hover-color:         @inverse;
+
+//== Selects
+//
+//## For each of Flat UI's selects, define text, background, font size and height.
+
+@select-font-size-base:                     @btn-font-size-base;
+@select-font-size-sm:                       @btn-font-size-sm;
+@select-font-size-lg:                       @btn-font-size-lg;
+@select-font-size-hg:                       @btn-font-size-hg;
+
+@select-line-height-base:                   @btn-line-height-base;
+@select-line-height-hg:                     @btn-line-height-hg;
+@select-line-height-lg:                     @btn-line-height-lg;
+@select-line-height-sm:                     @btn-line-height-sm;
+
+@select-font-weight:                        @btn-font-weight;
+
+@select-disabled-opacity:                   0.7;
+
+@select-default-color:                      @btn-default-color;
+@select-default-bg:                         @btn-default-bg;
+@select-default-hover-bg:                   @btn-hover-bg;
+@select-default-active-bg:                  @btn-active-bg;
+
+@select-primary-hover-bg:                   @btn-primary-hover-bg;
+@select-primary-active-bg:                  @btn-primary-active-bg;
+
+@select-info-hover-bg:                      @btn-info-hover-bg;
+@select-info-active-bg:                     @btn-info-active-bg;
+
+@select-success-hover-bg:                   @btn-success-hover-bg;
+@select-success-active-bg:                  @btn-success-active-bg;
+
+@select-danger-hover-bg:                    @btn-danger-hover-bg;
+@select-danger-active-bg:                   @btn-danger-active-bg;
+
+@select-warning-hover-bg:                   @btn-warning-hover-bg;
+@select-warning-active-bg:                  @btn-warning-active-bg;
+
+@select-inverse-hover-bg:                   @btn-inverse-hover-bg;
+@select-inverse-active-bg:                  @btn-inverse-active-bg;
+
+@select-link-disabled-color:                @btn-link-disabled-color;
+@select-arrow-color:                        @brand-primary;
+
+// Select dropdowns
+@select-dropdown-border-radius:             0;
+
+@select-dropdown-item-color:                fade(@brand-primary, 85%);
+@select-dropdown-item-hover-color:          inherit;
+@select-dropdown-item-hover-bg:             mix(@inverse, @brand-primary, 85%);
+
+@select-dropdown-disabled-item-color:       fade(@brand-primary, 95%);
+@select-dropdown-disabled-item-opacity:     0.4;
+
+@select-dropdown-highlighted-item-bg:       @brand-secondary;
+@select-dropdown-highlighted-item-color:    @inverse;
+
+@select-dropdown-optgroup-color:            fade(@brand-primary, 60%);
+
+// Multiselect
+@multiselect-container-bg:                  @tagsinput-container-bg;
+@multiselect-container-border-color:        @tagsinput-container-border-color;
+@multiselect-container-border-radius:       @tagsinput-container-border-radius;
+
+@multiselect-tag-border-radius:             @tagsinput-tag-border-radius;
+@multiselect-tag-color:                     @inverse;
+@multiselect-tag-hover-color:               @tagsinput-tag-hover-color;
+@multiselect-tag-icon-color:                @tagsinput-tag-icon-color;
+
+@multiselect-dropdown-border-radius:        @border-radius-large;
+@multiselect-dropdown-item-border-radius:   @border-radius-base;
+
+@multiselect-input-color:                   @tagsinput-input-color;

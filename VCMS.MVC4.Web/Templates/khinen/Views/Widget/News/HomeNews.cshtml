@@ -1,0 +1,98 @@
+﻿@model Widget
+@{
+    var article = Article.GetByType((int)Model.ArticleTypeId, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection);
+}
+@if (article.List.Count > 0)
+{
+    int i = 1;
+    <div class="widget-home home-news">
+        <div class="container">
+            <h2 class="heading">
+                @Model.Title
+            </h2>
+            <div class="content">
+                @foreach (var item in article.List)
+                {
+                    if (i % 2 == 0)
+                    {
+                        <div class="item">
+                            <div class="meta">
+                                <h3>
+                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                                        @item.ArticleName
+                                    </a>
+                                </h3>
+                                @if (Model.ShowDate)
+                                {
+                                    <div class="date"><i class="fa fa-calendar"></i> @item.Day</div>
+                                }
+                                @if (Model.ShowDescription)
+                                {
+                                    <div class="short-desc">
+                                        @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, 150))
+                                    </div>
+                                }
+                                @if (Model.ShowViewMore)
+                                {
+                                    <div class="view-detail">
+                                        <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                                            @Html.Locale("view_detail")
+                                        </a>
+                                    </div>
+                                }
+                            </div>
+                            @if (!Model.HiddenImage)
+                            {
+                                <figure>
+                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName" class="banner-cubic-1">
+                                        @Html.Image(item.ImageUrl, new ImageOptions { Width = 290, Height = 190, Watermark = SiteConfig.WatermarkFill, Mode = ImageMode.crop }, new { alt = item.ArticleName })
+                                    </a>
+                                </figure>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="item">
+                            @if (!Model.HiddenImage)
+                            {
+                                <figure>
+                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName" class="banner-cubic-1">
+                                        @Html.Image(item.ImageUrl, new ImageOptions { Width = 290, Height = 190, Watermark = SiteConfig.WatermarkFill, Mode = ImageMode.crop }, new { alt = item.ArticleName })
+                                    </a>
+                                </figure>
+                            }
+                            <div class="meta">
+                                <h3>
+                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                                        @item.ArticleName
+                                    </a>
+                                </h3>
+                                @if (Model.ShowDate)
+                                {
+                                    <div class="date"><i class="fa fa-calendar"></i> @item.Day</div>
+                                }
+                                @if (Model.ShowDescription)
+                                {
+                                    <div class="short-desc">
+                                        @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, 30))
+                                    </div>
+                                }
+                                @if (Model.ShowViewMore)
+                                {
+                                    <div class="view-detail">
+                                        <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                                            @Html.Locale("view_detail")
+                                        </a>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                    i++;
+                }
+            </div>
+        </div>
+    </div>
+
+}

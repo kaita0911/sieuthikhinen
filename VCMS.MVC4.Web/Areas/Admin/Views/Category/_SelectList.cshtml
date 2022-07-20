@@ -1,0 +1,38 @@
+﻿@model ICollection<VCMS.MVC4.Data.Category>
+@{
+    var article = (Article)ViewBag.Article;
+}
+<div class="list select-list">
+    <div class="header">
+        <div class="check">
+            <label class="checkbox fix"><input type="checkbox" onclick="checkAll($(this).is(':checked'))" /><i></i></label>
+        </div>
+        <div class="name"><span>Name</span></div>
+    </div>
+    <div class="items">
+        @foreach (var item in Model)
+        {
+
+            <div class="item">
+                <div class="check">
+                    @if (article != null)
+                    {
+                        <label class="checkbox fix">
+                            <input name="categories" type="checkbox" value="@item.Id" class="check" @(article.Categories.Contains(item) ? "checked" : "") /><i></i>
+                        </label>
+                    }
+                    else
+                    {
+                        <label class="checkbox fix"><input name="categories" type="checkbox" value="@item.Id" class="check" /><i></i></label>
+                    }
+                </div>
+                <div class="name">
+                    <div level="@item.Level" class="level level_@item.Level">
+                        <a href="javascript:void(0)" class="@(item.ChildrenCount > 0 ? "collapse" : "hidden")"></a>
+                        <span>@item.CategoryName</span>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,137 @@
+﻿@model ICollection<Locale>
+@{
+
+    ViewBag.Title = "Danh sách chuỗi";
+    ViewBag.Breadcrumb = new BreadcrumbModel()
+    {
+        Items = new List<BreadcrumbItem>()
+        {
+            new BreadcrumbItem(){Url = Url.Action("Index","Home"), Text="Home", IsFirst=true},
+            new BreadcrumbItem(){Url = Url.Action("Index","Locale"), Text="Danh sách chuỗi", IsLast = true},
+        }
+    };
+    var db = new DataContext();
+}
+<div class="btn-group">
+    <span class="btn create">
+        <a href="@Url.Action("Create",null,null)"><i class="fa fa-plus"></i> <span class="hidden-xs">Thêm mới</span></a>
+    </span>
+    <span class="btn delete">
+        <a href="@Url.Action("Delete", null, null)" id="delete"><i class="fa fa-trash-o"></i> <span class="hidden-xs">Xóa</span></a>
+    </span>
+    <span class="btn import">
+        <a href="@Url.Action("Import", "Locale")" data-toggle="modal" data-target="#locale-form">
+            <i class="fa fa-plus"></i> <span>Import from Excel</span>
+        </a>
+    </span>
+    <div class="btn-group btn type">
+        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id="button-action">
+            <i class="fa fa-table"></i>
+            Export to Excel
+        </a>
+        <ul class="dropdown-menu fa-ul">
+            <li>
+                <a href="@Url.Action("Export", "Locale")">
+                    <i class="fa fa-align-justify fs15"></i> <span>Tất cả</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" id="export-select">
+                    <i class="fa fa-magic fs15"></i> <span>Tùy chọn</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+<table class="table table-hover">
+    <thead class="header">
+        <tr>
+            <th class="check">
+                <label class="checkbox single noborder">
+                    <input type="checkbox" id="check-all" /><i></i>
+                </label>
+            </th>
+            <th class="hidden-xs code language">
+                @Html.Label("Mã")
+            </th>
+            <th class="titles">
+                @Html.Label("Giá trị mặc định")
+            </th>
+            @foreach (var l in SiteConfig.Languages)
+            {
+            <th class="titles">@l.DisplayName</th>
+            }
+            <th class="action">
+                @Html.Label("Thao tác")
+            </th>
+        </tr>
+    </thead>
+    <tbody class="items">
+        @foreach (var item in Model)
+        {
+            <tr class="item">
+                <td class="check">
+                    <label class="checkbox fix"><input type="checkbox" value="@item.Id" class="check-export" /><i></i></label>
+                </td>
+                <td class="code language">@item.LocaleKey</td>
+                <td class="titles">@Html.Raw(item.DefaultValue)</td>
+                @foreach (var l in SiteConfig.Languages)
+                {
+                    if (item.LocaleDetail.FirstOrDefault(a => a.LocaleId == item.Id && a.LanguageId == l.Id) != null)
+                    {
+                        <td class="titles">
+                            @Html.Raw(item.LocaleDetail.FirstOrDefault(a => a.LocaleId == item.Id && a.LanguageId == l.Id).Value)
+                        </td>
+                    }
+                    else
+                    {
+                        <td class="titles" title=""></td>
+                    }
+                }
+                <td class="action">
+                    <a href="@Url.Action("Edit", null, new {id=item.Id })"><i class="fa fa-edit"></i> <span class="hidden-xs">Edit</span></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div class="modal fade" id="locale-form" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    @{Html.RenderAction("Import", "Locale");}
+</div>
+@section Scripts{
+    <script type="text/javascript">
+        $(function () {
+            $("#check-all").checkAll(".item .check input[type='checkbox']");
+        });
+        $(".check-export").change(function () {
+            $(this).parentsUntil(".items").find(".check input[type='checkbox']").addClass("changed");
+        });
+        $("#export-select").on("click", function () {
+            $('a#button-action').trigger('click');
+            var json = [];
+            $(".item .check input[type='checkbox'].changed").each(function () {
+                json.push({ "id": $(this).val() });
+            });
+            if (json.length > 0) {
+                $.ajax({
+                    url: '@Url.Action("ExportSelect")',
+                    type: 'POST',
+                    success: function (json) {
+                        if (json['error'])
+                            alert(json['error']['warning']);
+                        else if (json['redirect'])
+                            location = json['redirect'];
+                    },
+                    data: "json=" + JSON.stringify(json)
+                });
+            }
+            else
+                alert('Lựa chọn chuỗi từ khóa cần Export.');
+            return false;
+        });
+        $("#delete").sdelete({
+            url: '@Url.Action("Delete")',
+            selector: ".item .check input[type='checkbox']",
+        });
+    </script>
+}

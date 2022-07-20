@@ -1,0 +1,154 @@
+﻿@using (DataContext db = new DataContext())
+{
+    if (Session["email"] == null)
+    {
+        Session["email"] = "false";
+    }
+    
+    if (Session["email"] == "false")
+    {
+        <section id="registeremail" class="registeremail close hidden-xs">
+            <h2 class="heading font-Helverins">
+                <span>
+                    Đăng Ký Nhận Bản Tin Khuyến Mãi
+                </span>
+            </h2>
+            <div class="content email">
+                <span>Đăng ký địa chỉ email để nhận bản tin từ website </span>
+                <span class="lbl">Lavaviet.com</span>
+            </div>
+            <div class="form">
+                <input class="txt-email" placeholder="Enter Email" />
+                <input type="checkbox" name="cancel" class="check-cancel" /><span class="canl">Huỷ đăng ký</span>
+                <button id="bt-submit" class="pull-right"></button>
+            </div>
+            <span id="close">
+                <img src="@Url.Content("~/Templates/LavaViet/Content/images/close.png")" alt="colse" />
+            </span>
+        </section>
+        <section id="overlay" class="overlay-email close hidden-xs"></section>
+        <script>
+            $(document).ready(function () {
+                var _w = 314;
+                var _h = 200;
+                var _left = ($(window).width() / 2) - (_w / 2);
+                var _top = ($(window).height() / 2) - (_h / 2);
+                $("#registeremail").css({
+                    top: _top,
+                    left: _left,
+                });
+            });
+            $(window).resize(function () {
+                var _w = 314;
+                var _h = 200;
+                var _left = ($(window).width() / 2) - (_w / 2);
+                var _top = ($(window).height() / 2) - (_h / 2);
+                $("#registeremail").css({
+                    top: _top,
+                    left: _left,
+                });
+            })
+            $(window).load(function () {
+                if ('@Session["email"]' == "false") {
+                    setTimeout(function () {
+                        $("#registeremail,#overlay").removeClass("close");
+                    }, 2000);
+                }
+            });
+            $("#bt-submit").click(function () {
+                var input = $(".txt-email").val();
+                if (input == "") {
+                    $(".content.email").css("color", "red").css("font-weigth", "700").css("padding-top", "15px");
+                    $(".content.email").html("Bạn chưa nhập địa chỉ email!!!");
+                    $(".txt-email").focus();
+                }
+                else {
+                    if ($(".check-cancel").is(':checked')) {
+                        $.ajax({
+                            url: '@Url.Action("DeleteMail", "Home")',
+                            type: "POST",
+                            data: "mail=" + input,
+                            dataType: "json",
+                            success: function (data) {
+                                if (data.Status == 0) {
+                                    $(".content.email").css("color", "red").css("font-weigth", "700").css("padding-top", "15px");
+                                    $(".content.email").html("Địa chỉ email không chính xác!!!");
+                                }
+                                else if (data.Status == 1) {
+                                    $(".content.email").css("color", "red").css("font-weigth", "700").css("padding-top", "15px");
+                                    $(".content.email").html("Hủy đăng ký thành công!!!");
+                                    setTimeout(function () {
+                                        $("#registeremail,#overlay").addClass("close");
+                                    }, 3000);
+                                    setTimeout(function () {
+                                        $("#registeremail,#overlay").remove();
+                                    }, 4000);
+                                }
+                                else if (data.Status == 2) {
+                                    $(".content.email").css("color", "red").css("font-weigth", "700").css("padding-top", "15px");
+                                    $(".content.email").html("Địa chỉ email không tồn tại trong hệ thống!!!");
+                                }
+                            }
+                        });
+                        return;
+                    }
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("RegisterMail", "Home")',
+                        data: {
+                            mail: input
+                        },
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.Status == 0) {
+                                $(".content.email").css("color", "red").css("font-weigth", "700").css("padding-top", "15px");
+                                $(".content.email").html("Địa chỉ email không chính xác!!!");
+                            }
+                            else if (data.Status == 1) {
+                                $(".content.email").css("color", "red").css("font-weigth", "700").css("padding-top", "15px");
+                                $(".content.email").html("Địa chỉ email này đã có!!!");
+                            }
+                            else {
+                                $(".content.email").css("color", "red").css("font-weigth", "700").css("padding-top", "15px");
+                                $(".content.email").html("Đăng ký email thành công");
+                                setTimeout(function () {
+                                    $("#registeremail,#overlay").addClass("close");
+                                }, 3000);
+                                setTimeout(function () {
+                                    $("#registeremail,#overlay").addClass("close");
+                                    $("#registeremail,#overlay").remove();
+                                }, 4000);
+                            }
+                        },
+                        error: function (data) {
+                        }
+                    });
+                }
+            });
+            $("#close").click(function () {
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("StatusRegisterEmail", "Home")',
+                    data: {
+                        status: 'true',
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        if (!$("#registeremail,#overlay").hasClass("close")) {
+                            $("#registeremail,#overlay").addClass("close");
+                            setTimeout(function () {
+                                $("#registeremail,#overlay").remove();
+                            }, 500);
+                        }
+                    },
+                    error: function (data) {
+
+                    }
+                });
+
+            });
+        </script>
+    }
+
+
+}

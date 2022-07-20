@@ -1,0 +1,76 @@
+﻿@model ArticleResult
+@{
+    var db = new DataContext();
+    var desc = db.ArticleTypeDetails.FirstOrDefault(a => a.ArticleType.Code == "FQA" && a.LanguageId == SiteConfig.LanguageId);
+    ViewBag.Code = "news";
+    ViewBag.TypeId = desc.ArticleTypeId;
+    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12 col-lg-push-3 col-md-push-3 content">
+        <div class="article row">
+            @if (!string.IsNullOrWhiteSpace(desc.Description))
+            {
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="description-type hidden-xs">
+                        @Html.Raw(desc.Description)
+                    </div>
+                </div>
+            }
+            @if (Model.List.Count > 0)
+            {
+                var i = 1;
+                foreach (var item in Model.List)
+                {
+                    <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12 news-border @(i%4==0?"transparent-lg":"") @(i%3==0?"transparent-sm":"")">
+                        <div class="box-block news insite">
+                            <div class="image">
+                                <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                    @if (item.ImageUrl != null)
+                                    {
+                                        <img src="@Url.Content("~/UserUpload/Article/")@item.ImageUrl?width=337" class="width-full" alt="@item.ArticleName" />
+                                    }
+                                    else
+                                    {
+                                        <img src="@Url.Content("~/Templates/LavaViet/Content/images/no-news.jpg")?width=337" class="width-full" alt="@item.ArticleName" />
+                                    }
+
+                                </a>
+                            </div>
+                            <div class="box-meta">
+                                <h3 class="name">
+                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                        <span>@item.ArticleName</span>
+                                    </a>
+                                </h3>
+                                <div class="date">
+                                    <i class="fa fa-calendar"></i> <span>@item.DateUpdated</span>
+                                </div>
+                                <div class="description">
+                                    @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, 25))
+                                </div>
+                                <div class="link">
+                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })">
+                                        <i class="fa fa-long-arrow-right"></i> <span>@Html.Locale("viewmore")</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                                    i++;
+                }
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    @Html.Pager(new PagerOptions { VisibleItemCount = 5, ItemCount = Model.TotalItemCount, PageSize = Model.PageSize }, null)
+                </div>
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(ViewBag.Desc))
+                {
+                    if (string.IsNullOrWhiteSpace(desc.Description))
+                    {
+                        <span>@Html.Locale("null")</span>
+                    }
+                }
+            }
+        </div>
+    </div>
+    @Html.Partial("_LeftColumns")
+}

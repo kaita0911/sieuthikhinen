@@ -1,0 +1,22 @@
+﻿@model Widget
+@{
+    var article = Article.GetByType((int)Model.ArticleTypeId, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection, Model.Includes);
+    if (article.List.Count > 0)
+    {
+        <div class="box-footer f-consulting">
+            <h2 class="heading">@Model.Title</h2>
+            <div class="container">
+                <div class="content">
+                    <ul class="row">
+                        @foreach (var item in article.List)
+                        {
+                            <li class="col-md-3">
+                                <a href="@Url.Action("Detail", "Article", new { id=item.Id,code=item.ArticleType.UrlFriendly,title=item.UrlFriendly})">@item.ArticleName</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>     
+        </div>
+    }
+}

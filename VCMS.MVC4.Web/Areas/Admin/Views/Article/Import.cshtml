@@ -1,0 +1,125 @@
+﻿@model VCMS.MVC4.Data.ArticleResult
+@using VCMS.MVC4.Extensions
+@using System.Data
+@{
+    Layout = null;
+    var articleType = (ViewBag.ArticleType as ArticleType);
+
+    var categories = Category.GetTree(articleType.Categories);
+
+    <div class="modal-dialog">
+        <div class="form no-boder-radius import">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Đóng</span></button>
+                <h4 class="modal-title" id="myModalLabel">Import Article</h4>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm(null, null, null, FormMethod.Post, new { id = "locale-form", enctype = "multipart/form-data" }))
+                {
+                    <div class="nhom">
+                        @Html.Label("Chọn nhóm")
+                        @Html.Partial("~/Areas/Admin/Views/Category/_SearchList.cshtml", categories)
+                    </div>
+
+                    <div class="editor-label">
+                        @Html.Label("Chọn file Import")
+                    </div>
+                    <div class="editor-field file article">
+                        @Html.TextBox("Import", null, new { type = "file", data_val = "true" })<i data-label="Chọn file"></i>
+                        @Html.ValidationMessage("Import")
+                    </div>
+                    <div id=""></div>
+                    <div class="toolbar">
+                        <span class="button">
+                            <button id="button-locale-import" type="submit" class="btn save"><i class="fa fa-save"></i> Upload</button>
+                        </span>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="alert" id="loading">
+        <img src="~/Content/images/loading.gif" />
+    </div>
+}
+<style>
+    div#loading {
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.27);
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        display: none;
+    }
+
+        div#loading img {
+            margin: auto;
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            top: 0;
+            z-index: 111;
+            width: 60px;
+            height: 60px;
+        }
+</style>
+<script>
+    //var submit = document.getElementById('button-locale-import').addEventListener("click", myFunction);
+    //function myFunction() {
+    //    document.addEventListener(
+    //        "DOMContentLoaded",
+    //        function () {
+    //            $("#loadingAjax").show();
+    //            var loading = document.getElementById("loading");
+    //            loading.remove();
+    //        },
+    //        false
+    //    );
+    //}
+    $("#button-locale-import").on("click", function () {
+        var _this = $(this);
+        var data = new FormData();
+        var files = $("#Import").get(0).files;
+
+        var cate = $('input[name="categories"]:checked').map(function () {
+            return this.value;
+        }).get();
+
+        if (files.length > 0) {
+            data.append("Import", files[0]);
+        }
+
+        if (cate.length > 0) {
+            data.append("categories", cate);
+        }
+
+        $(".alert").show();
+        $(".text-danger").hide();
+
+        $.ajax({
+            url: '@Url.Action("Import", "Article", new { id = articleType.Id })',
+            data: data,
+            type: "post",
+            //dataType: "json",
+            contentType: false,
+            processData: false,
+            success: function (json) {
+                $('.alert, .text-danger').remove();
+                if (json['redirect'])
+                    location = json['redirect'];
+                else if (json['error']) {
+
+                    $('.modal-body').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                }
+                return false;
+            }, error: function (xhr, ajaxOptions, thrownError) {
+                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            }
+        });
+        return false;
+    });
+</script>
+

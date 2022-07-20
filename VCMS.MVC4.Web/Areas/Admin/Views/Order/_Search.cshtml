@@ -1,0 +1,10 @@
+﻿<div class="pull-right input-group">
+    @using (Html.BeginForm("Search", "Order", FormMethod.Get, null))
+    {
+        <div class="search-box order-search-box">
+            <input name="keyword" type="text" class="text-box pull-left" value="@Request["keyword"]" placeholder="Mã đơn hàng hoặc tên khách hàng" />
+            <button type="submit" class="btn search"><i class="fa fa-search"></i> <span>Tìm kiếm</span></button>
+            @Html.Hidden("shipping",Request["shipping"])
+        </div>
+    }
+</div>

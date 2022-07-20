@@ -1,0 +1,7 @@
+﻿@model ArticleType
+@{
+    ViewBag.Title = Model.Name;
+    ViewBag.Breadcrumb = new BreadcrumbModel { Items = new List<BreadcrumbItem> { new BreadcrumbItem { Text = Model.Name, Url = null, IsLast = true } } };
+}
+<h1>@Model.Name</h1>
+@Html.Action("ViewByType", "Article", new { typeId = Model.Id, sortOrder = ArticleSortOrder.DATE_CREATED, direction = VCMS.MVC4.Data.SortDirection.DESCENDING })

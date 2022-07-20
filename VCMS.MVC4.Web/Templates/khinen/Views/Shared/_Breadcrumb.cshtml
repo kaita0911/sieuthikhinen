@@ -1,0 +1,24 @@
+﻿@model BreadcrumbModel
+@{
+    var model = Model;
+}
+<section id="breadcrumb">
+    <div class="container">
+        <ul class="breadcrumb pull-left">
+            <li>
+                <a href="@Url.Action("Index","Home")" title=""><i class="fa fa-home"></i> @Html.Locale("home")</a>
+            </li>
+            @foreach (var item in model.Items)
+            {
+                if (item.IsLast)
+                {
+                    <li class="last"><span>@Html.Raw(item.Text)</span></li>
+                }
+                else
+                {
+                    <li><a href="@item.Url" title="">@Html.Raw(item.Text)</a></li>
+                }
+            }
+        </ul>
+    </div>
+</section>

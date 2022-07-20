@@ -1,0 +1,80 @@
+﻿@model ArticleType
+@{
+    //var cates = Category.GetByType((int)Model.Id, SiteConfig.SiteId, SiteConfig.LanguageId);
+    //var treeCate = Category.GetTree(cates).Where(c => c.Level == 0).ToList();
+    //var temp = Article.GetByCategories(cates.Select(c => c.Id).ToArray(), SiteConfig.SiteId, ArticleFlags.ACTIVE, 20, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.DESCENDING, ArticleIncludeFlags.CATEGORIES);
+    //var arts = new List<Article>();
+    var articles = Article.GetByType(Model.Id, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 9000, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.DESCENDING, includeflags: ArticleIncludeFlags.NONE).List;
+    var ids = new List<String>();
+    var article = (Article)ViewBag.Article;
+    var currentArticelId = 0;
+
+    if (article != null)
+    {
+        currentArticelId = article.Id;
+        var other = article.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("OTHERARTICLE", StringComparison.OrdinalIgnoreCase));
+        if (other != null && !string.IsNullOrWhiteSpace(other.Value))
+        {
+            ids = other.Value.Split(',').ToList();
+        }
+    }
+
+    //if (article != null && !string.IsNullOrWhiteSpace(article.ArtilceRelatedId))
+    //{
+    //    ids = article.ArtilceRelatedId.Split(',').ToList();
+    //}
+
+    if (articles.Count > 0)
+    {
+        <div class="list search-list-article">
+            @*<div class="header">
+                <div class="name" style="width:100%">
+                    <input style="width:100%" type="search" name="keyword" id="keyword" placeholder="Từ khóa, bấm Enter để tìm" />
+                </div>
+            </div>*@
+            <div class="items">
+                @foreach (var item in articles.Where(a => a.Id != currentArticelId))
+                {
+                    <div class="article-title item">
+                        <label class="checkbox list-article">
+                            <input type="checkbox" name="relatedArticles" class="check" value="@item.Id" @((ids.Contains(item.Id.ToString())) ? "checked" : "") />
+                            <i></i>
+
+                            <span>
+                                @item.ArticleName
+                            </span>
+                        </label>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $(function () {
+
+            $(".list-article .level a").click(function () {
+                var parent = $(this).closest(".item");
+
+                if ($(this).hasClass('collapse')) {
+                    $(this).removeClass("collapse").addClass("expand");
+                    parent.find('.list-article').hide();
+                    parent.find('.list-category').hide();
+                    //while (child != undefined)
+                    //{
+                    //    child.hide();
+                    //}
+                }
+                else {
+                    $(this).removeClass("expand").addClass("collapse");
+                    parent.find('.list-article').show();
+                    parent.find('.list-category').show();
+                }
+                return false;
+            });
+        });
+
+    });
+</script>

@@ -1,0 +1,102 @@
+﻿@model ICollection<WidgetGroup>
+@using System.Data.Entity;
+@{
+    ViewBag.Title = "Quản lý Widgets";
+    ViewBag.Breadcrumb = new BreadcrumbModel()
+    {
+        Items = new List<BreadcrumbItem>()
+        {
+            new BreadcrumbItem(){Url = Url.Action("Index", "Home"), Text = "Home", IsFirst = true},
+            new BreadcrumbItem(){Url = null, Text = "Danh sách Widgets", IsLast = true},
+        }
+    };
+    var i = 1;
+    var db = new DataContext();
+    var widgets = ViewBag.Widgets as ICollection<Widget>;
+    var widgetsCustomer = ViewBag.WidgetsCustomer as ICollection<Widget>;
+
+}
+
+<div class="btn-group">
+    <span class="btn create">
+        <a href="javascript:void(0)" data-toggle="modal" data-target="#widgetGroup-form"><i class="fa fa-plus"></i> <span class="hidden-xs">Thêm mới</span></a>
+    </span>
+    <span class="btn delete">
+        <a href="@Url.Action("DeleteGroup", null, null)" id="delete">
+            <i class="fa fa-trash-o"></i> <span class="hidden-xs">Xóa</span>
+        </a>
+    </span>
+</div>
+<table class="table table-hover">
+    <thead class="header">
+        <tr>
+            <th class="check">
+                <label class="checkbox single noborder">@Html.CheckBox("chkSelectAll", false, new { id = "check-all" })<i></i></label>
+            </th>
+            <th class="name">Mã</th>
+            <th class="title">Tên Nhóm</th>
+            <th class="action">Thao tác</th>
+        </tr>
+    </thead>
+    <tbody class="items">
+        @foreach (var item in Model)
+        {
+            <tr class="item">
+                <td class="check">
+                    <label class="checkbox fix">@Html.CheckBox("chkSelect", false, new { value = item.Id })<i></i></label>
+                </td>
+                <td class="code">@item.Code</td>
+                <td class="name">@item.Name</td>
+                <td class="action">
+                    <a href="javascript:void(0)" data-id="@item.Id" data-toggle="modal" data-target="#widgetGroup-form-edit" class="edit-link"><i class="fa fa-edit"></i> <span class="hidden-xs">Edit</span></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div class="modal fade" id="widgetGroup-form" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    @{Html.RenderAction("CreateGroup", "Widget");}
+</div>
+<div class="modal fade" id="widgetGroup-form-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+</div>
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script type="text/javascript">
+        $(function () {
+            $("#check-all").checkAll(".item .check input[type='checkbox']");
+        });
+        $("#update").click(function (evt) {
+            evt.preventDefault();
+            var selected = $(".item input[type='radio']:checked").val();
+            $.ajax({
+                url: "@Url.Action("Update")",
+                data: "id=" + selected,
+                type: "post",
+                success: function (data) { alert(data.Message) }
+            })
+        });
+
+        $(".edit-link").click(function (event) {
+            event.preventDefault();
+            $.ajax({
+                url: "@Url.Action("EditGroup")",
+                data: "id=" + $(this).attr("data-id"),
+                type: "get",
+                success: function (data) {
+                    $("#widgetGroup-form-edit").html(data);
+                }
+
+            });
+        });
+        $("#delete").sdelete({
+            url: '@Url.Action("DeleteGroup")',
+            selector: ".item .check input[type='checkbox']",
+
+        });
+        function Success(e) {
+            $(".form form")[0].reset();
+            location.reload();
+        }
+    </script>
+}

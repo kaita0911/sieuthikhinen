@@ -1,0 +1,139 @@
+﻿<link rel="stylesheet" type="text/css" href="~/Templates/@SiteConfig.SiteCode/content/carouselengine/initcarousel.css">
+@using (DataContext db = new DataContext())
+{
+    int discount_g = 0;
+    int discount = 0;
+    decimal price = 0.0M;
+    string str_currency = "VND";
+
+    var articleType = db.ArticleTypes.FirstOrDefault(a => a.Code == "PRODUCT");
+    if (articleType != null)
+    {
+        var lstCate = Category.GetTree(Category.GetByType(articleType.Id, SiteConfig.SiteId, SiteConfig.LanguageId)).Where(a => a.Level == 0).ToList();
+        if (lstCate.Count > 0)
+        {
+            <div id="product-home">
+                @foreach (var itemCate in lstCate)
+                {
+                    var lstArt = Article.GetByCategory(itemCate.Id, SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.HOT, 1, 8, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING);
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 pd-cate">
+                            <div class="item-cate">
+                                <div class="cate-name">
+                                    @Html.ActionLink(itemCate.CategoryName, "Detail", "Category", new { id = itemCate.Id, code = itemCate.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(itemCate.CategoryName) }, null)
+                                </div>
+                                @if (lstArt.TotalItemCount > 8)
+                                {
+                                    <div class="cate-view-all pull-right">
+                                        @Html.ActionLink("Xem thêm", "Detail", "Category", new { id = itemCate.Id, code = itemCate.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(itemCate.CategoryName) }, null)
+                                    </div>
+                                }
+                                <div class="ctn">
+                                    <div class="row">
+                                        @foreach (var item in lstArt.List)
+                                        {
+                                            var cate = item.Categories.Where(c => c.ArticleTypeId == 2).OrderByDescending(c => c.Id);
+                                            foreach (var itemD in cate)
+                                            {
+                                                int.TryParse(itemD.ArticleDiscount.ToString(), out discount_g);
+                                                if (discount_g > 0)
+                                                {
+                                                    break;
+                                                }
+                                            }
+                                            decimal.TryParse(item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("PRICE", StringComparison.OrdinalIgnoreCase)).Value.Replace(",", "").Trim(), out price);
+                                            str_currency = item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("CURRENCY", StringComparison.OrdinalIgnoreCase)).Value;
+                                            if (str_currency == "VND")
+                                            {
+                                                str_currency = "đ";
+                                            }
+                                            else
+                                            {
+                                                str_currency = "$";
+                                            }
+                                            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                                                <div class="box-block product border">
+                                                    <div class="image">
+                                                        <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                                            @if (item.ImageUrl != null)
+                                                            {
+                                                                <img src="@Url.Content("~/UserUpload/Article/")@item.ImageUrl?width=335" class="width-full" alt="@item.ArticleName" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <img src="@Url.Content("~/Templates/"+ SiteConfig.SiteCode +"/Content/images/no-product.jpg")?width=335" class="width-full" alt="@item.ArticleName" />
+                                                            }
+                                                        </a>
+                                                    </div>
+                                                    <div class="box-meta">
+                                                        <h3 class="name">
+                                                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                                                <span>@item.ArticleName</span>
+                                                            </a>
+                                                        </h3>
+                                                        <div class="price-all">
+                                                            @if (price > 0)
+                                                            {
+                                                                if (discount > 0)
+                                                                {
+                                                                    <div class="has-discount">
+                                                                        <div class="price">
+                                                                            <span class="lbl">Giá công ty: </span>
+                                                                            <span class="ctn">@string.Format("{0:#,##0} đ", price).Replace(",", ".")</span>
+                                                                        </div>
+                                                                        <div class="dprice">
+                                                                            <span class="lbl">Giá KM: </span>
+                                                                            <span class="ctn">@string.Format("{0:#,##0} đ", price - (price * discount / 100)).Replace(",", ".")</span>
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                else if (discount_g > 0)
+                                                                {
+                                                                    <div class="has-discount">
+                                                                        <div class="price">
+                                                                            <span class="lbl">Giá: </span>
+                                                                            <span class="ctn">@string.Format("{0:#,##0} đ", price).Replace(",", ".")</span>
+                                                                        </div>
+                                                                        <div class="dprice">
+                                                                            <span class="lbl">Giá KM: </span>
+                                                                            <span class="ctn">@string.Format("{0:#,##0} đ", price - (price * discount_g / 100)).Replace(",", ".")</span>
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="no-discount">
+                                                                        <div class="price">
+                                                                            <span class="lbl">Giá: </span>
+                                                                            <span class="ctn">@string.Format("{0:#,##0} " + str_currency, price).Replace(",", ".")</span>
+                                                                        </div>
+
+                                                                    </div>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="lbl">Giá: </span>
+                                                                <span class="price no-befo">Liên hệ</span>
+                                                            }
+
+                                                        </div>
+                                                        <div class="link">
+                                                            <a href="/ShoppingCart/AddToCart/@item.Id">
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            </div>
+        }
+    }
+}

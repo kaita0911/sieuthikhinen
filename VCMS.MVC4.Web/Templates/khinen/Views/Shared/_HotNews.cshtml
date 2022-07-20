@@ -1,0 +1,68 @@
+﻿@using (DataContext db = new DataContext())
+{
+    var news = Article.GetByType(db.ArticleTypes.FirstOrDefault(a => a.Code == "NEWSS").Id, SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.HOT, 1, 6, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.DESCENDING);
+    if (news.List.Count > 0)
+    {
+        <div class="hot-news">
+            <h2 class="heading main">
+                <span>@Html.Locale("hotnews")</span>
+            </h2>
+            <div class="box-content">
+                @foreach (var item in news.List.Take(1))
+                {
+                    <div class="box-block news hot-news first">
+                        <div class="image">
+                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                @if (item.ImageUrl != null)
+                                {
+                                    <img src="@Url.Content("~/UserUpload/Article/")@item.ImageUrl?width=337" class="width-full" alt="@item.ArticleName" />
+                                }
+                                else
+                                {
+                                    <img src="@Url.Content("~/Templates/LavaViet/Content/images/no-news.jpg")?width=337" class="width-full" alt="@item.ArticleName" />
+                                }
+
+                            </a>
+
+                        </div>
+                        <div class="box-meta">
+                            <h3 class="name">
+                                <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                    <span>@item.ArticleName</span>
+                                </a>
+                            </h3>
+                            <div class="date">
+                                <i class="fa fa-calendar"></i> <span>@item.DateUpdated</span>
+                            </div>
+                            <div class="description">
+                                @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, 25))
+                            </div>
+                            <div class="link">
+                                <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })">
+                                    <i class="fa fa-long-arrow-right"></i> <span>@Html.Locale("viewmore")</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                }
+                <ul class="related-news">
+                    @foreach (var item in news.List.Skip(1))
+                    {
+                        <li>
+                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                <span>@item.ArticleName</span>
+                            </a>
+                            <span class="date">
+                                <i class="fa fa-calendar"></i> <span>@item.DateUpdated</span>
+                            </span>
+                            <div class="description">
+                                @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, 25))
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+}

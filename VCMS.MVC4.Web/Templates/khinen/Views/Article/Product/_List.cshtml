@@ -1,0 +1,137 @@
+﻿@*<link rel="stylesheet" href="~/Content/stickytooltip/stickytooltip.css" />
+    <script src="~/Content/stickytooltip/stickytooltip.js"></script>*@
+@model ArticleResult
+@if (Model.List.Count > 0)
+{
+    var id = -1;
+    var type = ViewBag.Type != null ? ViewBag.Type as ArticleType : Model.List.FirstOrDefault().ArticleType;
+    @*if (type.DescriptionCategory)
+    {
+        <div id="description-type">
+            @Html.Raw(type.ArticleTypeDetail[SiteConfig.LanguageId].Description)
+        </div>
+    }*@
+    if (ViewContext.RouteData.Values["id"] != null)
+    {
+        id = Convert.ToInt32(ViewContext.RouteData.Values["id"]);
+    }
+
+        <div class="box-product-slider box-product-list page_product">
+            <h1 class="title">@(ViewBag.Title != null ? ViewBag.Title : type.Name)</h1>
+            @if (type.DescriptionCategory)
+            {
+                var cate = Category.GetById(id, SiteConfig.LanguageId);
+                if (cate != null)
+                {
+                    <div class="description">
+                        @Html.Raw(cate.Description)
+                    </div>
+                }
+            }
+            <div class="row10 xxx">
+                @foreach (var item in Model.List)
+                {
+                    var code = item["CODE"];                   
+                    <div class="pr-list col-md-3 col-sm-6 col-xs-6">
+                        <div class="items">
+                            @if (type.ShowImageInList)
+                            {
+                            <figure>
+                                <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = type.UrlFriendly, title = item.UrlFriendly.ToLower() })" title="@item.ArticleName" data-tooltip="sticky-@item.Id">
+                                    @Html.Image(item.ImageUrl !=null ? item.ImageUrl.ToLower() : item.ImageUrl, new ImageOptions { Width = 167, Height = 167, Watermark = SiteConfig.Watermark, Mode = ImageMode.pad, Lazy = false }, new { alt = code !=null ? code : item.ArticleName })
+                                </a>
+                                @*<figcaption>
+                                    <p>
+
+                                        <a class="quickview" href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="Xem chi tiết">
+                                            <i class="fa fa-search-plus"></i>
+                                        </a>
+
+                                        <a href="@Url.Action("AddToCart", "ShoppingCart", new { id = item.Id })" class="addcart cart" title="Cho vào giỏ hàng" rel="nofollow">
+                                            <i class="fa fa-shopping-cart"></i>
+                                        </a>
+                                    </p>
+                                </figcaption>*@
+                            </figure>
+                            }
+                            <div class="meta">
+                                <h3>
+                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = type.UrlFriendly, title = item.UrlFriendly.ToLower() })" title="@item.ArticleName">@item.ArticleName</a>
+                                </h3>
+                                <div class="code"><label class="hidden-xs">Mã số:</label>@code</div>
+
+                                @if (type.HasPrice)
+                                {
+                                <div class="price-all">
+                                    @if (item.DiscountPrice > 0)
+                                    {
+
+                                        <span class="price">@Html.DiscountPrice(item.ItemPrice)</span>
+                                        <span class="price-old">@Html.Price(item.ItemPrice)</span>
+
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("Contact", "Home", new { id = item.Id })">
+                                            <span class="price">@Html.Price(item.ItemPrice)</span>
+                                        </a>
+                                    }
+                                </div>
+                                }
+                                    <form action="/ShoppingCart/AddToCart" method="post" class="form-order">
+                                        @*@Html.Hidden("id", item.Id)*@
+                                        <input type="hidden" name="id" id="@item.Id" value="@item.Id">
+                                        <div class="quantitynum">
+                                            <input name="num" type="number" id="num_@item.Id" min="1" max="100" value="1" />
+                                        </div>
+                                        @*<p>Số lượng @Html.DropDownList("num", Enumerable.Range(1, 50).Select(j => new SelectListItem { Value = j.ToString(), Text = j.ToString() }), "1")</p>*@
+                                        <button type="submit" class="bt-carted cartedngoai">Mua ngay</button>
+                                    </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+        </div>
+    @Html.Pager(new PagerOptions { VisibleItemCount = 5, PageSize = 36, ItemCount = Model.TotalItemCount, FirstText = Html.Locale("text_first").ToHtmlString(), LastText = Html.Locale("text_last").ToHtmlString() }, null)
+}
+else
+{
+    <span>@Html.Locale("article_null")</span>
+}
+
+    <script>
+        jQuery('<div class="quantity-nav"><div class="quantity-button quantity-up">+</div><div class="quantity-button quantity-down">-</div></div>').insertAfter('.quantitynum input');
+        jQuery('.quantitynum').each(function () {
+            var spinner = jQuery(this),
+                input = spinner.find('input[type="number"]'),
+                btnUp = spinner.find('.quantity-up'),
+                btnDown = spinner.find('.quantity-down'),
+                min = input.attr('min'),
+                max = input.attr('max');
+
+            btnUp.click(function () {
+                var oldValue = parseFloat(input.val());
+                if (oldValue >= max) {
+                    var newVal = oldValue;
+                } else {
+                    var newVal = oldValue + 1;
+                }
+                spinner.find("input").val(newVal);
+                spinner.find("input").trigger("change");
+            });
+
+            btnDown.click(function () {
+                var oldValue = parseFloat(input.val());
+                if (oldValue <= min) {
+                    var newVal = oldValue;
+                } else {
+                    var newVal = oldValue - 1;
+                }
+                spinner.find("input").val(newVal);
+                spinner.find("input").trigger("change");
+            });
+
+        });
+    </script>

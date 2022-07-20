@@ -1,0 +1,5 @@
+﻿@using (Html.BeginForm("Search","Home",FormMethod.Get))
+{
+    <input type="text" name="keyword" placeholder ="Nhập từ khóa"  value="@ViewBag.SearchKeyword" />
+    <input type="submit" id="search-button"  value=""/>
+}

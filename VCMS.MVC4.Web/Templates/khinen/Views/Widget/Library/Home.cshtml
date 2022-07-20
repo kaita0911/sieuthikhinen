@@ -1,0 +1,80 @@
+﻿@model Widget
+@{
+    var article = Article.GetByType((int)Model.ArticleTypeId, SiteConfig.SiteId, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection, Model.Includes);
+    if (article.List.Count > 0)
+    {
+        <div class="box-library box-home">
+            <div class="container">
+                <h2 class="heading">
+                    <span>@Model.Title</span>
+                </h2>
+                <div class="content">
+                    <div class="row">
+                        @foreach (var item in article.List)
+                        {
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                <div class="item">
+                                    <figure>
+                                        @Html.Image(item.ImageUrl, new ImageOptions { Width = 339, Height = 284, Mode = ImageMode.crop }, new { alt = item.ArticleName, @class = "owl" })
+                                    </figure>
+                                    <div class="title">
+                                        <a class="name lightbox" href="@Url.Content(item.ImageUrl)" title="@item.ArticleName" data-plugin-options="{type:image;}">
+                                            @item.ArticleName
+                                        </a>
+                                        <a class="zoom lightbox" href="@Url.Content(item.ImageUrl)" data-plugin-options="{type:image;}">
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        @*
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                @foreach (var item in article.List.Skip(2).Take(1))
+                                {
+                                    <div class="item">
+                                        <figure>
+                                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                                @Html.Image(item.ImageUrl, new ImageOptions { Width = 339, Height = 593, Mode = ImageMode.crop }, new { alt = item.ArticleName, @class = "owl" })
+                                            </a>
+                                        </figure>
+                                        <div class="title">
+                                            <a class="name" href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                                @item.ArticleName
+                                            </a>
+                                            <a class="zoom lightbox" href="@Url.Content(item.ImageUrl)" data-plugin-options="{type:image;}">
+                                            </a>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                <div class="row">
+                                    @foreach (var item in article.List.Skip(3).Take(2))
+                                    {
+                                        <div class="col-lg-12 col-md-12 col-sm-6 col-xs-6">
+                                            <div class="item">
+                                                <figure>
+                                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                                        @Html.Image(item.ImageUrl, new ImageOptions { Width = 339, Height = 284, Mode = ImageMode.crop }, new { alt = item.ArticleName, @class = "owl" })
+                                                    </a>
+                                                </figure>
+                                                <div class="title">
+                                                    <a class="name" href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                                        @item.ArticleName
+                                                    </a>
+                                                    <a class="zoom lightbox" href="@Url.Content(item.ImageUrl)" data-plugin-options="{type:image;}">
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    }
+                                </div>
+                            </div>
+                        *@
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}

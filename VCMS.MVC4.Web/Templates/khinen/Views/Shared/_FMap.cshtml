@@ -1,0 +1,20 @@
+﻿@using System.Data.Entity;
+@using (DataContext db = new DataContext())
+{
+    var company = Article.GetByTypeCode("COMPANY", SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 1, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING).List.FirstOrDefault();
+    <div class="box-footer f-map">
+        <div class="content">
+            @if (company != null)
+            {
+                var maps = company.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("MAP", StringComparison.OrdinalIgnoreCase));
+                if (!string.IsNullOrWhiteSpace(maps.Value))
+                {
+                   @Html.Raw(maps.Value)
+                }
+            }
+        </div>
+    </div>
+}
+
+
+

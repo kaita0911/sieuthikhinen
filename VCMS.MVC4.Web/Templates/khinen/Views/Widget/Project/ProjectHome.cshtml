@@ -1,0 +1,47 @@
+﻿@model Widget
+@{
+    var article = Article.GetByType((int)Model.ArticleTypeId, SiteConfig.SiteId, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection, Model.Includes);
+    if (article.List.Count > 0)
+    {
+        <div class="box-project-home">
+            <h2 class="heading-bottom">@Model.Title</h2>
+            <div class="content">
+                <div class="row">
+                    <div class="col-xs-12">
+                        @foreach (var item in article.List.Take(1))
+                        {
+                            <div class="item item-top">
+                                <figure>
+                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                                        @Html.Image(item.ImageUrl, new ImageOptions { Width = 350, Height = 210, Watermark = SiteConfig.Watermark, Mode = ImageMode.crop, Lazy = false }, new { alt = item.ArticleName, @class = (Model.LazyOwl ? "owl" : "") })
+                                    </a>
+                                    <figcaption>
+                                        <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                                            @item.ArticleName
+                                        </a>
+                                    </figcaption>
+                                </figure>
+                            </div>
+                        }
+                    </div>
+                    <div class="col-xs-12">
+                        <div class="row item-row">
+                            <div class="owl-carousel" data-plugin-options='{"items": 3, "singleItem": false, "autoPlay": true, "navigation": true, "pagination": false,"slideSpeed":400,"addClassActive":true,"itemsDesktop": [1199, 2],"itemsDesktopSmall": [991, 3],"itemsTablet": [768, 3],"itemsMobile": [530, 3]}' data-snap-ignore="true">
+                                @foreach (var item in article.List.Skip(1))
+                                {
+                                    <div class="item item-bottom">
+                                        <figure>
+                                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                                                @Html.Image(item.ImageUrl, new ImageOptions { Width = 85, Height = 73, Watermark = SiteConfig.Watermark, Mode = ImageMode.crop }, new { alt = item.ArticleName, @class = (Model.LazyOwl ? "owl" : "") })
+                                            </a>
+                                        </figure>
+                                    </div>
+                                }
+                            </div>
+                        </div>                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}

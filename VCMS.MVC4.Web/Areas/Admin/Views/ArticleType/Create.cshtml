@@ -1,0 +1,259 @@
+﻿@using VCMS.MVC4.Data
+@using VCMS.MVC4.Web
+@model VCMS.MVC4.Data.ArticleType
+@{
+    ViewBag.Title = "Tạo mới loại bài viết";
+}
+<div class="form">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+        <fieldset>
+            <legend class="title">ArticleType</legend>
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Code)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Code)
+                @Html.ValidationMessageFor(model => model.Code)
+            </div>
+            <div class="editor-field">
+                @foreach (var item in SiteConfig.Languages)
+                {
+                    @Html.Label("Tên loại - " + item.DisplayName)
+                    @Html.TextBox("txtName" + item.Id.ToString(), Model.ArticleTypeDetail[item.Id] == null ? "" : Model.ArticleTypeDetail[item.Id].Name, new { @class = "url-source" })
+                    @Html.Label("Friendly Url - " + item.DisplayName)
+                    @Html.TextBox("txtUrlFriendly" + item.Id.ToString(), Model.ArticleTypeDetail[item.Id] == null ? "" : Model.ArticleTypeDetail[item.Id].UrlFriendly, new { @class = "url-dest" })
+                }
+            </div>
+            <div class="editor-field">
+                <br />
+                <div class="editor-label ">
+                    @Html.Label("Thuộc tính bài viết")
+                </div>
+                <ul class="attribute-list">
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.HasShorDesc)<i></i> Có mô tả ngắn gọn</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.HasCategory, new { onchange = "shAttrCate()", @class = "chk-shattrcate" })<i></i> Có phân nhóm</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.HasImage)<i></i> Có hình đại diện</label></li>
+
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.HasDescription)<i></i> Có mô tả chi tiết</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.AllowSearch)<i></i> Cho phép tìm kiếm</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.MultiImage)<i></i> Cho phép nhiều hình</label></li>
+
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.HasMeta)<i></i> Có meta tags</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.HiddenUrl)<i></i> Ẩn Url bài viết</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.HasAttachment)<i></i> Có file đính kèm</label></li>
+                    <li>
+                        <label class="checkbox">
+                            @Html.CheckBoxFor(model => model.HasPrice, new { onchange = "shDiscount()", @class = "chk-shdiscount" })<i></i> Có giá
+                        </label>
+                    </li>
+                    <li class="sh-discount" style="display:none">
+                        <label class="checkbox">
+                            @Html.CheckBoxFor(model => model.HasDiscount)<i></i> Có giảm giá
+                        </label>
+                    </li>
+                    <li class="sh-discount" style="display:none">
+                        <label class="checkbox">
+                            @Html.CheckBoxFor(model => model.HasNumberProduct)<i></i> Giới hạn số lượng sản phẩm
+                        </label>
+                    </li>
+                </ul>
+                <div class="editor-label margin-top-20">
+                    @Html.Label("Hiển thị bài viết") <small>(Chi tiết)</small>
+                </div>
+                <ul class="attribute-list">
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.AllowView)<i></i> Cho phép xem trước</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.HasRequiredLogin)<i></i> Yêu cầu đăng nhập</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.ShowImage)<i></i> Hiển thị hình đại diện <small>(Mặc định: không hiển thị)</small></label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.ShowShareArticle)<i></i> Có chia sẻ bài viết</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.ShowComment)<i></i> Có comment facebook</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.OtherArticleAjax)<i></i> Phân trang sản phẩm liên quan</label></li>
+                </ul>
+                <div class="editor-label margin-top-20">
+                    @Html.Label("Hiển thị List bài viết")
+                </div>
+                <ul class="attribute-list">
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.ShowImageInList)<i></i> Có hình đại diện</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.ShowDescription)<i></i> Có mô tả</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.ShowDateTime)<i></i> Có ngày cập nhật</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.ShowActionLink)<i></i> Có Action link</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.ShowIconFly)<i></i> Có Icon Fly</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.ShowRating)<i></i> Có đánh giá bài viết</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.ShowAttribute)<i></i> Có Hot, New, Mostview</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.ShowFilter)<i></i> Có lọc bài viết</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.ShowChildCategory)<i></i> Có danh sách nhóm con</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.DescriptionCategory)<i></i> Có mô tả nhóm</label></li>
+                </ul>
+                <div class="editor-label margin-top-20">
+                    @Html.Label("Kiểu hiển thị") <small>(Bài viết chi tiết)</small>
+                </div>
+                <ul class="attribute-list type-post-detail">
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.IsFullWidth)<i></i> FullWidth Post</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.IsGallery)<i></i> Gallery Image </label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.IsVideo)<i></i> Video Post</label></li>
+                    @*<li><label class="checkbox">@Html.CheckBoxFor(model => model.IsMusic)<i></i> Music Post</label></li>*@
+                </ul>
+                <div class="editor-label margin-top-20">
+                    @Html.Label("Danh sách")
+                </div>
+                <ul class="attribute-list columns">
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.FourColumn)<i></i> 4 Cột</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.FiveColumn)<i></i> 5 Cột</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.SixColumn)<i></i> 6 cột</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.TwoColumnSiderBar)<i></i> 2 Cột - SiderBar</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.ThreeColumnSiderBar)<i></i> 3 Cột - SiderBar</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.FourColumnSiderBar)<i></i> 4 Cột - SiderBar</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.FiveColumnSiderBar)<i></i> 5 Cột - SiderBar</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.Masony)<i></i> Masonry</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.MasonySiderBar)<i></i> Masonry - SiderBar</label></li>
+                </ul>
+                <div class="editor-label margin-top-20">
+                    @Html.Label("Loại bài viết")
+                </div>
+                <ul class="attribute-list">
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.IsContent)<i></i> Có nội dung</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.HasCopyAndMove)<i></i> Cho phép chuyển loại</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.SiteMap)<i></i> Có trong sitemap </label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.HasRating)<i></i> Có đánh giá bài viết </label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.IsFirstArticle)<i></i> Xem bài viết</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.HasImportExPort)<i></i> Cho phép Import/Export</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.HasWidget)<i></i> Có sử dụng Widget</label></li>
+                    <li><label class="checkbox">@Html.CheckBoxFor(model => model.HasPoster)<i></i> Fanpage Autopost</label></li>
+                </ul>
+                <div class="attribute-cate hide-div">
+                    <div class="editor-label margin-top-20">
+                        @Html.Label("Attributes nhóm")
+                    </div>
+                    <ul class="attribute-list">
+                        <li>
+                            <label class="checkbox">@Html.CheckBoxFor(model => model.IsNewCate, new { @class = "edit-item" })<i></i>Mới</label>
+                            @Html.TextBoxFor(model => model.StrIsNewCate, new { @class = "edit-item edit-txt", @placeholder = "Nhập tiêu đề cần đổi" })
+                        </li>
+                        <li>
+                            <label class="checkbox">@Html.CheckBoxFor(model => model.IsHotCate, new { @class = "edit-item" })<i></i>Nổi bật</label>
+                            @Html.TextBoxFor(model => model.StrIsHotCate, new { @class = "edit-item edit-txt", @placeholder = "Nhập tiêu đề cần đổi" })
+                        </li>
+                        <li>
+                            <label class="checkbox">@Html.CheckBoxFor(model => model.IsMostViewCate, new { @class = "edit-item" })<i></i>Xem nhiều</label>
+                            @Html.TextBoxFor(model => model.StrIsMostViewCate, new { @class = "edit-item edit-txt", @placeholder = "Nhập tiêu đề cần đổi" })
+                        </li>
+                    </ul>
+                </div>
+                <div class="editor-label margin-top-20">
+                    @Html.Label("Attributes bài viết")
+                </div>
+                <ul class="attribute-list">
+                    <li>
+                        <label class="checkbox">@Html.CheckBoxFor(model => model.IsNew, new { @class = "edit-item" })<i></i>Mới</label>
+                        @Html.TextBoxFor(model => model.StrIsNew, new { @class = "edit-item edit-txt", @placeholder = "Nhập tiêu đề cần đổi" })
+                    </li>
+                    <li>
+                        <label class="checkbox">@Html.CheckBoxFor(model => model.IsHot, new { @class = "edit-item" })<i></i>Nổi bật</label>
+                        @Html.TextBoxFor(model => model.StrIsHot, new { @class = "edit-item edit-txt", @placeholder = "Nhập tiêu đề cần đổi" })
+                    </li>
+                    <li>
+                        <label class="checkbox">@Html.CheckBoxFor(model => model.IsMostView, new { @class = "edit-item" })<i></i>Xem nhiều</label>
+                        @Html.TextBoxFor(model => model.StrIsMostView, new { @class = "edit-item edit-txt", @placeholder = "Nhập tiêu đề cần đổi" })
+                    </li>
+                </ul>
+            </div>
+            <div class="editor-label margin-top-20">
+                @Html.Label("Phân nhóm riêng")
+            </div>
+            <div class="editor-field" id="catetype-list">
+                <ul class="attribute-list">
+                  @foreach (CategoryType item in ViewBag.CategoryType)
+                        {
+                            <li><label class="checkbox">@Html.CheckBox("catetype", false, new { value = item.Id })<i></i> @item.CategoryTypeDetail[SiteConfig.LanguageId].Name</label> </li>
+                        }
+                </ul>
+                <a href="@Url.Action("CreateAjax", "Category", null)" id="new-catetype" data-toggle="modal" data-target="#catetype-form">
+                    <i class="fa fa fa-adn fa-lg"></i> <span>Thêm mới</span>
+                </a>
+            </div>
+            <br />
+            <div class="editor-label margin-top-20">
+                @Html.Label("Thuộc tính mở rộng")
+            </div>
+            <div class="editor-field" id="property-list">
+                <ul class="attribute-list">
+                    @foreach (Property item in ViewBag.Properties)
+                    {
+                        <li><label class="checkbox">@Html.CheckBox("prop", false, new { value = item.Id })<i></i> @item.PropertyDetail[SiteConfig.LanguageId].Name</label> </li>
+                    }
+                </ul>
+                <a href="@Url.Action("CreateAjax", "Property", null)" id="new-property" data-toggle="modal" data-target="#property-form">
+                    <i class="fa fa fa-adn fa-lg"></i> <span>Thêm mới</span>
+                </a>
+            </div>
+            <div class="toolbar">
+                <span class="button">
+                    <button type="submit" class="btn save"><i class="fa fa-save"></i> Lưu</button>
+                </span>
+                <span class="btn back">
+                    <a href="@Url.Action("Index", null, null)">
+                        <i class="fa fa-mail-reply"></i> <span>Trở về</span>
+                    </a>
+                </span>
+            </div>
+        </fieldset>
+    }
+</div>
+<div class="modal fade" id="catetype-form" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    @{Html.RenderAction("CreateAjax", "Category");}
+</div>
+<div class="modal fade" id="property-form" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    @{Html.RenderAction("CreateAjax", "Property");}
+</div>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script>
+
+        function shAttrCate() {
+            if ($('.chk-shattrcate').is(":checked"))
+                $(".attribute-cate").show();
+            else
+                $(".attribute-cate").hide();
+        }
+
+        function shDiscount() {
+            if ($('.chk-shdiscount').is(":checked"))
+                $(".sh-discount").show();
+            else
+                $(".sh-discount").hide();
+        }
+        function Widget() {
+            if ($('#HasWidget').is(":checked"))
+                $(".widget-viewspacial").show();
+            else {
+                $(".widget-viewspacial").hide();
+                $("#HasSpacialView").prop("checked", false);
+            }
+        }
+        //widget-viewspacial
+        $(".url-source").each(function () {
+            $(this).latinize({ destination: $(this).nextUntil(".url-dest").next() });
+        });
+
+        function catetypeAdded(data) {
+            $("#catetype-form form")[0].reset();
+            $("#catetype-form #success").html(": Thêm thành công");
+            $("#catetype-list ul").append("<li><label class='checkbox'><input type='checkbox' name='prop' value='" + data.Id + "' /><i></i>" + data.DisplayName + "</label></li>");
+            $("#catetype-form #Code").focus();
+        }
+
+        function propertyAdded(data) {
+            $("#property-form form")[0].reset();
+            $("#property-form #success").html(": Thêm thành công");
+            $("#property-list ul").append("<li><label class='checkbox'><input type='checkbox' name='prop' value='" + data.Id + "' /><i></i>" + data.DisplayName + "</label></li>");
+            $("#property-form #Code").focus();
+        }
+        $(".columns input").on("change", function () {
+            var _this = $(this);
+            $(".columns input").not(_this).prop('checked', false);
+            _this.prop('checked') ? _this.prop('checked', true) : _this.prop('checked', false);
+        });
+    </script>
+}

@@ -1,0 +1,118 @@
+﻿@model ArticleType
+@{
+    ViewBag.Title = Model.Name;
+    ViewBag.Breadcrumb = new BreadcrumbModel()
+    {
+        Items = new List<BreadcrumbItem>()
+        {
+            new BreadcrumbItem(){Url = Url.Action("Index","Home"), Text="Home", IsFirst=true},
+
+            new BreadcrumbItem(){ Text=Model.Name, IsLast=true},
+
+        }
+    };
+
+}
+<div class="form">
+    @using (Ajax.BeginForm(new AjaxOptions { HttpMethod = "POST", OnSuccess = "saved" }))
+    {
+        @Html.ValidationSummary(true)
+        <div class="btn-group margin-bottom-20">
+            <button type="submit" class="btn save"><i class="fa fa-save"></i> <span>Cập nhật thay đổi</span></button>
+            <span class="btn attribute">
+                <a href="@Url.Action("List", "Article", new { id = Model.Id })"><i class="fa fa-list-alt"></i> <span>Danh sách bài viết</span></a>
+            </span>
+            @if (Model.HasCategory)
+            {
+                <span class="btn delete">
+                    <a href="@Url.Action("List", "Category", new { id = Model.Id })">
+                        <i class="fa fa-signal"></i> <span>Danh sách nhóm</span>
+                    </a>
+                </span>
+            }
+        </div>
+        <fieldset>
+            <div id="tabs">
+                <ul class="nav nav-tabs" role="tablist" id="myTab">
+                    @foreach (var l in SiteConfig.Languages)
+                    {
+                        <li><a href="#tabs-@l.Id" role="tab" data-toggle="tab">@l.DisplayName</a></li>
+                    }
+
+                </ul>
+                <div class="tab-content">
+                    @foreach (var l in SiteConfig.Languages)
+                    {
+                    <div id="tabs-@l.Id" class="tab-pane">
+                        <div class="editor-label">
+                            @Html.Label("Tên")
+                        </div>
+                        <div class="editor-field">
+                            @Html.TextBox("txtName" + l.Id.ToString(), Model.ArticleTypeDetail[l.Id] == null ? "" : Model.ArticleTypeDetail[l.Id].Name, new { @class = "url-source", @readonly = "readonly" })
+                        </div>
+                        <div class="editor-label">
+                            @Html.Label("Friendly Url ")
+                        </div>
+                        <div class="editor-field">
+                            @Html.TextBox("txtUrlFriendly" + l.Id.ToString(), Model.ArticleTypeDetail[l.Id] == null ? "" : Model.ArticleTypeDetail[l.Id].UrlFriendly, new { @class = "url-dest", @readonly = "readonly" })
+                        </div>
+                        <div class="editor-label full-desc">
+                            @Html.Label("mô tả chi tiết")
+                        </div>
+                        <div class="editor-field margin-bottom-7">
+                            @Html.TextAreaFor(model => model.ArticleTypeDetail[l.Id].Description, new { @class = "fck" })
+                        </div>
+                        <div class="editor-label">
+                            @Html.Label("meta keywords")
+                        </div>
+                        <div class="editor-field">
+                            @Html.TextBoxFor(model => model.ArticleTypeDetail[l.Id].SEOKeywords, new { @class = "keyword" })
+                        </div>
+                        <div class="editor-label">
+                            @Html.Label("meta description")
+                        </div>  
+                        <div class="editor-field">
+                            @Html.TextBoxFor(model => model.ArticleTypeDetail[l.Id].SEODescription)
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+            <script>
+                $(".nav-tabs li:first").addClass("active");
+                $(".tab-content .tab-pane:first").addClass("active");
+            </script>
+            <div class="toolbar">
+                <span class="button">
+                    <button type="submit" class="btn save"><i class="fa fa-save"></i> Cập nhật thay đổi</button>
+                </span>
+            </div>
+        </fieldset>
+    }
+
+
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryui")
+    @Scripts.Render("~/bundles/editor")
+    <script>
+        $(function () {
+            $(".keyword").keyword();
+            
+            $("input[data-auto-copy=true]").autoCopy();
+            $("#tabs").validtabs();
+            $(".url-source").each(function () {
+                $(this).latinize({ destination: $(".url-dest", $(this).parent().parent()) });
+            });
+        });
+        function saved(data, status, xhr) {
+            if (data.status == 0)
+                alert("Updated OK!");
+            else
+                alert("Failed");
+        }
+    </script>
+}
+

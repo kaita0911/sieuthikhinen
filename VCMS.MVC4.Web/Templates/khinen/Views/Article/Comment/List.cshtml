@@ -1,0 +1,57 @@
+﻿@model ArticleResult
+@{
+    var db = new DataContext();
+    var desc = db.ArticleTypeDetails.FirstOrDefault(a => a.ArticleType.Code == "NEWS" && a.LanguageId == SiteConfig.LanguageId);
+    ViewBag.Code = "news";
+    ViewBag.TypeId = desc.ArticleTypeId;
+    var lstCate = Category.GetByType(desc.ArticleTypeId, SiteConfig.SiteId, SiteConfig.LanguageId);
+    <div class="article">
+        <div class="new-cate">
+            @foreach (var itemCate in lstCate)
+            {
+                var lstArt = Article.GetByCategory(itemCate.Id, SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 2, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.DESCENDING);
+                <div class="item-cate">
+                    <div class="cate-name">
+                        @Html.ActionLink(itemCate.CategoryName, "Detail", "Category", new { id = itemCate.Id, code = itemCate.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(itemCate.CategoryName) }, null)
+                    </div>
+                    <div class="cate-content">
+                        @foreach (var item in lstArt.List)
+                        {
+                            <div class="row item-art">
+                                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                                    <div class="image">
+                                        <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                                            @if (item.ImageUrl != null)
+                                            {
+                                                <img src="@Url.Content("~/UserUpload/Article/")@item.ImageUrl?width=337" alt="@item.ArticleName" />
+                                            }
+                                            else
+                                            {
+                                                <img src="@Url.Content("~/Templates/"+ SiteConfig.SiteCode +"/Content/images/no-news.jpg")?width=337" alt="@item.ArticleName" />
+                                            }
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="col-lg-9 col-md-9 col-sm-6 col-xs-6">
+                                    <div class="ctn">
+                                        <h3 class=" name">
+                                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                                                <span>@item.ArticleName</span>
+                                            </a>
+                                        </h3>
+                                        <div class="date">
+                                            <i class="fa fa-calendar"></i> <span>@item.DateCreated</span>
+                                        </div>
+                                        <div class="description">
+                                            @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, 70))
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}

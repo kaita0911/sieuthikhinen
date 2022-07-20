@@ -1,0 +1,23 @@
+﻿@using System.Data.Entity;
+@using (DataContext db = new DataContext())
+{
+    
+    var article = Article.GetByTypeCode("NEWS", SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 3, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING).List;
+    if (article.Count > 0)
+    {
+        <div class="box-footer f-consulting">
+            <h2 class="heading">@Html.Locale("news")</h2>
+            <div class="content">
+                <ul>
+                    @foreach (var item in article)
+                    {
+                        <li><a href="@Url.Action("Detail", "Article", new { id=item.Id, code=item.ArticleType.UrlFriendly,title=Unichar.UnicodeStrings.UrlString(item.ArticleName)})">@item.ArticleName</a></li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+}
+
+
+

@@ -1,0 +1,17 @@
+﻿@model Widget
+@{
+    var article = Article.GetByType((int)Model.ArticleTypeId, SiteConfig.SiteId, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection);
+    var effect = Model.Effect1 ? "banner-cubic-1" : Model.Effect2 ? "banner-cubic-2" : Model.Effect3 ? "banner-cubic-3" : Model.Effect4 ? "banner-cubic-4" : Model.Effect5 ? "banner-cubic-5" : Model.Effect6 ? "banner-cubic-6" : Model.Effect7 ? "banner-cubic-7" : "";
+}
+@if (article.List.Count > 0)
+{
+    <div class="box-footer footer-services pull-left">
+        <h2 class="heading footer-heading">@Model.Title</h2>
+        <ul class="ul-services">
+            @foreach (var item in article.List)
+            {
+                <li><a href="@Url.Action("Detail", "Article", new { id=item.Id,code=item.ArticleType.UrlFriendly,title=Unichar.UnicodeStrings.UrlString(item.ArticleName)})" title="@item.ArticleName">@item.ArticleName</a></li>
+            }
+        </ul>
+    </div>
+}

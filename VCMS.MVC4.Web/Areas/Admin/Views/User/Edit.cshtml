@@ -1,0 +1,144 @@
+﻿@using VCMS.MVC4.Web.Models
+@model VCMS.MVC4.Data.UserProfile
+@using System.Data.Entity;
+@{
+    DataContext db = new DataContext();
+    ViewBag.Title = "Chỉnh sửa thông tin người dùng";
+    ViewBag.Breadcrumb = new BreadcrumbModel()
+    {
+        Items = new List<BreadcrumbItem>()
+        {
+            new BreadcrumbItem(){Url = Url.Action("Index","Home"), Text="Home", IsFirst=true},
+            new BreadcrumbItem(){Url = Url.Action("Index","User"), Text="Quản lý người dùng"},
+            new BreadcrumbItem(){Url = null, Text="Chỉnh sửa thông tin người dùng", IsLast=true    }
+        }
+    };
+    string role = "Super Administrators";
+    if (Request["role"] != null)
+    {
+        role = Request["role"].ToString();
+    }
+}
+
+<div class="form">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+        <fieldset>
+            <legend>UserProfile</legend>
+            @Html.HiddenFor(model => model.UserId)
+            <div class="editor-label">
+                @Html.LabelFor(model => model.UserName)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.UserName)
+                @Html.ValidationMessageFor(model => model.UserName)
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Password)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Password)
+                @Html.ValidationMessageFor(model => model.Password)
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(model => model.DisplayName)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.DisplayName)
+                @Html.ValidationMessageFor(model => model.DisplayName)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Email)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Email)
+                @Html.ValidationMessageFor(model => model.Email)
+                @if (ViewBag.ErrorMail != null)
+                {
+                    <div class="error"><b>@ViewBag.ErrorMail</b></div>
+                }
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Phone)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Phone)
+                @Html.ValidationMessageFor(model => model.Phone)
+            </div>
+            @if (role == "Moderators")
+            {
+                var uac = db.UserArticleTypeCates.Where(u => u.UserId == Model.UserId);
+                var lstType = db.ArticleTypes.Include(a => a.Articles).Include("ArticleTypeDetail").Include(ct => ct.CategoryTypes.Select(t => t.CategoryTypeDetail)).OrderBy(at => at.SortOrder).ToArray();
+                <div class="editor-label">
+                    @Html.Label("Được quyền thao tác trên")
+                </div>
+                <ul class="select-chk">
+                    @foreach (var item in lstType)
+                    {
+                        <li>
+                            <label class="checkbox">@Html.CheckBox("chkArticleType", uac.Where(u => u.ArticleTypeId > 0).Select(u => u.ArticleTypeId).Contains(item.Id), new { value = item.Id })<i></i> @item.Name</label>
+                            @if (item.HasCategory)
+                            {
+                                var categories = Category.GetTree(Category.GetByType(item.Id, SiteConfig.LanguageId)).Where(a => a.Level == 0).ToList();
+                                if (categories.Count > 0)
+                                {
+                                    <ul class="sub-moder" style="display:none">
+                                        @foreach (var cate in categories)
+                                        {
+                                            <li>
+                                                <label class="checkbox">
+                                                    @Html.CheckBox("chkCategory", uac.Where(u => u.CategoryId > 0).Select(u => u.CategoryId).Contains(cate.Id), new { value = cate.Id, onclick = "Check(" + item.Id + ")" })<i></i> @cate.CategoryName
+                                                </label>
+                                                <ul class="sub-moder">
+                                                    @foreach (var scate in cate.Children)
+                                                    {
+                                                        <li>
+                                                            <label class="checkbox">
+                                                                @Html.CheckBox("chkCategory", uac.Where(u => u.CategoryId > 0).Select(u => u.CategoryId).Contains(scate.Id), new { value = scate.Id, onclick = "Check(" + cate.Id + ")" })<i></i> @scate.CategoryName
+                                                            </label>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                            }
+                        </li>
+                    }
+                </ul>
+            }
+            <div style="display: @(role == "Moderators"?"none":"block")">
+                <div class="editor-label">
+                    @Html.Label("Nhóm người dùng")
+                </div><ul>
+                    @foreach (var item in Roles.GetAllRoles())
+                    {
+                        if (item != "Super Administrators")
+                        {
+                            <li><label class="checkbox">@Html.CheckBox("chkRole", Roles.IsUserInRole(Model.UserName, item), new { value = item })<i></i> @item</label> </li>
+                        }
+                    }
+                </ul>
+            </div>
+            
+            <p>
+                <span class="button">
+                    <button type="submit" class="btn save"><i class="fa fa-save"></i> Sửa</button>
+                </span>
+                <span class="btn back">
+                    <a href="@Url.Action("Index",null,null)">
+                        <i class="fa fa-mail-reply"></i> <span>Trở về danh sách</span>
+                    </a>
+                </span>
+            </p>
+        </fieldset>
+    }
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

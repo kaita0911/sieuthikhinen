@@ -1,0 +1,48 @@
+﻿@model Widget
+@{
+    var article = Article.GetByType((int)Model.ArticleTypeId, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection, Model.Includes);
+    if (article.List.Count > 0)
+    {
+        <div class="box-home box-service-slider">
+            <div class="container">
+                <h2 class="heading">
+                    <span>@Model.Title</span>
+                </h2>
+                <div class="content">
+                    <div class="owl-carousel" data-plugin-options='{"items": 4, "singleItem": false, "autoPlay": true, "navigation": true, "pagination": false,"slideSpeed":400,"addClassActive":true,"itemsDesktop": [1199, 4],"itemsDesktopSmall": [991, 4],"itemsTablet": [768, 2],"itemsMobile": [479, 1]}' data-snap-ignore="true">
+                        @foreach (var item in article.List)
+                        {
+                            <div class="items">
+                                @if (!Model.HiddenImage)
+                                {
+                                    <figure>
+                                        <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                                            @Html.Image(item.ImageUrl, new ImageOptions { Width = 100, Height = 100, Watermark = SiteConfig.Watermark, Mode = ImageMode.crop, Lazy = false }, new { alt = item.ArticleName })
+                                        </a>
+                                    </figure>
+                                }
+                                <div class="meta">
+                                    <div class="clearfix"></div>
+                                    <h3>
+                                        <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.ArticleTypeDetail[SiteConfig.LanguageId].UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">@item.ArticleName</a>
+                                    </h3>
+                                    <div class="short-desc">
+                                        @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, 35))
+                                    </div>
+                                    @if (Model.ShowViewMore)
+                                    {
+                                        <div class="view-more">
+                                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.ArticleTypeDetail[SiteConfig.LanguageId].UrlFriendly, title = item.UrlFriendly })" title="Xem chi tiết">
+                                                <i class="fa fa-plus"></i>
+                                            </a>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}

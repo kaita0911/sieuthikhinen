@@ -1,0 +1,21 @@
+﻿@model Widget
+@{
+    var category = Category.GetTree(Category.GetByType((int)Model.ArticleTypeId, SiteConfig.LanguageId)).Where(a => a.Level == 0).ToList();
+    <div class="box-partner">
+        <h2 class="heading">
+            <span>@Model.Title</span>
+        </h2>
+        <div class="content-background">
+            <div class="owl-carousel" data-plugin-options='{"items": 7, "singleItem": false, "autoPlay": true, "navigation": true, "pagination": false,"slideSpeed":400,"addClassActive":true,"itemsDesktop": [1199, 4],"itemsDesktopSmall": [991, 4],"itemsTablet": [768, 3],"itemsMobile": [479, 3]}' data-snap-ignore="true">
+                @foreach (var item in category)
+                {
+                    <div class="items">
+                        <a href="@Url.Action("Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" class="banner-cubic-6" title="@item.CategoryName">
+                            @Html.Image(item.ImageUrl, new ImageOptions { Width = 134, Height = 94, Mode = ImageMode.crop }, new { alt = item.CategoryName, @class = "owl" })
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,11 @@
+﻿@model VCMS.MVC4.Data.ArticleResult
+@{
+    string viewName = string.IsNullOrWhiteSpace(ViewBag.viewPath) ? "_List" : (ViewBag.viewPath.ToString() + "/_List");
+    if (ViewEngines.Engines.FindView(ViewContext.Controller.ControllerContext, viewName, null).View == null)
+    {
+        viewName = "_List";
+    }
+}
+@Html.Partial(viewName, Model.List)
+
+@Html.Pager(new PagerOptions { VisibleItemCount = 9, ItemCount = Model.TotalItemCount, PageSize = Model.PageSize }, null)

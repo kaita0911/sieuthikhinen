@@ -1,0 +1,16 @@
+﻿
+<div class="left-col lr-search">
+    <div class="header">
+        <h2>Tìm kiếm nhanh</h2>
+    </div>
+    <div>
+        @using (Html.BeginForm("Search", "Home", FormMethod.Get))
+        {
+            <input type="search" name="keyword" class="txt-search" placeholder="Nhập từ khóa tìm kiếm" value="@ViewBag.SearchKeyword" autocomplete="off">
+            <button type="submit" class="icon-search"></button>
+            <div class="center">
+                <button type="submit" class="btn-search">Tìm kiếm</button>
+            </div>
+        }
+    </div>
+</div>

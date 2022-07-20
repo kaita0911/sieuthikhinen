@@ -1,0 +1,99 @@
+﻿@model Widget
+@{
+    var type = ArticleType.GetById((int)Model.ArticleTypeId, SiteConfig.LanguageId);
+    var art_list = Article.GetByType((int)Model.ArticleTypeId, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection, Model.Includes);
+    //var cate_lst = Category.GetByType((int)Model.ArticleTypeId, SiteConfig.LanguageId, 0, CategoryFlags.NEW, 0);
+    <div class="box-home2 box-project-home">
+        <div class="container">
+            <h2 class="heading">
+                <a href="@Url.Action("Index", "ArticleType", new { code = type.UrlFriendly })">
+                    @Model.Title
+                </a>
+                <span>Một số dự án tiêu biểu gần đây của công ty</span>
+            </h2>
+            @*<ul class="box-cate">
+                    @foreach (var item in cate_lst)
+                    {
+                        <li>
+                            <h3 class="meta">
+                                <a href="@Url.Action("Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.CategoryName">@item.CategoryName</a>
+                            </h3>
+                        </li>
+                    }
+                </ul>*@
+            <div class="content">
+                <div class="row">
+                    @foreach (var item in art_list.List)
+                    {
+                        <div class="col-md-3 col-sm-6 col-xs-6">
+                            <div class="box-block box-product">
+                                @if (!Model.HiddenImage)
+                                {
+                                    <figure>
+                                        <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                                            @Html.Image(item.ImageUrl, new ImageOptions { Width = 270, Height = 200, Watermark = SiteConfig.Watermark, Mode = ImageMode.crop, Lazy = false }, new { alt = item.ArticleName })
+                                        </a>
+                                        @*<div class="detail">
+                                                <div class="border">
+                                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })">
+                                                        @Html.Locale("view_detail")
+                                                    </a>
+                                                </div>
+                                            </div>*@
+                                    </figure>
+                                }
+                                <div class="meta">
+                                    <h3>
+                                        <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">@item.ArticleName</a>
+                                    </h3>
+                                    @if (Model.ShowDescription)
+                                    {
+                                        <div class="s-desc">
+                                            @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, 30))
+                                        </div>
+                                    }
+                                    @*<div class="price-all pull-left">
+                                            @if (item.DiscountPrice > 0)
+                                            {
+                                                <span class="price">@Html.DiscountPrice(item.ItemPrice)</span>
+                                                <span class="price-old">@Html.Price(item.ItemPrice)</span>
+                                            }
+                                            else
+                                            {
+                                                <a href="@Url.Action("Contact", "Home", new { id = item.Id })">
+                                                    <span class="price">@Html.Locale("price"): @Html.Price(item.ItemPrice)</span>
+                                                </a>
+                                            }
+                                        </div>*@
+                                    @*<div class="action pull-right">
+                                            @if (item.Price > 0)
+                                            {
+                                                <a href="@Url.Action("AddToCart", "ShoppingCart", new { id = item.Id })" class="cart" rel="nofollow">
+                                                    @Html.Locale("cart_checkout")
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <a href="@Url.Action("Contact", "Home", new { id=item.Id})" class="cart" rel="nofollow">@Html.Locale("contact")</a>
+                                            }
+                                        </div>*@
+                                    <div class="view-detail">
+                                        <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.ArticleTypeDetail[SiteConfig.LanguageId].UrlFriendly, title = item.UrlFriendly })" title="Xem chi tiết">
+                                            @Html.Locale("view_more")@*<i class="fa fa-plus"></i>*@
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                @*<div class="view-more">
+                    <a href="@Url.Action("Index", "ArticleType", new { code = type.UrlFriendly })">
+                        <span>Xem thêm</span>
+                    </a>
+                </div>*@
+            </div>
+        </div>
+    </div>
+}
+

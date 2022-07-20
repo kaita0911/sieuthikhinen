@@ -1,0 +1,9 @@
+﻿@Html.Image(SiteConfig.Image("loading.gif"), new ImageOptions { Width = 400, Height = 400, Lazy = false } )
+<script language="javascript" type="text/javascript">
+    checkURL();
+    function checkURL() {
+        var url = window.location.href;
+        if (url.indexOf("#access_token") > 0)
+            window.location = url.replace("#access_token", "access_token");
+    }
+</script>

@@ -1,0 +1,18 @@
+﻿@model ICollection<Article>
+<div class="news-list">
+    @foreach (var item in Model)
+    {
+        <div class="news-item clear-fix">
+            <div class="img">
+               <a href="@Url.Action("Detail","Article",new{id = item.Id, code=item.ArticleType.UrlFriendly, title =  Unichar.UnicodeStrings.UrlString( item.ArticleName)})" >
+                   <img src="@Url.Content("~/UserUpload/Article/")@item.ImageUrl?width=160" alt="@item.ArticleName" /></a>
+            </div>
+            <div class="name">
+                @Html.ActionLink(item.ArticleName,"Detail","Article",new{id=item.Id, code=item.ArticleType.UrlFriendly, title =  Unichar.UnicodeStrings.UrlString( item.ArticleName)},null)
+            </div>
+            <div class="headline">
+                @Html.Raw(VNS.Web.Helpers.HTMLHelper.GetInnerText(item.ShortDescription))
+            </div>
+        </div>
+    }
+</div>

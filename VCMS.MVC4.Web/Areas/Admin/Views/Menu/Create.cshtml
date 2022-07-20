@@ -1,0 +1,95 @@
+﻿@using VCMS.MVC4.Data
+@using VCMS.MVC4.Web
+@model VCMS.MVC4.Data.MenuItem
+
+@{
+    ViewBag.Title = "Tạo mới menu";
+    ViewBag.Breadcrumb = new BreadcrumbModel()
+    {
+        Items = new List<BreadcrumbItem>()
+        {
+            new BreadcrumbItem(){Url = Url.Action("Index","Home"), Text="Home", IsFirst=true},
+            new BreadcrumbItem(){Url = Url.Action("Index","Menu"), Text="Quản lý menu"},
+            new BreadcrumbItem(){Url = null, Text="Tạo mới menu"},
+        }
+    };
+    var selectList = (SelectList)ViewBag.ArticleTypeList;
+}
+
+@Styles.Render("~/Content/themes/base/css")
+<div class="form">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+        <fieldset>
+            <legend>Menu</legend>
+            @Html.HiddenFor(model => model.WebsiteId, new { value = 1 })
+            <div class="editor-field">
+                @foreach (var item in SiteConfig.Languages)
+                {
+                    @Html.Label("Tiêu đề - " + item.DisplayName)
+                    @Html.TextBox("txtName" + item.Id.ToString(), Model.MenuItemDetail[item.Id] == null ? "" : Model.MenuItemDetail[item.Id].Text)
+                }
+            </div>
+            <div class="editor-field">
+                @Html.Label("Thứ tự")
+                @Html.TextBoxFor(model => model.SortOrder)
+            </div>
+            <div class="editor-field chose">
+                @Html.Label("Loại trang", new { @class = "block" })
+                <label class="radio">@Html.RadioButtonFor(model => model.ItemType, MenuItemType.LINK)<i></i> Link</label>
+                <label class="radio">@Html.RadioButtonFor(model => model.ItemType, MenuItemType.MODULE)<i></i> Loại bài viết</label>
+            </div>
+            <div class="link">
+                <div class="editor-field">
+                    @Html.Label("Liên kết")
+                    @Html.TextBoxFor(model => model.Url, new { placeholder = "http://" })
+                </div>
+            </div>
+            <div class="module" style="display:none">
+                <div class="editor-field">
+                    @Html.Label("Loại bài viết", new { @class = "block" })
+                    @Html.DropDownListFor(model => model.ArticleTypeId, selectList, new { @class = "form-control mg-bottom-10" })
+                </div>
+                <div class="editor-field">
+                    <ul>
+                        <li><label class="checkbox">@Html.CheckBoxFor(model => model.HasSubMenu)<i></i> Có menu con</label></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="editor-field">
+                @Html.Label("Icon")
+                @Html.TextBoxFor(model => model.Icon)
+            </div>
+            <div class="toolbar">
+                <span class="button">
+                    <button type="submit" class="btn save"><i class="fa fa-save"></i> <span>Lưu</span></button>
+                </span>
+                <span class="btn back">
+                    <a href="@Url.Action("Index",null,null)">
+                        <i class="fa fa-mail-reply"></i> <span>Huỷ</span>
+                    </a>
+                </span>
+            </div>
+        </fieldset>
+    }
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryui")
+    <script>
+        $(function () {
+            $("input[type=radio]").change(function () {
+                if ($(this).val().toLocaleLowerCase() == "module") {
+                    $("div.link").hide();
+                    $("div.module").show();
+                }
+                else {
+                    $("div.link").show();
+                    $("div.module").hide();
+                }
+            })
+        })
+    </script>
+}

@@ -1,0 +1,137 @@
+﻿@model ArticleResult
+@{
+    var db = new DataContext();
+    var allcount = (int)ViewBag.AllCount;
+    var newcount = (int)ViewBag.NewCount;
+    var hotcount = (int)ViewBag.HotCount;
+    var flag = ViewContext.RouteData.Values["flag"] != null ? ViewContext.RouteData.Values["flag"].ToString() : "active";
+    
+    if (flag == "hot")
+    {
+        ViewBag.Title = Html.Locale("filter_discount");
+    }
+    else if(flag=="new")
+    {
+        ViewBag.Title = Html.Locale("filter_gift");
+    }
+    else
+    {
+        ViewBag.Title = Html.Locale("heading_all");
+    }
+    <div class="clearfix"></div>
+    <div class="container">
+        @Html.Partial("_Filter")
+        <div class="filter-article">
+            <div class="left">
+                @*<a href="@Url.Action("ProductAttribute", "Article", new { flag = ArticleFlags.ACTIVE.ToString().ToLower(), title = Unichar.UnicodeStrings.UrlString(Html.Locale("heading_all").ToHtmlString()) })" title="" class="@(flag == "active" ? "active" : "")">
+                    @Html.Locale("heading_all") <span>(@allcount)</span>
+                </a>*@
+                @if (newcount > 0)
+                {
+                    <a href="@Url.Action("ProductAttribute", "Article", new { flag = ArticleFlags.NEW.ToString().ToLower(), title = Unichar.UnicodeStrings.UrlString(Html.Locale("filter_gift").ToHtmlString()) })" title="" class="@(flag == "new" ? "active" : "")">
+                        @Html.Locale("filter_gift") <span>(@newcount)</span>
+                    </a>
+                }
+                @if (hotcount > 0)
+                {
+                    <a href="@Url.Action("ProductAttribute", "Article", new { flag = ArticleFlags.HOT.ToString().ToLower(), title = Unichar.UnicodeStrings.UrlString(Html.Locale("filter_discount").ToHtmlString()) })" title="" class="@(flag == "hot" ? "active" : "")">
+                        @Html.Locale("filter_discount") <span>(@hotcount)</span>
+                    </a>
+                }
+            </div>
+            <div class="right">
+                <a href="javascript:void(0)">@Html.Locale("heading_filter")</a>
+                @if (Request["sortorder"] != null && Request["sortorder"].Equals("ARTICLE_NAME", StringComparison.OrdinalIgnoreCase) && Request["sortdirection"].Equals("ASCENDING", StringComparison.OrdinalIgnoreCase))
+                {
+                    <a href="@Html.FilterLinkString(new { sortorder = ArticleSortOrder.ARTICLE_NAME, sortdirection = VCMS.MVC4.Data.SortDirection.DESCENDING })">
+                        @Html.Locale("heading_filter_name").ToHtmlString()
+                        <i class="fa fa-caret-up @(Request["sortorder"].Equals("ARTICLE_NAME", StringComparison.OrdinalIgnoreCase) ? "active" : "")"></i>
+                    </a>
+
+                }
+                else
+                {
+                    <a href="@Html.FilterLinkString(new { sortorder = ArticleSortOrder.ARTICLE_NAME, sortdirection = VCMS.MVC4.Data.SortDirection.ASCENDING })">
+                        @Html.Locale("heading_filter_name").ToHtmlString()
+                        <i class="fa @(Request["sortorder"] != null ? (Request["sortdirection"].Equals("DESCENDING", StringComparison.OrdinalIgnoreCase) && Request["sortorder"].Equals("ARTICLE_NAME", StringComparison.OrdinalIgnoreCase) ? "fa-caret-down active" : "fa-caret-up") : "fa-caret-up")"></i>
+                    </a>
+                }
+                @if (Request["sortorder"] != null && Request["sortorder"].Equals("PRICE", StringComparison.OrdinalIgnoreCase) && Request["sortdirection"].Equals("ASCENDING", StringComparison.OrdinalIgnoreCase))
+                {
+                    <a href="@Html.FilterLinkString(new { sortorder = ArticleSortOrder.PRICE, sortdirection = VCMS.MVC4.Data.SortDirection.DESCENDING })">
+                        @Html.Locale("heading_filter_price").ToHtmlString()
+                        <i class="fa fa-caret-up @(Request["sortorder"].Equals("PRICE", StringComparison.OrdinalIgnoreCase) ? "active" : "")"></i>
+                    </a>
+
+                }
+                else
+                {
+                    <a href="@Html.FilterLinkString(new { sortorder = ArticleSortOrder.PRICE, sortdirection = VCMS.MVC4.Data.SortDirection.ASCENDING })">
+                        @Html.Locale("heading_filter_price").ToHtmlString()
+                        <i class="fa @(Request["sortorder"] != null ? (Request["sortdirection"].Equals("DESCENDING", StringComparison.OrdinalIgnoreCase) && Request["sortorder"].Equals("PRICE", StringComparison.OrdinalIgnoreCase) ? "fa-caret-down active" : "fa-caret-up") : "fa-caret-up")"></i>
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="content-background">
+        <div class="container">
+            @if (Model.List.Count > 0)
+            {
+                <h1 class="hidden">@(ViewBag.Title != null ? ViewBag.Title : Model.List.FirstOrDefault().ArticleType.Name)</h1>
+                <div class="row product-row">
+                    @foreach (var item in Model.List)
+                    {
+                        var size = item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("Size", StringComparison.OrdinalIgnoreCase));
+                        var strength = item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("Strength", StringComparison.OrdinalIgnoreCase));
+                        <div class="col-md-3 col-sm-4 col-xs-6">
+                            <article class="box-block box-product">
+                                <figure class="">
+                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                        @Html.Image(item.ImageUrl, new ImageOptions { Width = 337, Height = 298, Watermark = SiteConfig.Watermark }, new { alt = item.ArticleName })
+                                    </a>
+                                </figure>
+                                <div class="meta">
+                                    <div class="infos">
+                                        <h3>
+                                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })">@item.ArticleName</a>
+                                        </h3>
+                                        <span class="info">@(size!=null? size.Value:"") / @(strength!=null?strength.Value:"")</span>
+                                    </div>
+                                    @if (item.ArticleType.ShowDescription)
+                                    {
+                                        <div class="description">
+                                            @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, 20))
+                                        </div>
+                                    }
+                                    <div class="price-all">
+                                        <span class="price">@Html.Price(item.ItemPrice)</span>
+                                    </div>
+                                    @if (item.ArticleType.ShowActionLink)
+                                    {
+                                        <div class="action">
+                                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" class="">@Html.Locale("view_detail")</a>
+                                        </div>
+                                    }
+                                </div>
+
+                            </article>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <span>@Html.Locale("article_null")</span>
+            }
+        </div>
+    </div>
+    <div class="pagers">
+        <div class="container">
+            <div class="count pull-left hidden-xs">
+                @string.Format(Html.Locale("page_count").ToHtmlString(), (Model.PageSize * Model.PageIndex) < Model.TotalItemCount ? (Model.PageSize * Model.PageIndex) : Model.TotalItemCount, Model.TotalItemCount, Model.TotalItemCount)
+            </div>
+            @Html.Pager(new PagerOptions { VisibleItemCount = 5, ItemCount = Model.TotalItemCount, PageSize = Model.PageSize, FirstText = Html.Locale("text_first").ToHtmlString(), LastText = Html.Locale("text_last").ToHtmlString() }, null)
+        </div>
+    </div>
+}

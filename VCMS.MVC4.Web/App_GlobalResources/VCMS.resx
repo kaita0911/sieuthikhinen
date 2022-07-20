@@ -1,0 +1,395 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="about" xml:space="preserve">
+    <value>Giới thiệu </value>
+  </data>
+  <data name="address" xml:space="preserve">
+    <value>Địa chỉ</value>
+  </data>
+  <data name="addtocart" xml:space="preserve">
+    <value>Giỏ hàng của bạn </value>
+  </data>
+  <data name="all" xml:space="preserve">
+    <value> Tất cả sản phẩm</value>
+  </data>
+  <data name="attachment" xml:space="preserve">
+    <value>Hướng dẫn sử dụng</value>
+  </data>
+  <data name="attachment_download" xml:space="preserve">
+    <value>Download file hướng dẫn sử dụng </value>
+  </data>
+  <data name="bill" xml:space="preserve">
+    <value>Xem lại hóa đơn</value>
+  </data>
+  <data name="body" xml:space="preserve">
+    <value>Vui lòng để lại thông tin</value>
+  </data>
+  <data name="code" xml:space="preserve">
+    <value>Mã</value>
+  </data>
+  <data name="coffeebeans" xml:space="preserve">
+    <value>Cà phê nhân</value>
+  </data>
+  <data name="coffeeexpo" xml:space="preserve">
+    <value>Cà phê xuất khẩu</value>
+  </data>
+  <data name="coffeefa" xml:space="preserve">
+    <value>Cà phê gia đình</value>
+  </data>
+  <data name="coffeegif" xml:space="preserve">
+    <value>Cà phê làm quà biếu</value>
+  </data>
+  <data name="coffeewho" xml:space="preserve">
+    <value>Cà phê bán sỉ nội địa</value>
+  </data>
+  <data name="company" xml:space="preserve">
+    <value>Công ty</value>
+  </data>
+  <data name="contact" xml:space="preserve">
+    <value>Liên hệ</value>
+  </data>
+  <data name="contact_response_failed" xml:space="preserve">
+    <value>Đã có lỗi xảy ra, vui lòng thử lại sau.</value>
+  </data>
+  <data name="contact_response_ok" xml:space="preserve">
+    <value>Cảm ơn bạn đã liên hệ với chúng tôi. Mọi thông tin, câu hỏi sẽ được hồi đáp trong thời gian sớm nhất có thể.</value>
+  </data>
+  <data name="dola" xml:space="preserve">
+    <value>VNĐ</value>
+  </data>
+  <data name="home" xml:space="preserve">
+    <value>Trang chủ</value>
+  </data>
+  <data name="infocoffee" xml:space="preserve">
+    <value>Thông tin cà phê</value>
+  </data>
+  <data name="name" xml:space="preserve">
+    <value>Họ &amp; tên</value>
+  </data>
+  <data name="news" xml:space="preserve">
+    <value>Tin tức</value>
+  </data>
+  <data name="order" xml:space="preserve">
+    <value>Đặt hàng</value>
+  </data>
+  <data name="order_form" xml:space="preserve">
+    <value>Đặt hàng</value>
+  </data>
+  <data name="other" xml:space="preserve">
+    <value>{0} khác</value>
+  </data>
+  <data name="phone" xml:space="preserve">
+    <value>Điện thoại</value>
+  </data>
+  <data name="price" xml:space="preserve">
+    <value>Giá</value>
+  </data>
+  <data name="readmore" xml:space="preserve">
+    <value>Xem tiếp</value>
+  </data>
+  <data name="required" xml:space="preserve">
+    <value>không được để trống</value>
+  </data>
+  <data name="subject" xml:space="preserve">
+    <value>Chủ đề</value>
+  </data>
+  <data name="taiwan" xml:space="preserve">
+    <value>Trà oolong</value>
+  </data>
+  <data name="viewall" xml:space="preserve">
+    <value>&gt;&gt; Xem tất cả</value>
+  </data>
+  <data name="viewDetail" xml:space="preserve">
+    <value>Xem chi tiết</value>
+  </data>
+  <data name="cart" xml:space="preserve">
+    <value>Giỏ hàng</value>
+  </data>
+  <data name="detail" xml:space="preserve">
+    <value>Chi tiết</value>
+  </data>
+  <data name="advert" xml:space="preserve">
+    <value>BARISTA VIỆT NAM QUẢNG CÁO</value>
+  </data>
+  <data name="cart1" xml:space="preserve">
+    <value>Thêm vào giỏ</value>
+  </data>
+  <data name="money" xml:space="preserve">
+    <value>Thành tiền</value>
+  </data>
+  <data name="num" xml:space="preserve">
+    <value>Số lượng</value>
+  </data>
+  <data name="pri" xml:space="preserve">
+    <value>Đơn giá</value>
+  </data>
+  <data name="product" xml:space="preserve">
+    <value>Sản phẩm</value>
+  </data>
+  <data name="sitemap" xml:space="preserve">
+    <value>Sơ đồ website</value>
+  </data>
+  <data name="sum" xml:space="preserve">
+    <value>Tổng tiền</value>
+  </data>
+  <data name="F_Projects" xml:space="preserve">
+    <value>Sản phẩm nổi bật</value>
+  </data>
+  <data name="Key" xml:space="preserve">
+    <value>Từ khóa</value>
+  </data>
+  <data name="View_Project" xml:space="preserve">
+    <value>Xem thêm &gt;</value>
+  </data>
+  <data name="hight_product" xml:space="preserve">
+    <value>Sản phẩm nổi bật</value>
+  </data>
+  <data name="news1" xml:space="preserve">
+    <value>Tin tức mới</value>
+  </data>
+  <data name="view" xml:space="preserve">
+    <value>Xem thêm</value>
+  </data>
+  <data name="com" xml:space="preserve">
+    <value>Đặt hàng thành công. Thông tin đặt hàng của quý sẽ được chúng tôi cập nhật sớm nhất và gửi cho quý khách trong thời gian sớm nhất . Cám ơn quý khách đã mua hàng tại website của chúng tôi.</value>
+  </data>
+  <data name="ca" xml:space="preserve">
+    <value>Giỏ hàng</value>
+  </data>
+  <data name="check" xml:space="preserve">
+    <value>Đặt hàng</value>
+  </data>
+  <data name="navi" xml:space="preserve">
+    <value>Mục chính</value>
+  </data>
+  <data name="catalog" xml:space="preserve">
+    <value>Danh mục sản phẩm</value>
+  </data>
+  <data name="keyword" xml:space="preserve">
+    <value>Nhập từ khóa</value>
+  </data>
+  <data name="ac" xml:space="preserve">
+    <value>Người truy cập</value>
+  </data>
+  <data name="online" xml:space="preserve">
+    <value>Đang trực tuyến </value>
+  </data>
+  <data name="sup_online" xml:space="preserve">
+    <value>Hỗ trợ trực tuyến</value>
+  </data>
+  <data name="visitor" xml:space="preserve">
+    <value>Thống kê truy cập</value>
+  </data>
+  <data name="barista" xml:space="preserve">
+    <value>BARISTA VIỆT NAM</value>
+  </data>
+  <data name="e" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="f" xml:space="preserve">
+    <value>Fax</value>
+  </data>
+  <data name="c" xml:space="preserve">
+    <value>.</value>
+  </data>
+  <data name="update" xml:space="preserve">
+    <value>Cập nhật</value>
+  </data>
+  <data name="ff" xml:space="preserve">
+    <value>Tên</value>
+  </data>
+  <data name="g" xml:space="preserve">
+    <value>Gửi</value>
+  </data>
+  <data name="n" xml:space="preserve">
+    <value>họ</value>
+  </data>
+  <data name="catalogue" xml:space="preserve">
+    <value>Catalogue</value>
+  </data>
+  <data name="category" xml:space="preserve">
+    <value>Danh mục sản phẩm</value>
+  </data>
+  <data name="clickview" xml:space="preserve">
+    <value>Nhấp vào để xem</value>
+  </data>
+  <data name="pricelist" xml:space="preserve">
+    <value>Bảng giá</value>
+  </data>
+  <data name="city" xml:space="preserve">
+    <value>Tỉnh/TP</value>
+  </data>
+  <data name="country" xml:space="preserve">
+    <value>Quốc gia</value>
+  </data>
+  <data name="zcode" xml:space="preserve">
+    <value>Zip Code</value>
+  </data>
+  <data name="delete" xml:space="preserve">
+    <value>Xóa</value>
+  </data>
+  <data name="notecheck" xml:space="preserve">
+    <value>Trường hợp khách hàng yêu cầu giao hàng ra nước ngoài và ngoài tỉnh, vui lòng liên lạc trực tiếp với Á Châu qua &lt;br /&gt;Email: e-store@capheachau.com.vn, để được thông tin về phí vận chuyển &amp; thời điểm nhận hàng.&lt;br /&gt;
+Thông tin chuyển khoản: &lt;br /&gt;
+Chủ TK:  Đàm Công Tiến&lt;br /&gt;
+Số TK:  0600 514 04 796&lt;br /&gt;
+Tại ngân hàng Sacombank - CN Bình Tân-Tp.HCM
+ &lt;br /&gt; &lt;br /&gt;
+Chủ TK:  Đàm Công Tiến&lt;br /&gt;
+Số TK:  140 860 159&lt;br /&gt;
+Tại ngân hàng ACB - PGD Tân Sơn Nhì</value>
+  </data>
+  <data name="ds" xml:space="preserve">
+    <value>Danh sách nhóm</value>
+  </data>
+  <data name="found" xml:space="preserve">
+    <value>Khu vực tìm</value>
+  </data>
+  <data name="lost" xml:space="preserve">
+    <value>Khu vực mất</value>
+  </data>
+  <data name="customer_consulting" xml:space="preserve">
+    <value>Tư vấn khách hàng</value>
+  </data>
+  <data name="free_delivery" xml:space="preserve">
+    <value>Giao hàng miễn phí</value>
+  </data>
+  <data name="branch" xml:space="preserve">
+    <value>Chi nhánh miền nam</value>
+  </data>
+  <data name="cancel" xml:space="preserve">
+    <value>Hủy</value>
+  </data>
+  <data name="conus" xml:space="preserve">
+    <value>Liên hệ</value>
+  </data>
+  <data name="inf" xml:space="preserve">
+    <value>Vui lòng điền vào mẫu dưới đây khi bạn có bất kỳ yêu cầu hay góp ý nào.</value>
+  </data>
+  <data name="send" xml:space="preserve">
+    <value>Gởi</value>
+  </data>
+  <data name="new_product" xml:space="preserve">
+    <value>Sản phẩm mới</value>
+  </data>
+  <data name="search" xml:space="preserve">
+    <value>Từ khóa</value>
+  </data>
+</root>

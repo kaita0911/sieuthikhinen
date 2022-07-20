@@ -1,0 +1,221 @@
+﻿@model Order
+@{
+    ViewBag.Title = "In hóa đơn";
+    Layout = null;
+    var db = new DataContext();
+    var user = db.Users.FirstOrDefault(a => a.UserId == Model.CustomerId);
+    decimal total = 0;
+    var i = 1;
+    decimal qyt = 0;
+}
+<!DOCTYPE html>
+<html lang="en" id="print">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title - VCMS Administrator</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width" />
+    @Styles.Render("~/Content/admincss")
+    @Scripts.Render("~/bundles/jquery")
+</head>
+<body class="print">
+    <div class="container">
+        <div class="logo">
+            @Html.Image(SiteConfig.Image("logo.png"), new ImageOptions { Width = 220, Height = 36, Lazy = false }, new { alt = SiteConfig.SiteInfo.Title })
+        </div>
+        <div class="clearfix"></div>
+        <div class="row" style="margin-bottom:50px;">
+            <div class="col-xs-6">
+                <div class="order-customner-info">
+                    <h4><span>Thông tin khách hàng</span></h4>
+                    @if (user != null)
+                    {
+                        <div>[N]: @user.DisplayName</div>
+                        <div>[E]: @user.Email</div>
+                        <div>[P]: @user.Phone</div>
+                        <div>[A]: @user.Address</div>
+                        @*<div>[C]: @user.NameCity</div>
+                        <div>[S]: @user.NameState</div>*@
+                    }
+                    else
+                    {
+                        <div>[N]: @Model.FullName</div>
+                        <div>[E]: @Model.Email</div>
+                        <div>[P]: @Model.Phone</div>
+                        <div>[A]: @Model.Address</div>
+                        @*<div>[C]: @Model.NameCity</div>
+                        <div>[S]: @Model.NameState</div>*@
+                    }
+                </div>
+            </div>
+            <div class="col-xs-6">
+                <div class="order-print-info">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <label>Mã hóa đơn:</label>
+                            <label>Ngày đặt hàng:</label>
+                            @*<label>Ngày giao hàng:</label>*@
+                            <label>Số lượng:</label>
+                            <label>Thành tiền:</label>
+                            @if (Model.HasPayment)
+                            {
+                                <label>Hình thức thanh toán:</label>
+                            }
+                        </div>
+                        <div class="col-xs-6">
+                            <span>#@Model.OrderNumber</span>
+                            <span>@Model.DateCreated</span>
+                            @*<span>@Model.DateDelivery.Value.ToShortDateString(), @Model.TimeShipping</span>*@
+                            <span>@Model.TotalQty</span>
+                            <span>@Html.Amount(Model.TotalAmount + Model.Ttt)</span>
+                            @*<span>@Html.Amount(Model.TotalAmount + Model.AmountShipping)</span>*@
+                            @if (Model.HasPayment)
+                            {
+                                <span>@Html.Locale("checkout_payment_bank")</span>
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <table class="table-print table tb-order" style="border: 1px solid #ddd;">
+            <thead class="header">
+                <tr class="header">
+                    <th class="check">STT</th>
+                    <th class="title">Sản phẩm</th>
+                    <th class="check text-center nowarp">Số lượng</th>
+                    <th class="check text-right nowarp">Đơn giá</th>
+                    <th class="check text-right nowarp">Thành tiền</th>
+                    <th class="check text-right nowarp">Tình trạng</th>
+                </tr>
+            </thead>
+            <tbody class="items">
+                @foreach (var item in Model.OrderLines)
+                {
+                    if (item.NumberPr >= item.Qty || item.NumberPr == 0)
+                    {
+                <tr class="item">
+                    <td class="check">@i</td>
+                    <td class="title">@item.ProductName</td>
+                    <td class="check text-center nowarp">@item.Qty</td>
+                    <td class="check text-right nowarp">@Html.Amount(item.UnitPrice)</td>
+                    <td class="check text-right nowarp">@Html.Amount(item.Amount)</td>
+                    @if (item.NumberPr == 0)
+                    {
+                        <td class="total text-right">Chờ @item.Thoigiancho</td>
+                    }
+                    else
+                    {
+                        <td class="total text-right">Có sẵn</td>
+                    }
+                </tr>
+                    }
+                    else
+                    {
+                        var dus = item.Qty - item.NumberPr;
+                        <tr class="item">
+                            <td class="check">@i</td>
+                            <td class="title">@item.ProductName</td>
+                            <td class="check text-center nowarp">@item.NumberPr</td>
+                            <td class="check text-right nowarp">@Html.Amount(item.UnitPrice)</td>
+                            <td class="check text-right nowarp">@Html.Amount(item.UnitPrice * (int)item.NumberPr)</td>
+                            <td class="check text-right nowarp">Có sẵn</td>
+                        </tr>
+                        <tr class="item">
+                            <td class="check">@i</td>
+                            <td class="title">@item.ProductName</td>
+                            <td class="check text-center nowarp">@dus</td>
+                            <td class="check text-right nowarp">@Html.Amount(item.UnitPrice)</td>
+                            <td class="check text-right nowarp">@Html.Amount(item.UnitPrice * (int)dus)</td>
+                            <td class="check text-right nowarp">Chờ @item.Thoigiancho </td>
+                        </tr>
+                    }
+                    qyt += item.Qty;
+                    total += item.Amount;
+                    i++;
+                }
+            </tbody>
+            <tfoot>
+                @if (SiteConfig.SiteInfo.HasShoppingCart && SiteConfig.SiteInfo.AmountShippingToFree > 0)
+                {
+                    <tr>
+                        <td class="total text-right" colspan="4">@Html.Locale("cart_total"):</td>
+                        <td class="text-right">@Html.Amount(total)</td>
+                    </tr>
+                    <tr>
+                        <td class="total text-right" colspan="4">Phí vận chuyển:</td>
+                        <td class="text-right">
+                            @if (total >= SiteConfig.SiteInfo.AmountShippingToFree)
+                            {
+                                <span>@Html.Locale("cart_shipping_amount_free")</span>
+                            }
+                            else
+                            {
+                                <span>@Html.Amount(Model.AmountShipping)</span>
+                            }
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td class="total text-right" colspan="5">@Html.Locale("cart_qty"):</td>
+                    <td class="text-right">@Model.TotalQty</td>
+                </tr>
+                <tr>
+                    <td class="total text-right" colspan="5">@Html.Locale("cart_total_amount")</td>
+                    <td class="text-right nowarp">@Html.Amount(Model.TotalAmount)</td>
+                </tr>
+                <tr>
+                    <td class="total text-right" colspan="5">VAT 10%</td>
+                    <td class="text-right nowarp">@Html.Amount(Model.Ttt)</td>
+                </tr>
+                <tr>
+                    <td class="total text-right" colspan="5">Thành tiền</td>
+                    <td class="text-right nowarp">@Html.Amount(Model.TotalAmount + Model.Ttt)</td>
+                </tr>
+            </tfoot>
+        </table>
+        <div class="clearfix"></div>
+        @if (user != null)
+        {
+            <div class="order-shipper-info row" style="margin-bottom:15px;">
+                <h4 class="col-xs-12"><span>Địa chỉ giao hàng:</span></h4>
+                <div class="col-xs-12">Tên: @user.DisplayName</div>
+                <div class="col-xs-12">Địa chỉ: @user.Address</div>
+                <div class="col-xs-12">Email: @user.Email</div>
+                @*<div class="col-xs-7">Tỉnh/Thành phố: @user.NameCity</div>*@
+                <div class="col-xs-12">Điện thoại: @user.Phone</div>
+                @*<div class="col-xs-7">Quận/Huyện: @user.NameState</div>*@
+            </div>
+        }
+        else
+        {
+            <div class="order-shipper-info row" style="margin-bottom:15px;">
+                <h4 class="col-xs-12"><span>Địa chỉ giao hàng:</span></h4>
+                <div class="col-xs-12">Tên: @Model.FullName</div>
+                <div class="col-xs-12">Địa chỉ: @Model.Address</div>
+                <div class="col-xs-12">Email: @Model.Email</div>
+                @*<div class="col-xs-7">Tỉnh/Thành phố: @Model.NameCity</div>*@
+                <div class="col-xs-12">Điện thoại: @Model.Phone</div>
+                @*<div class="col-xs-7">Quận/Huyện: @Model.NameState</div>*@
+            </div>
+        }
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="col-xs-6 text-left">
+                <div>
+                    .......... Ngày .... Tháng .... Năm ......
+                </div>
+                <div style="padding-left: 60px;">Khách hàng</div>
+            </div>
+            <div class="col-xs-6 text-right">
+                <div>
+                    .......... Ngày .... Tháng .... Năm ......
+                </div>
+               
+            </div>
+        </div>
+    </div>
+</body>
+</html>

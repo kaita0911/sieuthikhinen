@@ -1,0 +1,24 @@
+﻿<section id="header">
+    <div class="container">
+        <div class="logo">
+            <a href="@Url.Action("Index","Home")">
+                <img src="@Url.Content("~/Templates/"+ SiteConfig.SiteCode +"/Content/images/logo.png")" />
+            </a>
+        </div>
+        <div class="title">
+            <a href="@Url.Action("Index","Home")">
+                <img src="@Url.Content("~/Templates/" + SiteConfig.SiteCode + "/Content/images/header-title.png")" />
+            </a>
+        </div>
+        <div class="header-right visible-lg">
+            @Html.Partial("_LRSocial")
+            @Html.Partial("_ShopCart")
+            <span class="line">|</span><div class="hot-line">
+                <span class="lbl">Tư vấn miễn phí</span> <span class="ctn-247"> 24/7: </span> <span class="ctn">@SiteConfig.SiteInfo.Hotline</span>
+            </div>
+            @*<div class="info">
+                    <a href="" class="fb"></a><a href="@Url.Action("Contact","Home")" class="mail"></a><span class="mail">@SiteConfig.SiteInfo.Email</span>
+                </div>*@
+        </div>
+    </div>
+</section>

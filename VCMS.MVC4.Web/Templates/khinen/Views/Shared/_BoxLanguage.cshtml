@@ -1,0 +1,9 @@
+﻿@using VCMS.MVC4.Web
+@{
+    var i = 1;
+    foreach (var item in SiteConfig.Languages)
+    {
+        <a href="@Url.Action("Index","Language",new {id=item.Id})" class="lg-@i"></a>
+        i++;
+    }
+}

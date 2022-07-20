@@ -1,0 +1,63 @@
+﻿@model ArticleResult
+@if (Model.List.Count > 0)
+{
+    var lstCate = Category.GetByType(6, SiteConfig.SiteId, SiteConfig.LanguageId);
+    var temp = Article.GetByCategories(lstCate.Select(c => c.Id).ToArray(), SiteConfig.LanguageId, ArticleFlags.ACTIVE, 3, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING);
+    var type = ViewBag.Type != null ? ViewBag.Type as ArticleType : lstCate.FirstOrDefault().ArticleType;
+
+    <div class="box-product-home-cate article content-background article-list">
+        <div class="content">
+            @foreach (var sitem in lstCate)
+            {
+                var lst = temp.Where(a => a.CurrentCategory.Id == sitem.Id).ToList();
+                <div class="citem">
+                    <h3 class="c-header mg-bottom-15">
+                        <a class="left" href="@Url.Action("Detail", "Category", new {id=sitem.Id,code=sitem.ArticleType.UrlFriendly,title=Unichar.UnicodeStrings.UrlString(sitem.CategoryName) })">
+                            @sitem.CategoryName
+                        </a>
+                        <a class="right"></a>
+                    </h3>
+                    <div class="art-content">
+                        @foreach (var item in lst)
+                        {
+                            <div class="item">
+                                <div class="row">
+                                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                                        @if (type.ShowImageInList)
+                                        {
+                                            <figure>
+                                                <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                                    @Html.Image(item.ImageUrl, new ImageOptions { Width = 337, Height = 200, Mode = ImageMode.crop }, new { alt = item.ArticleName, @class = "width-full" })
+                                                </a>
+                                            </figure>
+                                        }
+                                    </div>
+                                    <div class="col-lg-8 col-md-8 col-sm-6 col-xs-6">
+                                        <div class="meta">
+                                            <h3><a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.UrlFriendly) })" title="@item.ArticleDetail[SiteConfig.LanguageId].ArticleName">@item.ArticleDetail[SiteConfig.LanguageId].ArticleName</a></h3>
+                                            @if (type.ShowDateTime)
+                                            {
+                                                <span class="date">@item.Day</span>
+                                            }
+                                            @if (type.ShowDescription)
+                                            {
+                                                <div class="description">
+                                                    @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ArticleDetail[SiteConfig.LanguageId].ShortDesc, 50))
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+}
+else
+{
+    <span>@Html.Locale("article_null")</span>
+}

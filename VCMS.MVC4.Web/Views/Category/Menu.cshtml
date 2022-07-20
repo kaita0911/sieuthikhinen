@@ -1,0 +1,33 @@
+﻿@model ICollection<Category>
+@{
+    Layout = null;
+    var level0 = Model.Where(c => c.Level == 0).ToList();
+}
+<div class="box">
+    <div class="box-header"><span>Danh mục sản phẩm</span></div>
+    <div id="nav">
+        <ul class="top-level">
+            @foreach (var item in level0)
+            {
+                <li>@Html.ActionLink(item.CategoryName, "Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.CategoryName) }, null)
+                    @if (item.ChildrenCount > 0)
+                    {
+                        @Html.Partial("_Submenu", item) 
+                    }
+                </li> 
+            }
+        </ul>
+    </div>
+</div>
+<script>
+    $(function () {
+        $(".top-level li:has(ul.sub-level)").hover(
+           function () {
+                $(this).children("ul.sub-level").show();
+            },
+             function () {
+                $(this).children("ul.sub-level").hide();
+            }
+        );
+    });
+</script>

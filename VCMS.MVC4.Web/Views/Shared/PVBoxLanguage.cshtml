@@ -1,0 +1,16 @@
+﻿@using VCMS.MVC4.Web
+<div class="language-box float-right">
+    <ul class="languages">
+        @foreach (var item in SiteConfig.Languages)
+        {
+           <li> @Ajax.ActionLink(item.DisplayName,"Index","Language",new {id=item.Id},new AjaxOptions{OnSuccess="language_changed"},null)</li>
+        }
+    </ul>
+</div>
+<script>
+    function language_changed(data, status, xhr)
+    {
+      
+        window.location.href = data.url;
+    }
+</script>

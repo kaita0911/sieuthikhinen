@@ -1,0 +1,123 @@
+﻿@model IEnumerable<VCMS.MVC4.Data.UserProfile>
+
+@{
+    ViewBag.Title = "Danh sách người dùng";
+    ViewBag.Breadcrumb = new BreadcrumbModel()
+    {
+        Items = new List<BreadcrumbItem>()
+        {
+            new BreadcrumbItem(){Url = Url.Action("Index","Home"), Text="Home", IsFirst=true},
+            new BreadcrumbItem(){Url = null, Text="Quản lý người dùng",IsLast=true},
+        }
+    };
+    var role = "Super Administrators";
+    if (Request["role"] != null)
+    {
+        role = Request["role"].ToString();
+    }
+}
+
+<div class="btn-group">
+    @if (Roles.IsUserInRole("Super Administrators") || (Roles.IsUserInRole("Administrators") && role == "Moderators"))
+    {
+        <span class="btn create">
+            <a href="@Url.Action("Create", null, new { returnUrl = ViewContext.HttpContext.Request.Url.PathAndQuery,role=Request["role"] })"><i class="fa fa-plus"></i> <span class="hidden-xs">Thêm mới</span></a>
+        </span>
+    }
+    @if (Roles.IsUserInRole("Super Administrators") || Roles.IsUserInRole("Administrators") && Request["role"] != "Administrators" && Request["role"] != "")
+    {
+        <span class="btn delete">
+            <a href="javascript:void(0)" id="delete">
+                <i class="fa fa-trash-o"></i>
+                <span class="hidden-xs">Xóa</span>
+            </a>
+        </span>
+    }
+</div>
+@Html.Pager(new PagerOptions { ItemCount = ViewBag.ItemCount, VisibleItemCount = 5, PageSize = 20 }, null)
+<div class="tables">
+    <table class="table table-hover">
+        <thead class="header">
+            <tr>
+                @if ((Request["role"] != null && Request["role"] != "Guests") || (Roles.IsUserInRole("Super Administrators")))
+                {
+                    <th class="check">
+                        <label class="checkbox single noborder"><input type="checkbox" id="check-all" /><i></i></label>
+                    </th>
+                    <th class="name">
+                        @Html.Label("User name")
+                    </th>
+                    <th class="name hidden-xs">
+                        @Html.Label("Email")
+                    </th>
+                    <th class="date hidden-xs">
+                        @Html.Label("Date Created")
+                    </th>
+                    <th class="action">
+                        @Html.Label("Thao tác")
+                    </th>
+                }
+                else
+                {
+                    <th class="check">
+                        <label class="checkbox single noborder"><input type="checkbox" id="check-all" /><i></i></label>
+                    </th>
+                    <th class="name hidden-xs">
+                        @Html.Label("Email")
+                    </th>
+                    <th class="date hidden-xs">
+                        @Html.Label("Date Created")
+                    </th>
+                }
+            </tr>
+        </thead>
+        <tbody class="items">
+            @if ((Request["role"] != null && Request["role"] != "Guests") || (Roles.IsUserInRole("Super Administrators")))
+            {
+                foreach (var item in Model.Where(u => u.UserName != "visuckhoeviet"))
+                {
+                    <tr class="item">
+                        <td class="check">
+                            <label class="checkbox fix"><input type="checkbox" value="@item.UserId" /><i></i></label>
+                        </td>
+                        <td class="name">@Html.DisplayFor(modelItem => item.UserName)</td>
+                        <td class="name hidden-xs">@Html.DisplayFor(modelItem => item.Email)</td>
+                        <td class="date hidden-xs">@item.DateCreated.Value.ToString("dd-MM-yyyy HH:mm")</td>
+                        @if ((Request["role"] != null && Request["role"] != "Guests") || (Roles.IsUserInRole("Super Administrators")))
+                        {
+                            <td class="action">
+                                <a href="@Url.Action("Edit", null, new { id = item.UserId, returnUrl = ViewContext.HttpContext.Request.Url.PathAndQuery,role=Request["role"] })"><i class="fa fa-edit"></i> <span class="hidden-xs">Edit</span></a>
+                            </td>
+                        }
+                    </tr>
+                }
+            }
+            else
+            {
+                foreach (var item in Model)
+                {
+                    <tr class="item">
+                        <td class="check">
+                            <label class="checkbox fix"><input type="checkbox" value="@item.UserId" /><i></i></label>
+                        </td>
+                        <td class="name hidden-xs">@Html.DisplayFor(modelItem => item.Email)</td>
+                        <td class="date hidden-xs">@item.DateCreated.Value.ToString("dd-MM-yyyy HH:mm")</td>
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+</div>
+@section Scripts{
+    <script type="text/javascript">
+        $(function () {
+            $("#check-all").checkAll(".item .check input[type='checkbox']");
+            $("#delete").sdelete({
+                url: '@Url.Action("Delete")',
+                selector: ".item .check input[type='checkbox']",
+            });
+        })
+    </script>
+    <script src="@Url.Content("~/Scripts/jquery.simplepreview.js")"></script>
+}

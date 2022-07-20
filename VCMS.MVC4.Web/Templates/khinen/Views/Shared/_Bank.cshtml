@@ -1,0 +1,33 @@
+﻿@{
+    var article = Article.GetByTypeCode("BANK", SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 4, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.DESCENDING, ArticleIncludeFlags.PROPERTIES).List;
+    if (article.Count > 0)
+    {
+        var i = 1;
+        <div class="box-bank-home">
+            <h2 class="heading-bottom">Tài khoản ngân hàng</h2>
+            <div class="">
+               
+                @foreach (var item in article)
+                {
+                    var address = item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("ADDRESS", StringComparison.OrdinalIgnoreCase));
+                    var ac_name = item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("ACCOUNTNAME", StringComparison.OrdinalIgnoreCase));
+                    <div class="box-bank">
+                        <div class="content">
+                            <h3 class="title">@(i). @item.ArticleName</h3>
+                            <div class="item">
+                                <span class="lbl">Chủ TK:</span>
+                                <span class="ctn">@ac_name.Value</span>
+                            </div>
+                            <div class="item address">
+                                <span class="lbl">Chi nhánh</span>
+                                <span class="ctn">@address.Value</span>
+                            </div>
+                        </div>
+                    </div>
+                    i++;
+                }
+            </div>
+
+        </div>
+    }
+}

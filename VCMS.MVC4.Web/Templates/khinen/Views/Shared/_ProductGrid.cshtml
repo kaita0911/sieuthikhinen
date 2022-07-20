@@ -1,0 +1,99 @@
+﻿@model ArticleResult
+@{
+    var type = ViewBag.Type as ArticleType;
+    var column = "col-md-3 col-sm-4 col-xs-6";
+    var fivecolumn = "";
+    if (type.TwoColumnSiderBar)
+    {
+        column = "col-xs-6";
+    }
+    else if (type.ThreeColumnSiderBar)
+    {
+        column = "col-md-4 col-sm-4 col-xs-4 col-xs-6";
+    }
+    else if (type.FourColumnSiderBar)
+    {
+        column = "col-md-3 col-sm-3 col-xs-4 col-xs-6";
+    }
+    else if (type.FiveColumnSiderBar)
+    {
+        column = "col-lg-2 col-md-3 col-sm-3 col-xs-4 col-xs-6";
+        fivecolumn = "five-column";
+    }
+    <div class="row @fivecolumn.ToString() product-row">
+        @foreach (var item in Model.List)
+        {
+            <div class="@column.ToString()">
+                <article class="box-block box-product">
+                    @if (type.ShowImageInList)
+                    {
+                        <figure>
+                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName" class="">
+                                @Html.Image(item.ImageUrl, new ImageOptions { Width = 207, Height = 208, Watermark = SiteConfig.Watermark }, new { alt = item.ArticleName })
+                            </a>
+                            @if (type.ShowIconFly)
+                            {
+                                <a href="@Url.Action("QuickView", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" class="detail lightbox hidden-xs" data-toggle="tooltip" data-placement="top" title="Xem nhanh" data-plugin-options='{"type":"iframe"}'>
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                            }
+                            @if (type.ShowAttribute)
+                            {
+                                if (item.IsNew)
+                                {
+                                    <span class="box-label label-new">@Html.Locale("label_new")</span>
+                                }
+                                if (item.IsHot)
+                                {
+                                    <span class="box-label @(item.IsNew ? "label-hot" : "label-new")">Hot</span>
+                                }
+                            }
+                        </figure>
+                    }
+
+                    <div class="meta">
+                        <div class="info">
+                            <h3>
+                                <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">@item.ArticleName</a>
+                            </h3>
+                            @if (type.HasRating && type.ShowRating)
+                            {
+                                <div class="rating">
+                                    @Html.Image(SiteConfig.Image(string.Format("stars-{0}.png", item.Rating)), new ImageOptions { Width = 68, Height = 11 }, new { alt = item.ArticleName })
+                                </div>
+                            }
+                        </div>
+                        <div class="price-all">
+                            @if (item.DiscountPrice > 0)
+                            {
+                                <span class="price">@Html.DiscountPrice(item.ItemPrice)</span>
+                                <span class="price-old">@Html.Price(item.ItemPrice)</span>
+                            }
+                            else
+                            {
+                                <span class="price">@Html.Price(item.ItemPrice)</span>
+                            }
+                        </div>
+                        <div class="clearfix"></div>
+                        @if (type.ShowActionLink)
+                        {
+                            <div class="action">
+                                @if (item.CheckCart)
+                                {
+                                    <a href="#" class="cart addToCart" data-submit="@Url.Action("AddToCart", "ShoppingCart", new { id=item.Id})" data-id="@item.Id" data-load="@Url.Action("CartList","ShoppingCart")">@Html.Locale("cart_add")</a>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("Contact", "Home", new { id=item.Id})" class="">@Html.Locale("contact")</a>
+                                }
+                                <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" class="view-detail hidden-xs" data-toggle="tooltip" data-placement="top" title="@Html.Locale("view_detail")"><i class="fa fa-ioxhost"></i></a>
+                            </div>
+                        }
+                    </div>
+                </article>
+            </div>
+        }
+    </div>
+}
+
+

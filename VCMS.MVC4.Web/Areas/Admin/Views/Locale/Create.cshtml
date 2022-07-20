@@ -1,0 +1,81 @@
+﻿@using VCMS.MVC4.Web
+@using VCMS.MVC4.Data
+@model VCMS.MVC4.Data.Locale
+
+@{
+    ViewBag.Title = "Thêm Mới";
+}
+@section styles{
+    @Styles.Render("~/Content/themes/base/css")
+}
+
+<div class="form">
+
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+
+        <fieldset>
+            <legend>Locale</legend>
+            <div class="editor-label">
+                @Html.LabelFor(model => model.LocaleKey)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.LocaleKey)
+                @Html.ValidationMessageFor(model => model.LocaleKey)
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(model => model.DefaultValue)
+            </div>
+            <div class="editor-field">
+                @Html.TextAreaFor(model => model.DefaultValue)
+                @Html.ValidationMessageFor(model => model.DefaultValue)
+            </div>
+            @foreach (var l in SiteConfig.Languages)
+            {
+                <div class="editor-label">
+                    @Html.Label("Value - " + l.DisplayName)
+                </div>
+                <div id="tabs-@l.Id">
+                    @Html.TextAreaFor(model => model.LocaleDetail[l.Id].Value, new { cols = "20" })
+                </div>
+            }
+            <div class="toolbar">
+                <span class="button">
+                    <button type="submit" class="btn save"><i class="fa fa-save"></i> Lưu</button>
+                </span>
+                <span class="btn back">
+                    <a href="@Url.Action("Index",null,null)">
+                        <i class="fa fa-mail-reply"></i> <span>Trở về</span>
+                    </a>
+                </span>
+            </div>
+        </fieldset>
+    }
+
+
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+        @Scripts.Render("~/bundles/jqueryui")
+        @Scripts.Render("~/bundles/editor")
+        <script>
+            $(".form form").submit(function (event) {
+                event.preventDefault();
+                var obj = $(this);
+                $.ajax({
+                    url: "@Url.Action("Create")",
+                    type: "post",
+                    data: obj.serialize(),
+                    success: function (data) {
+                        if (data.Status == 0) {
+                            alert(data.Message);
+                        }
+                        else {
+                            window.location.href = '@Url.Action("Index")';
+                        }
+                    }
+                });
+            });
+        </script>
+    }
+</div>

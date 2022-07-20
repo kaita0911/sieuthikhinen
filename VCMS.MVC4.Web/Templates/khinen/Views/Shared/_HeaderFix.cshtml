@@ -1,0 +1,127 @@
+﻿@using (DataContext db = new DataContext())
+{
+    var type = ArticleType.GetIdByCode("PRODUCT");
+<div id="header-fixed" class="header-style-1">
+    <div class="m-logo">
+        <a class="header-logo" href="@Url.Action("Index","Home")">
+            @Html.Image(SiteConfig.Image("logo.png"), new ImageOptions { Width = 192, Lazy = false }, new { alt = "image", @class = "im-logo" })
+        </a>
+        <div class="search-order tramobile pull-right">
+            <a href="/ShoppingCart/MyOrder">
+                Tra cứu <br />
+                đơn hàng
+            </a>
+        </div>
+        @if (SiteConfig.SiteInfo.HasShoppingCart)
+        {
+            <a class="header-icon-4 cart_mb" href="/ShoppingCart/">
+                <i class="fa fa-shopping-cart"></i>
+                <span id="number">@SiteConfig.ShoppingCart.Items.Sum(a => a.Quantity)</span>
+            </a>
+        }
+        <a class="header-icon-1 open-left-sidebar" href="#"><i class="fa fa-bars"></i></a>
+
+    </div>
+    <div class="header-elements">
+
+        @Html.Partial("_SearchMobile")
+    </div>
+    @{
+
+        var _listcategory = Category.GetTree(Category.GetByType(type, SiteConfig.LanguageId)).Where(a => a.Level == 0).ToList();
+        var _listcategorybr = Category.GetTree(Category.GetByType(5, SiteConfig.LanguageId)).Where(a => a.Level == 0).ToList();
+
+    <div class="navigation_dm">
+        @if (_listcategory.Count > 0)
+        {
+
+            <span class="btn-dm"><i class="fa fa-list"></i> Danh mục sản phẩm</span>
+            <ul class="list_dm_mb">
+                @foreach (var item in _listcategory)
+                {
+                    <li>
+                        <a class="navigation-item" href="@Url.Action("Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.CategoryName).ToLower() })" title="@item.CategoryName">
+
+                            @item.CategoryName
+                        </a>
+
+                        @if (item.ChildrenCount > 0)
+                        {
+                            <i class="fa fa-plus sh-item iitem-@item.Id" onclick="toggleByClass('@item.Id');"></i>
+                            <ul class="sh-snap-menu uitem-@item.Id">
+                                @foreach (var sitem in item.Children)
+                                {
+                                    <li>
+                                        <a class="navigation-sitem" href="@Url.Action("Detail", "Category", new { id = sitem.Id, code = sitem.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(sitem.CategoryName).ToLower() })" title="@sitem.CategoryName">
+                                            <em>@sitem.CategoryName</em>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        }
+
+                    </li>
+                }
+
+            </ul>
+
+
+
+        }
+        @if (_listcategorybr.Count > 0)
+        {
+
+            <span class="btn-dmbr"><i class="fa fa-list"></i> Nhà sản xuất</span>
+            <div class="list_dm_mb_br">
+                <ul>
+                    @foreach (var item in _listcategorybr)
+                    {
+                        <li>
+                            <a class="navigation-item" href="@Url.Action("Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.CategoryName).ToLower() })" title="@item.CategoryName">
+
+                                @item.CategoryName
+                            </a>
+
+
+                        </li>
+                    }</ul>
+
+            </div>
+
+
+
+        }
+    </div>
+    }
+</div>
+}
+
+<script>
+    $(".btn-dm").click(function () {
+        $(".list_dm_mb").slideToggle();
+    });
+    $(".btn-dmbr").click(function () {
+        $(".list_dm_mb_br").slideToggle();
+    });
+    function toggleByClass(className) {
+       
+
+        $('.sh-snap-menu').not('.uitem-' + className).hide();
+        $('.sh-item').not('.iitem-' + className).removeClass('fa-minus');
+
+        $('.iitem-' + className).toggleClass('fa-minus');
+        $(".uitem-" + className).toggle();
+
+
+
+    }
+    $(window).scroll(function () {
+        var h = $(".header");
+        if ($(this).scrollTop() > (h.height())) {
+            $("#header-fixed").addClass("menu-fix");
+        }
+        else {
+            $("#header-fixed").removeClass("menu-fix");
+        }
+    });
+</script>

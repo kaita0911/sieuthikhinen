@@ -1,0 +1,22 @@
+﻿@model ArticleResult
+@{
+    var sum = Model.List.Sum(a => a.Number);
+    ViewBag.Code = "commentus";
+    <h1 class="title font-Aurora">@(!string.IsNullOrWhiteSpace(ViewBag.Title) ? ViewBag.Title : Model.List.FirstOrDefault().ArticleType.Name)</h1>
+    ViewBag.TypeId = Model.List.FirstOrDefault().ArticleType.Id;
+    <div class="row comment-us">
+        @foreach (var item in Model.List.OrderBy(a => a.SortOrder))
+        {
+            <div class="col-md-3 col-sm-6 col-xs-6">
+                <div class="item">
+                    <div class="lbl"><h3>@item.ArticleName</h3></div>
+                    <div class="ctn">
+                        <div class="p"><span class="num">@item.Number</span> @Html.Locale("comment")</div>
+                        <div class="s">@(item.Number * 100 / sum)%</div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+

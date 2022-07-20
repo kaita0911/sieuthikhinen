@@ -1,0 +1,53 @@
+﻿@using System.Data.Entity;
+@using (DataContext db = new DataContext())
+{
+    var articleType = db.ArticleTypes.FirstOrDefault(t => t.Code == "ABOUTUS");
+    if (articleType != null)
+    {
+        var art = Article.GetByType(articleType.Id, SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 1, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING).List;
+        <div class="h-about-us">
+            <div class="container">
+                <div class="row">
+                    @foreach (var item in art)
+                    {
+                        <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                            <div class="name">
+                                <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })">
+                                    @item.ArticleName
+                                </a>
+                            </div>
+                            <div class="content">
+                                <div class="short-desc">
+                                    <span>
+                                        @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, 100))
+                                    </span>
+                                </div>
+                                <div class="detail">
+                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })">
+                                        Xem tiếp
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                            <div class="owl-carousel" data-plugin-options='{"items": 1, "singleItem": true, "autoPlay": true, "navigation": true, "pagination": false,"slideSpeed":400,"addClassActive":true,"transitionStyle":"fade"}' data-snap-ignore="true">
+                                @foreach (var iitem in item.ImageList)
+                                {
+                                    <figure>
+                                        <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName" class="banner-cubic-7">
+                                            @Html.Image(iitem.FileName, new ImageOptions { Width = 370, Height = 270, Watermark = SiteConfig.WatermarkFill, Lazy = false }, new { alt = item.ArticleName })
+                                        </a>
+                                    </figure>
+                                }
+                            </div>
+
+                        </div>
+                    }
+                </div>
+            </div>
+
+        </div>
+    }
+}
+
+

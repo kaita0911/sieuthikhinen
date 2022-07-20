@@ -1,0 +1,124 @@
+﻿@model VCMS.MVC4.Data.Article
+@{
+    int i = 1;
+    var type = ViewBag.Type as ArticleType;
+    <article class="article-detail" itemscope itemtype="http://schema.org/Article">
+        <div class="file-attach">
+            @if (Model.ArticleFiles.Where(af => af.FileType == ArticleFileType.ATTACHMENT).Count() > 0)
+            {
+                <h2>@Model.ArticleName</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="sort-order width-80">Thứ tự</th>
+                            <th class="name">Tên file</th>
+                            <th class="extension width-80">Loại file</th>
+                            <th class="size width-80">Kích thước</th>
+                            <th class="date width-80">Tải về</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.ArticleFiles.Where(af => af.FileType == ArticleFileType.ATTACHMENT))
+                        {
+                            var exarr = item.OriginalFileName.Split('.');
+                            double dl = (item.FileSize / 1024f) / 1024f;
+                            <tr>
+                                <td class="center">@i</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.Title))
+                                    {
+                                        <a href="@item.FileName" title="Click để tải về" target="_blank">
+                                            @item.Title
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@item.FileName" title="Click để tải về" target="_blank">
+                                            @Model.ArticleName
+                                        </a>
+                                    }
+                                </td>
+                                <td class="center">
+                                    @if (exarr.Length > 0)
+                                    {
+                                        <span>@exarr[1].ToString()</span>
+                                    }
+                                </td>
+                                <td class="center">
+                                    <span> @dl.ToString("0.00") MB</span>
+                                </td>
+                                <td class="center">
+                                    <a href="@item.FileName" title="Click để tải về" target="_blank">
+                                        <span class="fa fa-download"></span>
+                                    </a>
+
+                                </td>
+                            </tr>
+
+                            i++;
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+        @*<div class="row">
+                @if (type.ShowImage)
+                {
+                    <div class="col-sm-6 col-xs-12">
+                        <div class="image-article">
+                            <a href="@Url.Content(Model.ImageUrl)" class="lightbox" data-plugin-options="{type:image;}">
+                                @Html.Image(Model.ImageUrl, new ImageOptions { Width = 381, Height = 324, Watermark = SiteConfig.Watermark, Mode = ImageMode.pad }, new { alt = Model.ArticleName })
+                            </a>
+                        </div>
+                    </div>
+                }
+                <h1 class="title detail @(type.ShowImage ? "col-sm-6" : "") col-xs-12" itemprop="name">
+                    <a>@Model.ArticleName</a>
+                </h1>
+                <div class="description short @(type.ShowImage ? "col-sm-6" : "") col-xs-12" itemprop="description">
+                    @Html.Raw(Model.ShortDescription)
+                </div>
+                <div class="clearfix"></div>
+                <div class="description full col-xs-12" itemprop="description">
+                    @Html.Raw(Model.Description)
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-xs-12">
+                    <ul class="download-list">
+                        @foreach (var item in Model.ArticleFiles.Where(af => af.FileType == ArticleFileType.ATTACHMENT))
+                        {
+                            <li class="download">
+                                <a href="@item.FileName" title="@Html.Locale("click_to_download")" target="_blank">
+                                    <i class="fa fa-download"></i> Tải về
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+                @if (!string.IsNullOrWhiteSpace(Model.SEOKeywords))
+                {
+                    <div class="tags col-xs-12">
+                        <strong>Tags:</strong>
+                        @foreach (var item in Model.SEOKeywords.Split(','))
+                        {
+                            <a href="@Url.Action("Tag", "Home", new { keyword = item.Replace(" ", "-") })" target="_blank" itemprop="keywords">
+                                <span><i class="fa fa-tags"></i> @item</span>
+                            </a>
+                        }
+                    </div>
+                }
+            </div>*@
+        <div class="clearfix"></div>
+        <div class="a-share">
+            @if (type.ShowShareArticle)
+            {
+                @Html.Partial("_ShareArticle")
+            }
+        </div>
+    </article>
+    @Html.Action("Other", "Article", new { id = Model.Id, typeid = Model.ArticleTypeId, categoryId = Model.Categories.Count > 0 ? Model.Categories.Skip(Model.Categories.Count - 1).FirstOrDefault().Id : 0, pageSize = 6 })
+    if (Request.IsAuthenticated && (Roles.IsUserInRole("Super Administrators") || Roles.IsUserInRole("Administrators")))
+    {
+        <a href="@Url.Action("Edit", "Article", new { id = Model.Id, area = "Admin" })" target="_blank" class=" col-xs-12"><i class="fa fa-edit"></i> @Html.Locale("view_admin")</a>
+    }
+}

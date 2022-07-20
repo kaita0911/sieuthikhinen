@@ -1,0 +1,61 @@
+﻿<div class="tophead hidden-sm hidden-xs">
+    <div class="container">
+        <p>Chào mừng bạn đến với website Tiến Phát</p>
+        @Html.Partial("_AddLink")
+    </div>
+</div>
+<div class="header-top hidden-sm hidden-xs">
+    <div class="container">
+        <div class="content">
+            <div class="header-left">
+                <div class="hotline">
+                    
+                        @Html.Image(SiteConfig.Image("hotline.png"), new ImageOptions { Width = 19, Height = 22, Lazy = false }, new { alt = "hotline" })
+                        HOTLINE: @Html.Phone(SiteConfig.SiteInfo.Hotline)
+                    
+                </div>
+                <div class="search-order pull-left">
+                    <a href="/shoppingcart/myorder">
+                        @Html.Image(SiteConfig.Image("tracuu.png"), new ImageOptions { Width = 29, Height = 26, Lazy = false }, new { alt = "tra cứu" })
+                        Tra cứu đơn hàng
+                    </a>
+                </div>
+            </div>
+            
+            <div class="logo">
+                <a href="@Url.Action("index","home")">
+                    @Html.Image(SiteConfig.Image("logo.png"), new ImageOptions { Width = 192, Height = 61, Lazy = false }, new { alt = SiteConfig.SiteInfo.Title })
+                </a>
+            </div>
+            
+
+            <div class="header-right">
+                <div class="search pull-left">
+                    @Html.Partial("_Search")
+                </div>
+                <div id="shop-cart" class="carts">
+                    <a href="/shoppingcart/">
+                        <div class="icon-cart">
+                                @Html.Image(SiteConfig.Image("cart.png"), new ImageOptions { Width = 27, Height = 26, Lazy = false }, new { alt = "cart" })
+                                <span id="number">@SiteConfig.ShoppingCart.Items.Sum(a => a.Quantity)</span>
+                                <span class="lbl">Giỏ hàng</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*<script>
+        $(document).ready(function () {
+            $(function () {
+                $(window).scroll(function () {
+                    if ($(this).scrollTop() > 150) {
+                        $('#navigation').addClass("fix");
+                    } else {
+                        $('#navigation').removeClass("fix");
+                    }
+                });
+            });
+        });
+    </script>*@

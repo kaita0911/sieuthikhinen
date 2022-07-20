@@ -1,0 +1,25 @@
+﻿@model ArticleResult
+@if (Model.List.Count > 0)
+{
+    var type = Model.List.FirstOrDefault().ArticleType;
+    <div class="other-common other-article">
+        <h2 class="title">@Html.Locale("other_article")</h2>
+        <ul>
+            @foreach (var item in Model.List)
+            {
+                <li>
+                    <h3>
+                        <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                            <i class="fa fa-check"></i> @item.ArticleName
+                        </a>
+                        @if (type.ShowDateTime)
+                        {
+                            <span class="date"> - @item.Day/@item.Daymore</span>
+                        }
+                    </h3>       
+                </li>
+            }
+        </ul>
+    </div>
+
+}

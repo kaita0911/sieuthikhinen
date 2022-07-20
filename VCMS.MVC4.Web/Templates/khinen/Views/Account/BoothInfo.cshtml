@@ -1,0 +1,103 @@
+﻿@model BoothInfoModel
+@{
+    Layout = "_LayoutAccount.cshtml";
+    ViewBag.Title = Html.Locale("account_booth_info").ToHtmlString();
+    ViewBag.Breadcrumb = new BreadcrumbModel { Items = new List<BreadcrumbItem> { new BreadcrumbItem { Text = Html.Locale("account_booth_info").ToHtmlString(), Url = null, IsLast = true } } };
+}
+<div class="acc-product acc-edit-pro booth-info">
+    <h1 class="title">
+        @Html.Locale("account_booth_info")
+    </h1>
+    <div class="content">
+        <div class="form">
+            @using (Html.BeginForm("BoothInfo", "Account", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <div class="row">
+                    <div class="col-sm-6 col-xs-12">
+                        <div>
+                            <div class="editor-label">
+                                @Html.Label("Logo")
+                            </div>
+                            @Html.HiddenFor(model => model.Logo)
+                            @if (!string.IsNullOrEmpty(Model.Logo))
+                            {
+                                <img src="@Url.Content("~/" + Model.Logo)?width=100" class="img" />
+                            }
+                            <div class="editor-field file file-image article">
+                                <input type="file" name="fimg" /><i data-label="Chọn file"></i>
+                            </div>
+
+                        </div>
+                        <div>
+                            <div class="editor-label">
+                                @Html.Label("Banner")
+                            </div>
+                            @Html.HiddenFor(model => model.Banner)
+                            @if (!string.IsNullOrEmpty(Model.Banner))
+                            {
+                                <img src="@Url.Content("~/" + Model.Banner)?width=100" class="img" />
+                            }
+                            <div class="editor-field file file-image article">
+                                <input type="file" name="fbanner" /><i data-label="Chọn file"></i>
+                            </div>
+
+                        </div>
+                        <div id="tabs">
+                            <ul class="nav nav-tabs" role="tablist" id="myTab">
+                                @foreach (var l in SiteConfig.Languages)
+                                {
+                                    <li><a href="#tabs-@l.Id" role="tab" data-toggle="tab">@l.DisplayName</a></li>
+                                }
+                            </ul>
+                            <div class="tab-content">
+                                @foreach (var l in SiteConfig.Languages)
+                                {
+                                    <div id="tabs-@l.Id">
+                                        <div class="editor-label">
+                                            <label> @Html.Locale("account_company_name")</label>
+                                        </div>
+                                        <div class="editor-field">
+                                            @Html.TextBoxFor(model => model.UserProfileDetail[l.Id].Title, new { name = "txtTitle_" + l.Id.ToString(), data_auto_copy = "true" })
+                                        </div>
+
+                                        <div class="editor-label">
+                                            <label> Slogan</label>
+                                        </div>
+                                        <div class="editor-field">
+                                            @Html.TextBoxFor(model => model.UserProfileDetail[l.Id].ShortDesc, new { name = "txtShortDesc_" + l.Id.ToString(), data_auto_copy = "true" })
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <script>
+                            $(".nav-tabs li:first").addClass("active");
+                            $(".tab-content .tab-pane:first").addClass("active");
+                        </script>
+                    </div>
+
+                    <div class="col-xs-12 toolbar">
+                        <a href="/Account/Index" class="btn btn-continue btn-next"><i class="fa fa-angle-left"></i> @Html.Locale("account_back")</a>
+                        <button class="btn btn-continue btn-next" type="submit">@Html.Locale("account_update") <i class="fa fa-angle-right"></i></button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    @Scripts.Render("~/bundles/admin")
+    @Scripts.Render("~/bundles/dcaccordion")
+    @Scripts.Render("~/Scripts/ckeditor/ckeditor.js")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryui")
+}
+
+<script>
+    $(function () {
+        $("input[data-auto-copy=true]").autoCopy();
+        $("#tabs").validtabs();
+    });
+</script>

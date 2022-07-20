@@ -1,0 +1,132 @@
+﻿@model ArticleType
+@using System.Data.Entity;
+@{
+    Layout = null;
+    var OtType = new List<string> { "BANNER", "PARTNER", "GALLERY", "ADV" };
+    var ViewByType = ViewBag.ViewByType as List<DirectoryInfo>;
+    var widget = ViewBag.Widget as Widget;
+
+    if (ViewByType.Count > 0)
+    {
+        <div class="editor-label ">
+            @Html.Label("Template")
+        </div>
+        <ul class="attribute-list">
+            @foreach (var item in ViewByType)
+            {
+                <li>
+                    <label class="checkbox">
+                        @Html.RadioButton("WidgetView", item, (widget.WidgetView != null && widget.WidgetView.Equals(item.Name.ToString(), StringComparison.OrdinalIgnoreCase) ? true : false))<i></i> @item
+                    </label>
+                </li>
+            }
+        </ul>
+        <script>
+            $("input[name=WidgetView]").on("change", function () {
+                $(".category-attr").hide();
+                var _this = $(this);
+                (_this.val() == "Category" || _this.val() == "CategoryHome") ? $(".category-attr").show() : $(".category-attr").hide(), $("#ShowSubMenu").prop("checked", false);
+            });
+        </script>
+    }
+    var code = Model.Code;
+    <div class="article-list">
+        <div class="editor-label margin-bottom-5">
+            @Html.Label("Thuộc tính")
+        </div>
+        @if (!OtType.Contains(Model.Code))
+        {
+            <ul class="attribute-list margin-0">
+                <li>
+                    <label class="checkbox">@Html.CheckBox("HiddenImage", widget.HiddenImage)<i></i> Ẩn hình đại diện</label>
+                </li>
+                <li>
+                    <label class="checkbox">@Html.CheckBox("ShowDate", widget.ShowDate)<i></i> Có ngày cập nhật</label>
+                </li>
+                <li>
+                    <label class="checkbox">@Html.CheckBox("ShowDescription", widget.ShowDescription)<i></i> Có mô tả ngắn gọn</label>
+                </li>
+                <li>
+                    <label class="checkbox">@Html.CheckBox("LazyOwl", widget.LazyOwl)<i></i> Load hình sau 2.5s</label>
+                </li>
+                <li>
+                    <label class="checkbox">@Html.CheckBox("ShowIconFly", widget.ShowIconFly)<i></i> Có nút bay <small>(Zoom, Detail,...)</small></label>
+                </li>
+
+                <li>
+                    <label class="checkbox">@Html.CheckBox("ShowViewMore", widget.ShowViewMore)<i></i> Có xem chi tiết</label>
+                </li>
+                @if (Model.HasRating)
+                {
+                    <li>
+                        <label class="checkbox">@Html.CheckBox("ShowRating", widget.ShowRating)<i></i> Có đánh giá</label>
+                    </li>
+                }
+            </ul>
+        }
+        @if (Model.Code.Equals("PRODUCT", StringComparison.OrdinalIgnoreCase))
+        {
+            <ul class="attribute-list margin-0">
+                @if (Model.HasPrice)
+                {
+                    <li>
+                        <label class="checkbox">@Html.CheckBox("ShowPrice", widget.ShowPrice)<i></i> Có giá</label>
+                    </li>
+                }
+                <li>
+                    <label class="checkbox">@Html.CheckBox("ShowButton", widget.ShowButton)<i></i> Có button <small>(Đặt hàng, Chi tiết, ...)</small></label>
+                </li>
+            </ul>
+        }
+        <ul class="attribute-list margin-0">
+            @if (Model.Code.Equals("BANNER", StringComparison.OrdinalIgnoreCase))
+            {
+                <li>
+                    <label class="checkbox">@Html.CheckBox("AutoPlay", widget.AutoPlay)<i></i> Tự động chạy</label>
+                </li>
+                <li>
+                    <label class="checkbox">@Html.CheckBox("Pagination", widget.Pagination)<i></i> Có nút Pagination</label>
+                </li>
+                <li>
+                    <label class="checkbox">@Html.CheckBox("Navigation", widget.Navigation)<i></i> Có nút Left-Right</label>
+                </li>
+                <li>
+                    <label class="checkbox">@Html.CheckBox("Thumbnail", widget.Thumbnail)<i></i> Có Thumbnail Image Banner</label>
+                </li>
+                <li>
+                    <label class="checkbox">@Html.CheckBox("PlayPause", widget.PlayPause)<i></i> Có nút dừng</label>
+                </li>
+                <li>
+                    <label class="checkbox">@Html.CheckBox("AutoHeight", widget.AutoHeight)<i></i> Chiều cao tự động</label>
+                </li>
+                <li>
+                    <label class="checkbox">@Html.CheckBox("HoverStop", widget.HoverStop)<i></i> Dừng lại khi rê chuột</label>
+                </li>
+            }
+            @if (Model.Code.Equals("ADV", StringComparison.OrdinalIgnoreCase))
+            {
+                <li>
+                    <label class="checkbox">@Html.CheckBox("Effect1", widget.Effect1)<i></i> Hiệu ứng 1</label>
+                </li>
+                <li>
+                    <label class="checkbox">@Html.CheckBox("Effect2", widget.Effect2)<i></i> Hiệu ứng 2</label>
+                </li>
+                <li>
+                    <label class="checkbox">@Html.CheckBox("Effect3", widget.Effect3)<i></i> Hiệu ứng 3</label>
+                </li>
+                <li>
+                    <label class="checkbox">@Html.CheckBox("Effect4", widget.Effect4)<i></i> Hiệu ứng 4</label>
+                </li>
+                <li>
+                    <label class="checkbox">@Html.CheckBox("Effect5", widget.Effect5)<i></i> Hiệu ứng 5</label>
+                </li>
+                <li>
+                    <label class="checkbox">@Html.CheckBox("Effect6", widget.Effect6)<i></i> Hiệu ứng 6</label>
+                </li>
+                <li>
+                    <label class="checkbox">@Html.CheckBox("Effect7", widget.Effect7)<i></i> Hiệu ứng 7</label>
+                </li>
+            }
+        </ul>
+    </div>
+}

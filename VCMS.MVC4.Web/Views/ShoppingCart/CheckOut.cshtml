@@ -1,0 +1,22 @@
+﻿@model CheckOutModel
+@{
+    ViewBag.Title = "CheckOut";
+}
+
+@using (Html.BeginForm())
+{
+    <label>First Name</label>
+    @Html.TextBoxFor(model => model.FirstName)
+    <label>Last Name</label>
+    @Html.TextBoxFor(model => model.LastName)
+    <label>Address</label>
+    @Html.TextBoxFor(model => model.Address)
+    <label>Phone</label>
+    @Html.TextBoxFor(model => model.Phone)
+    <label>Email</label>
+    @Html.TextBoxFor(model => model.Email)
+    
+    @Html.Partial("_CartInfo",SiteConfig.ShoppingCart)
+
+    <input type="submit" />
+}

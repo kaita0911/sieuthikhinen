@@ -1,0 +1,20 @@
+﻿@using System.Data.Entity;
+@using (DataContext db = new DataContext())
+{
+    int i = 0;
+    var list = Article.GetByTypeCode("TAG", SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 20, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING, ArticleIncludeFlags.PROPERTIES).List;
+    if (list.Count > 0)
+    {
+        <div class="box-footer f-tag">
+            <h2 class="heading main-footer">Xu hướng tìm kiếm</h2>
+            <div class="content">
+                @foreach(var item in list)
+                {
+                    var url = item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("URL", StringComparison.OrdinalIgnoreCase));
+                    <a href="@url.Value">@item.ArticleName@*@(i < list.Count - 1?",":"")*@</a>
+                    i++;
+                }
+            </div>
+        </div>
+    }
+}

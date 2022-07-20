@@ -1,0 +1,58 @@
+﻿<link rel="stylesheet" href="~/Content/Plugin/NivoSlider/style.css" />
+<script src="~/Content/Plugin/NivoSlider/common.js"></script>
+<script src="~/Content/Plugin/NivoSlider/jquery.nivo.slider.js"></script>
+@model Widget
+@{
+    var article = Article.GetByType(Model.ArticleTypeId.Value, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection, Model.Includes);
+
+    if (article.List.Count > 0)
+    {
+        <div class="slide-bg">
+            @foreach (var item in article.List)
+            {
+                <div class="bg-home">
+                    <div class="content-slide" style="display: none;">
+                        <h2>@item.ArticleName</h2>
+                        <h3>@Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, 15))</h3>
+                    </div>
+                    <img src="@Url.Content(item.ImageUrl)?width=1400&height=550&mode=crop" title="" />
+                </div>
+            }
+        </div>
+    }
+}
+<script src="~/Content/Plugin/NivoSlider/vnponline.js"></script>
+<script>
+    var current = 0;
+    $('.slide-bg').nivoSlider({
+        effect: 'fold',
+        prevText: 'prev',
+        nextText: 'next',
+        slices: 25,
+        boxCols: 25,
+        boxRows: 24,
+        pauseOnHover: false,
+        animSpeed: 1000,
+        pauseTime: 8000,
+        startSlide: 0,
+        beforeChange: function () {
+            $('.content-slide').animate({ 'opacity': 0 }, 600, 'linear');
+
+        },
+        afterChange: function () {
+            //  $('.content-slide').removeClass('show');
+            current = $('.slide-bg').data('nivo:vars').currentSlide;
+            $('.content-slide').removeAttr('style');
+            $('.content-slide').removeClass('show');
+            $('.bg-home:eq(' + current + ') .content-slide').addClass('show');
+        },
+        afterLoad: function () {
+            current = $('.slide-bg').data('nivo:vars').currentSlide;
+
+            $('.bg-home:eq(' + current + ') .content-slide').addClass('show');
+        }
+
+
+
+    });
+</script>

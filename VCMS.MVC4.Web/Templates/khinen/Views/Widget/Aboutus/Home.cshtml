@@ -1,0 +1,48 @@
+﻿@model Widget
+@{
+    var article = Article.GetByType((int)Model.ArticleTypeId, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection);
+}
+@if (article.List.Count > 0)
+{
+    <div class="home-about-us box-home">
+        @*<div class="row">*@
+        @foreach (var item in article.List)
+        {
+            @*<div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">*@
+            @*<h2 class="heading">
+                @Model.Title
+            </h2>*@
+            <div class="meta">
+                <h3>
+                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                        @item.ArticleName
+                    </a>
+                </h3>
+                <div class="description">
+                    @Html.Raw(item.ShortDescription)
+                </div>
+                <div class="view-detail">
+                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                        @Html.Locale("view_detail")
+                    </a>
+                </div>
+            </div>
+            @*</div>*@
+            @*<div class="col-lg-8 col-md-8 col-sm-6 col-xs-6">
+                    @if (!Model.HiddenImage)
+                    {
+                        <figure>
+                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName" class="banner-cubic-7">
+                                @Html.Image(item.ImageUrl, new ImageOptions { Height = 355, Watermark = SiteConfig.WatermarkFill }, new { alt = item.ArticleName })
+                            </a>
+                        </figure>
+                    }
+                    <div class="description">
+                        @Html.Raw(item.ShortDescription)
+                    </div>
+                </div>*@
+        }
+        @*</div>*@
+    </div>
+}
+

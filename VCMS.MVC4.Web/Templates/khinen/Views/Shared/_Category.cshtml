@@ -1,0 +1,50 @@
+﻿@using (DataContext db = new DataContext())
+{
+    var category = Category.GetTree(Category.GetByType(ArticleType.GetIdByCode("PRODUCT"), SiteConfig.SiteId, SiteConfig.LanguageId)).Where(a => a.Level == 0).ToList();
+    var category_model = Category.GetTree(Category.GetByType(ArticleType.GetIdByCode("CLASSIC"), SiteConfig.SiteId, SiteConfig.LanguageId)).Where(a => a.Level == 0).ToList();
+    if (category.Count > 0)
+    {
+        <div class="box-sidebar box-category">       
+            <ul class="category-sidebar">
+                <h2 class="sidebar-heading">
+                    @Html.Locale("Product")
+                </h2>
+                @foreach (var item in category)
+                {
+                    <li>
+                        <a href="@Url.Action("Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.CategoryName) })" title="@item.CategoryName">@item.CategoryName</a>
+                        @if (item.ChildrenCount > 0)
+                        {
+                            <ul class="sub-menu">
+                                @foreach (var sub in item.Children)
+                                {
+                                    <li><a href="@Url.Action("Detail", "Category", new { id = sub.Id, code = sub.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(sub.CategoryName) })">@sub.CategoryName</a></li>
+                                }
+                            </ul>
+                        }
+                    </li>
+                }
+                <h2 class="sidebar-heading">
+                    @Html.Locale("models")
+                </h2>
+                @foreach (var item in category_model)
+                {
+                    <li>
+                        <a href="@Url.Action("Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.CategoryName) })" title="@item.CategoryName">@item.CategoryName</a>
+                        @if (item.ChildrenCount > 0)
+                        {
+                            <ul class="sub-menu">
+                                @foreach (var sub in item.Children)
+                                {
+                                    <li><a href="@Url.Action("Detail", "Category", new { id = sub.Id, code = sub.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(sub.CategoryName) })">@sub.CategoryName</a></li>
+                                }
+                            </ul>
+                        }
+                    </li>
+                }
+            </ul>
+            @*<a href="@Url.Action("Index", "ArticleType", new { code = category.FirstOrDefault().ArticleType.UrlFriendly })" class="view-all hidden-xs hidden-md">@Html.Locale("view_more")</a>*@
+        </div>
+    }
+
+}

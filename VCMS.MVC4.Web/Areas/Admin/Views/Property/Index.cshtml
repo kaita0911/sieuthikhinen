@@ -1,0 +1,84 @@
+﻿@model ICollection<Property>
+@{
+    ViewBag.Title = "Quản lý thuộc tính";
+}
+
+<div class="btn-group">
+    <span class="btn create">
+        <a href="@Url.Action("Create",null,null)"><i class="fa fa-plus"></i> <span class="hidden-xs">Thêm mới</span></a>
+    </span>
+    <span class="btn delete">
+        <a href="@Url.Action("Delete", null, null)" id="delete"><i class="fa fa-trash-o"></i> <span class="hidden-xs">Xóa</span></a>
+    </span>
+    <span class="btn attribute hidden-xs">
+        <a href="@Url.Action("UpdateOrder", null, null)" id="update"><i class="fa fa-sort-numeric-desc"></i> <span class="hidden-xs">Cập nhật thứ tự</span></a>
+    </span>
+</div>
+<table class="table table-hover">
+    <thead class="header">
+        <tr>
+            <th class="check">
+                <label class="checkbox single noborder"><input type="checkbox" id="check-all" /><i></i></label>
+            </th>
+            <th class="code">
+                @Html.Label("Mã")
+            </th>
+            <th class="name">
+                @Html.Label("Tên thuộc tính")
+            </th>
+            <th class="name">
+                @Html.Label("Kiểu dữ liệu")
+            </th>
+            <th class="sort">
+                @Html.Label("Thứ tự")
+            </th>
+            <th class="action">
+                @Html.Label("Thao tác")
+            </th>
+        </tr>
+    </thead>
+    <tbody class="items">
+        @foreach (var item in Model)
+        {
+            <tr class="item">
+                <td class="check">
+                    <label class="checkbox fix"><input type="checkbox" value="@item.Id" /><i></i></label>
+                </td>
+                <td class="code">@Html.DisplayFor(modelItem => item.Code)</td>
+                <td class="name">@item.PropertyDetail[SiteConfig.LanguageId].Name</td>
+                <td class="name hidden-xs">@item.PropertyType.ToString()</td>
+                <td class="sort">
+                    @Html.TextBox("sort", item.SortOrder ?? 0, new { rel = item.Id })
+                </td>
+                <td class="action">
+                    <a href="@Url.Action("Edit", null, new {id=item.Id })"><i class="fa fa-edit"></i> <span class="hidden-xs">Sửa</span></a>
+                    @if (item.PropertyType == PropertyType.MULTICHOICE || item.PropertyType == PropertyType.CHOICE || item.PropertyType == PropertyType.HASPRICE)
+                    {
+                        @*<a href="@Url.Action("Create", "PropertyMulti", new {id = item.Id })"> <i class="fa fa-plus"></i> <span class="hidden-xs">Thêm mới giá trị</span></a>*@
+                        <a href="@Url.Action("Index", "PropertyMulti", new {id = item.Id })"> <i class="fa fa-list-alt"></i> <span class="hidden-xs">Danh sách giá trị</span></a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section scripts
+{
+    <script>
+        $(function () {
+            $("#check-all").checkAll(".item .check input[type='checkbox']");
+            $("#delete").sdelete({
+                url: '@Url.Action("Delete")',
+                selector: ".item .check input[type='checkbox']",
+            });
+
+            $("#update").update({
+                url: '@Url.Action("UpdateOrder")',
+                selector: ".item input[name='sort']",
+                param1: 'id',
+                param2: 'order'
+            });
+        })
+    </script>
+}

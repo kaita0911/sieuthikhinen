@@ -1,0 +1,44 @@
+﻿@model ArticleResult
+@{
+    Layout = null;
+    if (Model.List.Count > 0)
+    {
+        var articleType = Model.List.FirstOrDefault().ArticleType;
+        string viewName = null;
+        if (articleType != null)
+        {
+            if (ViewEngines.Engines.FindView(ViewContext.Controller.ControllerContext, articleType.Code + "/Other", null).View != null)
+            {
+                viewName = articleType.Code + "/Other";
+            }
+        }
+        if (viewName != null)
+        {
+            @Html.Partial(viewName, Model)
+        }
+        else
+        {
+            <div class="clearfix"></div>
+            <div id="related" class=" col-xs-12">
+                <div class="related">
+                    <h2 class="title">
+                        <span>@Html.Locale("relate_article")</span>
+                    </h2>
+                    <div class="box-content">
+                        <ul class="related-def">
+                            @foreach (var item in Model.List)
+                            {
+                                <li>
+                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                        <span>@item.ArticleName</span>
+                                    </a>
+                                    <span class="fs-11">(@item.DateUpdated.Value.ToShortDateString())</span>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+}

@@ -1,0 +1,79 @@
+﻿@using (DataContext db = new DataContext())
+{
+    Layout = null;
+    var cart = SiteConfig.ShoppingCart.Items;
+    if (cart.Count > 0)
+    {
+        <div class="mini-cart-info">
+            <ul class="mini-products-list">
+                @foreach (var item in cart)
+                {
+                    <li class="item">
+                        <article class="box-block">
+                            <figure>
+                                <a href="@Url.Action("Detail", "Article", new { id = item.ArticleId, code = item.Article.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.Article.ArticleName) })" title="@item.Article.ArticleName">
+                                    @Html.Image(item.Article.ImageUrl, new ImageOptions { Width = 50, Height = 50, Watermark = SiteConfig.WatermarkFill,Lazy=false }, new { alt = item.Article.ArticleName, @class = "owl" })
+                                </a>
+                                <div class="text-center">
+                                    <a href="" class="delete" data-submit="@Url.Action("Delete", "ShoppingCart", new { id=item.ArticleId})" data-id="@item.ArticleId" data-load="@Url.Action("CartList","ShoppingCart")"><i class="fa fa-times"></i></a>
+                                </div>
+                            </figure>
+                            <div class="meta">
+                                <h3><a href="@Url.Action("Detail", "Article", new { id = item.ArticleId, code = item.Article.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.Article.ArticleName) })" title="@item.Article.ArticleName">@item.Article.ArticleName</a></h3>
+                                <p class="description">@Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.Article.ShortDescription, 10))</p>
+                                <span class="price">
+                                    @Html.Amount(item.UnitPrice)
+                                </span>
+                                <span class="qty">@Html.Locale("minicart_qty"):</span>
+                                <span class="number">@item.Quantity</span>
+                            </div>
+                        </article>
+                    </li>
+                }
+            </ul>
+            <div class="actions">
+                <div class="total">
+                    <span class="label">@Html.Locale("cart_total"):</span> <span class="price-total">@Html.Amount(cart.Sum(a => a.Amount))</span>
+                </div>
+                <div class="action text-right">
+                    <a href="@Url.Action("Index","ShoppingCart")" class="btn"><i class="fa fa-shopping-cart"></i> @Html.Locale("view_cart")</a>
+                    <a href="@Url.Action("Checkout","ShoppingCart")" class="btn"><i class="fa fa-recycle"></i> @Html.Locale("cart_checkout")</a>
+                </div>
+            </div>
+        </div>
+        <script>
+            $(".mini-cart-info .delete").on("click", function () {
+                var _this = $(this);
+                var _parent = _this.parents("li.item");
+                $.ajax({
+                    url: _this.data("submit"),
+                    type: 'post',
+                    data: {
+                        id: _this.data("id"),
+                    },
+                    dataType: 'json',
+                    success: function (json) {
+                        if (json.Status == 0) {
+                            _parent.animate({ "opacity": "0" }, 300);
+                            $(".mini-cart-info .price-total").html(json.Amount);
+                            $("#number").html(json.Qty);
+                            $("#shop-cart .content,#show-mobile .carts-mobile").load(_this.data("load"));
+                        }
+                        return false;
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                        return false;
+                    }
+                });
+                return false;
+            });
+        </script>
+    }
+    else
+    {
+        <span class="col-xs-12 padding-bottom-10">@Html.Locale("cart_null")</span>
+    }
+
+
+}

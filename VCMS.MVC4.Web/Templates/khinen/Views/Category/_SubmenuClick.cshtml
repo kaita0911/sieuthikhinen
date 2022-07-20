@@ -1,0 +1,24 @@
+﻿@model Category
+@{
+    int id = 0;
+    if (ViewContext.RouteData.Values["id"] != null)
+    {
+        int.TryParse(ViewContext.RouteData.Values["id"].ToString(), out id);
+    }
+    if (Model.Children.Count > 0)
+    {
+        <ul class="sub-level level@(Model.Level + 1)">
+            @foreach (var item in Model.Children)
+            {
+                <li class="@(item.Id == id ? "active-li" : "")">
+                    <i class="fa fa-caret-right"></i>
+                    @Html.ActionLink(item.CategoryName, "Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.CategoryName) }, null)
+                @if (item.ChildrenCount > 0)
+                {
+                    @Html.Partial("_SubmenuClick", item)
+                }
+            </li>
+            }
+        </ul>
+    }
+}

@@ -1,0 +1,26 @@
+﻿@using System.Data.Entity;
+@using (DataContext db = new DataContext())
+{
+    var articleType = db.ArticleTypes.FirstOrDefault(t => t.Code == "TAGS");
+    if (articleType != null)
+    {
+        var art = Article.GetByType(articleType.Id, SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 100, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING).List;
+        <div class="h-tags">
+            <div class="container">
+                <h2 class="heading">
+                    Tags từ khóa
+                </h2>
+                @foreach (var item in art)
+                {
+                    var url = item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("URL", StringComparison.OrdinalIgnoreCase));
+                    <a href="@url.Value">
+                        @item.ArticleName
+                    </a>
+                }
+            </div>
+        </div>
+    }
+}
+
+
+

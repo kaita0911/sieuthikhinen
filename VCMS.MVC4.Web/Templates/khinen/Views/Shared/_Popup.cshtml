@@ -1,0 +1,52 @@
+﻿@using (DataContext db = new DataContext())
+{
+    var item = Article.GetByType(db.ArticleTypes.FirstOrDefault(a => a.Code.Equals("POPUP", StringComparison.OrdinalIgnoreCase)).Id, SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 1, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.DESCENDING).List.FirstOrDefault();
+    if (Session["email"] == null)
+    {
+        Session["email"] = "true";
+    }
+    if (item != null && Session["email"] == "true")
+    {
+        var link = item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("LINK", StringComparison.OrdinalIgnoreCase));
+        <section id="popup" class="hidden-xs">
+            <div class="content">
+                <figure>
+                    <a href="@link.Value" title="@item.ArticleName" class="">
+                        @Html.Image(item.ImageUrl, new ImageOptions { Width = 750, Mode = ImageMode.max }, new { alt = item.ArticleName,@class="owl width-full" })
+                    </a>
+                </figure>
+                <span class="close">x</span>
+            </div>
+        </section>
+        <script>
+            $(window).bind("load", function () {
+                var timeout = setTimeout(function () {
+                    $("#popup").addClass("open");
+                }, 5000);
+            });
+            $(function () {
+                $("#popup .close").on("click", function () {
+                    $.ajax({
+                        url: '@Url.Action("StatusRegisterEmail","Home")',
+                        type: 'post',
+                        data: {status:"false"},
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#popup").removeClass("open");
+                        },
+                        complete: function () {
+                        },
+                        success: function (json) {
+                            $("#popup").remove();
+                            return false;
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+                            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                            return false;
+                        }
+                    });
+                });
+            });
+        </script>
+    }
+}

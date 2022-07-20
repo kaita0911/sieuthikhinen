@@ -1,0 +1,22 @@
+﻿@{
+    ViewBag.Title = "Facebook";
+    Layout = null;
+}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Facebook login</title>
+</head>
+<body style="text-align: center;">
+    <img src="/Images/loading.gif" />
+    <script language="javascript" type="text/javascript">
+        checkURL();
+        function checkURL() {
+            var url = window.location.href;
+            if (url.indexOf("#access_token") > 0)
+                window.location = url.replace("#access_token", "access_token");
+        }
+    </script>
+</body>
+</html>

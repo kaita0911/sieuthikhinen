@@ -1,0 +1,37 @@
+﻿@model Widget
+@{
+    var article = Article.GetByType((int)Model.ArticleTypeId, SiteConfig.SiteId, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection, Model.Includes);
+    if (article.List.Count > 0)
+    {
+        <div class="box-project-slider">
+            <div class="container">
+                <h2 class="heading">
+                    <a href="/du-an.html"><span>Dự án</span> đã thi công</a>
+                </h2>
+                <div class="content">
+                    <div class="owl-carousel" data-plugin-options='{"items": 4, "singleItem": false, "autoPlay": true, "navigation": true, "pagination": false,"slideSpeed":400,"addClassActive":true,"itemsDesktop": [1199, 3],"itemsDesktopSmall": [991, 3],"itemsTablet": [768, 2],"itemsMobile": [479, 1]}' data-snap-ignore="true">
+                        @foreach (var item in article.List)
+                        {
+                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })">
+                                <figure>
+                                    @Html.Image(item.ImageUrl, new ImageOptions { Width = 280, Height = 300, Mode = ImageMode.pad }, new { alt = item.ArticleName, @class = "owl" })
+                                </figure>
+                                <div class="title">
+                                    <span class="name">
+                                        @item.ArticleName
+                                    </span>
+                                    <br />
+                     
+                                    <span class="s-desc">
+                                        @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, 20))
+                                    </span>
+                                </div>
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+

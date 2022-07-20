@@ -1,0 +1,43 @@
+﻿@model Widget
+@{
+    var cate = Category.GetTree(Category.GetByType((int)Model.ArticleTypeId, SiteConfig.SiteId, SiteConfig.LanguageId)).Where(a => a.Level == 1).ToList();
+    var temp = Article.GetByCategories(cate.Select(c => c.Id).ToArray(), SiteConfig.LanguageId, ArticleFlags.HOT, 10, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING);
+
+    <div class="box-product-home-cate">
+        <div class="content">
+            @foreach (var sitem in cate)
+            {
+                var lst = temp.Where(a => a.CurrentCategory.Id == sitem.Id).ToList();
+                <div class="citem">
+                    <h3 class="c-header">
+                        <a class="left" href="@Url.Action("Detail", "Category", new {id=sitem.Id,code=sitem.ArticleType.UrlFriendly,title=Unichar.UnicodeStrings.UrlString(sitem.CategoryName) })">
+                            @sitem.CategoryName
+                        </a>
+                        <a class="right"></a>
+                    </h3>
+                    <div class="owl-carousel is-active" data-plugin-options='{"items": 4, "singleItem": false, "autoPlay": true, "navigation": true, "pagination": false,"slideSpeed":1200,"addClassActive":true,"itemsDesktop": [1199, 3],"itemsDesktopSmall": [991, 3],"itemsTablet": [768, 2],"itemsMobile": [479, 1]}'>
+                        @foreach (var item in lst)
+                        {
+                            <div class="item">
+                                <figure>
+                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.ArticleTypeDetail[SiteConfig.LanguageId].UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleDetail[SiteConfig.LanguageId].UrlFriendly) })" title="@item.ArticleName">
+                                        @Html.Image(item.ImageUrl, new ImageOptions { Width = 260, Height = 170, Watermark = SiteConfig.Watermark, Mode = ImageMode.pad }, new { alt = item.ArticleDetail[SiteConfig.LanguageId].ArticleName, @class = (Model.LazyOwl ? "owl" : "") })
+                                    </a>
+                                </figure>
+                                <h4>
+                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.ArticleTypeDetail[SiteConfig.LanguageId].UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleDetail[SiteConfig.LanguageId].UrlFriendly) })" title="@item.ArticleDetail[SiteConfig.LanguageId].ArticleName">@item.ArticleDetail[SiteConfig.LanguageId].ArticleName</a>
+                                </h4>
+                                <div class="contact">
+                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.ArticleTypeDetail[SiteConfig.LanguageId].UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleDetail[SiteConfig.LanguageId].UrlFriendly) })" title="@item.ArticleDetail[SiteConfig.LanguageId].ArticleName">
+                                        @Html.Locale("view-detail")
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+}

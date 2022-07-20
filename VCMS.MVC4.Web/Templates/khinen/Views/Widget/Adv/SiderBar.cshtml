@@ -1,0 +1,21 @@
+﻿@model Widget
+@{
+    var lst = Article.GetByType((int)Model.ArticleTypeId, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection).List.OrderBy(a => Guid.NewGuid()).ToList();
+    var effect = Model.Effect1 ? "banner-cubic-1" : Model.Effect2 ? "banner-cubic-2" : Model.Effect3 ? "banner-cubic-3" : Model.Effect4 ? "banner-cubic-4" : Model.Effect5 ? "banner-cubic-5" : Model.Effect6 ? "banner-cubic-6" : Model.Effect7 ? "banner-cubic-7" : "";
+}
+@if (lst.Count > 0)
+{
+    <div class="box-siderbar box-adv">
+        @foreach (var item in lst)
+        {
+            var link = item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("URL", StringComparison.OrdinalIgnoreCase));
+            <div class="item">
+                <figure>
+                    <a href="@link.Value" target="_blank" class="@effect">
+                        @Html.Image(item.ImageUrl, new ImageOptions { Width = 1400, Height = 350, Mode = ImageMode.crop }, new { alt = item.ArticleName, @class = "owl" })
+                    </a>
+                </figure>
+            </div>
+        }
+    </div>
+}

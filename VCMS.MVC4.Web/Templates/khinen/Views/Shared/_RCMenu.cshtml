@@ -1,0 +1,52 @@
+﻿@using (DataContext db = new DataContext())
+{
+    var article = Category.GetByType(db.ArticleTypes.FirstOrDefault(a => a.Code == "PRODUCT").Id, SiteConfig.SiteId, SiteConfig.LanguageId);
+    var menu = Category.GetTree(article).Where(a => a.Level == 0).ToList();
+    int id = 0;
+    if (ViewContext.RouteData.Values["id"] != null)
+    {
+        id = Convert.ToInt32(ViewContext.RouteData.Values["id"]);
+    }
+    if (menu.Count > 0)
+    {
+            <div class="box-right border">
+                <div class="box-heading">
+                    <h2 class="heading">
+                        <i class="fa fa-chain-broken"></i>
+                        <span>
+                            @Resources.VCMS.category
+                        </span>
+                    </h2>
+                </div>
+                <div class="box-content non-border">
+                    <ul class="project" id="menuProduct">
+                        @foreach (var item in menu)
+                        {
+                            <li class="@(item.Id == id ? "p-selected": "")">
+                                <a href="@Url.Action("Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.CategoryName) })">
+                                    <span class="p-name">@item.CategoryName</span>
+                                </a>
+                                @if (item.ChildrenCount > 0)
+                                {
+                                    <ul class="sub-project">
+                                        @foreach (var sub in item.Children)
+                                        {
+                                            <li class="@(sub.Id == id ? "selected" : "")">
+                                                <a href="@Url.Action("Detail", "Category", new { id = sub.Id, code = sub.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(sub.CategoryName) })">
+                                                    <span>
+                                                        @sub.CategoryName
+                                                    </span>
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+       
+    }
+}

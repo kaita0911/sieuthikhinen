@@ -1,0 +1,66 @@
+﻿@model VCMS.MVC4.Data.Article
+@{
+    var type = ViewBag.Type as ArticleType;
+<article class="article" itemscope itemtype="http://schema.org/Article">
+    @if (type.ShowImage)
+    {
+        <div class="col-sm-6 col-xs-12">
+            <div class="image-article">
+                <a href="@Url.Content(Model.ImageUrl)" class="lightbox" data-plugin-options="{type:image;}">
+                    @Html.Image(Model.ImageUrl, new ImageOptions { Width = 381, Height = 324, Watermark = SiteConfig.Watermark, Mode = ImageMode.pad }, new { alt = Model.ArticleName })
+                </a>
+            </div>
+        </div>
+    }
+    <h1 class="title" itemprop="name">@Model.ArticleName</h1>
+    <div class="description short @(type.ShowImage ? "col-sm-6" : "") col-xs-12" itemprop="description">
+        @Html.Raw(Model.ShortDescription)
+    </div>
+    <div class="clearfix"></div>
+    <div class="description full col-xs-12" itemprop="description">
+        @Html.Raw(Model.Description)
+    </div>
+    @if (type.HasAttachment)
+    {
+        <div class="attachment">
+            @if (type.HasAttachment && Model.Attachments.Count > 0)
+            {
+                var j = 1;
+                foreach (var aitem in Model.Attachments)
+                {
+                    <div class="box-download">
+                        <a download="@aitem.OriginalFileName" href="@aitem.FileName" class="d-detail">
+                            <i class="fa fa-cloud-download"></i>File đính kèm @j
+                        </a>
+                    </div>
+                    j++;
+                }
+            }
+        </div>
+    }
+    @if (!string.IsNullOrWhiteSpace(Model.SEOKeywords))
+    {
+        <div class="tags col-xs-12">
+            <strong>Tags:</strong>
+            @foreach (var item in Model.SEOKeywords.Split(','))
+            {
+                <a href="@Url.Action("Tag", "Home", new { keyword = item.Replace(" ", "-") })" target="_blank" itemprop="keywords">
+                    <span><i class="fa fa-tags"></i> @item</span>
+                </a>
+            }
+        </div>
+    }
+    <div class="clearfix"></div>
+    <div class="a-share">
+        @if (type.ShowShareArticle)
+        {
+            @Html.Partial("_ShareArticle")
+        }
+    </div>
+</article>
+    @Html.Action("Other", "Article", new { id = Model.Id, typeid = Model.ArticleTypeId, categoryId = Model.Categories.Count > 0 ? Model.Categories.Skip(Model.Categories.Count - 1).FirstOrDefault().Id : 0, pageSize = 6 })
+    if (Request.IsAuthenticated && (Roles.IsUserInRole("Super Administrators") || Roles.IsUserInRole("Administrators")))
+    {
+        <a href="@Url.Action("Edit", "Article", new { id = Model.Id, area = "Admin" })" target="_blank" class=" col-xs-12"><i class="fa fa-edit"></i> @Html.Locale("view_admin")</a>
+    }
+}

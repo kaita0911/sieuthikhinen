@@ -1,0 +1,13 @@
+﻿@model VCMS.MVC4.Data.ArticleResult
+@{
+    string viewPath = ViewBag.ViewPath.ToString();
+}
+
+@if (string.IsNullOrWhiteSpace(viewPath))
+{
+    @Html.Partial("_List", Model)
+}
+else
+{
+    @Html.Partial(viewPath, Model)
+}

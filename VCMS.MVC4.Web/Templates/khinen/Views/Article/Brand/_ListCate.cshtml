@@ -1,0 +1,27 @@
+﻿@model ArticleResult
+@{
+    var cate = Category.GetTree(Category.GetByType(16, SiteConfig.LanguageId)).Where(a => a.Level == 0).ToList();
+    var temp = Article.GetByCategories(cate.Select(c => c.Id).ToArray(), SiteConfig.LanguageId, ArticleFlags.MOSTVIEW, 3, ArticleSortOrder.ARTICLE_NAME, VCMS.MVC4.Data.SortDirection.ASCENDING, ArticleIncludeFlags.ARTICLE_TYPE | ArticleIncludeFlags.DISCOUNTS | ArticleIncludeFlags.PRICES | ArticleIncludeFlags.PROPERTIES).ToList();
+    var type = ArticleType.GetById(16, SiteConfig.LanguageId);
+
+    <div class="box-product-list-cate">
+        <div class="row">
+            @foreach (var sitem in cate)
+            {
+                var lst = temp.Where(a => a.CurrentCategory.Id == sitem.Id).ToList();
+                <div class="listcate col-md-3 col-sm-3 col-xs-6">
+                    <h3 class="c-header">
+                        <a href="@Url.Action("Detail", "Category", new {id=sitem.Id,code=sitem.ArticleType.UrlFriendly,title=Unichar.UnicodeStrings.UrlString(sitem.CategoryName).ToLower() })">
+                            @sitem.CategoryName
+                        </a>
+                  
+                    </h3>
+
+                  
+                </div>
+            }
+        </div>
+    </div>
+}
+
+

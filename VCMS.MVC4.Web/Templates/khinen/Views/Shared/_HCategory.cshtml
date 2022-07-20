@@ -1,0 +1,242 @@
+﻿<div class="list-category">
+@using (DataContext db = new DataContext())
+{
+    var articleType = db.ArticleTypes.FirstOrDefault(a => a.Code == "PRODUCT");
+    if (articleType != null)
+    {
+        var lstCate = Category.GetTree(Category.GetByType(articleType.Id, SiteConfig.SiteId, SiteConfig.LanguageId)).Where(a => a.Level == 0).ToList();
+        if (lstCate.Count > 0)
+        {
+            <div class=" h-cate">
+            <div class="row">
+                @foreach (var item in lstCate)
+                {
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6">
+                        <div class="item">
+                            <div class="img">
+                                <a href="@Url.Action("Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.CategoryName) })" title="@item.CategoryName">
+                                    @if (item.ImageUrl != null)
+                                    {
+                                        <img src="@Url.Content("~/UserUpload/Category/")@item.ImageUrl?width=337" alt="@item.CategoryName" />
+                                    }
+                                    else
+                                    {
+                                        <img src="@Url.Content("~/Templates/"+ SiteConfig.SiteCode +"/Content/images/no-news.jpg")?width=337" class="width-full" alt="@item.CategoryName" />
+                                    }
+                                </a>
+                            </div>
+                            <div class="name">
+                                @Html.ActionLink(item.CategoryName, "Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.CategoryName) }, null)
+                            </div>
+                            <div class="short-desc">
+                                @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.CategoryDetail[SiteConfig.LanguageId].Description, 25))
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div></div>
+        }
+    }
+}
+<div class="nvnvn">
+	<div class="item_view">
+	
+		<ul class="item_list">
+		<li class="item-p clk-sh-mobile">
+                                                            <img src="/UserUpload/Category/632cdc43-e25d-4024-ad03-7db2570cecf4.png?width=55" class="icon-p hidden-xs hidden-sm">
+                                                        <a class="hidden-xs hidden-sm" href="/San-pham/Vat-lieu-tieu-hao-ac14768.html">
+                                                            <span class="name-p">Vật liệu tiêu hao</span>
+                                                        </a>
+                                                            
+                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/a4490db6-9379-42d6-b3f3-bbe2c5f72ece.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/Rang-tham-my-ac14769.html">Răng thẩm mỹ</a>
+
+                                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/7256c7a9-f911-4442-973f-59f05ff46141.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/Dieu-tri-noi-nha-ac14770.html">Điều trị nội nha</a>
+
+                                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/c8f89392-0691-4532-94bc-e237c2226b5d.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/Vat-lieu-noi-nha-ac19679.html">Vật liệu nội nha</a>
+
+                                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/def4bfac-dcb4-4b3f-976b-8759345cfa4f.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/Vat-lieu-gan-chinh-nha-ac14771.html">Vật liệu gắn chỉnh nha</a>
+
+                                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/c02d9d18-1a2f-44f9-af5e-405f6d66f53c.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/Vat-lieu-phuc-hinh-ac14772.html">Vật liệu phục hình</a>
+
+                                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/dd9ab734-e30b-40e7-94dc-b8b6c800bcac.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/Sua-soan---tram-Composite-ac16819.html">Sửa soạn &amp; trám Composite</a>
+
+                                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/6482f23c-eabf-4ed6-9e25-e083adb52b20.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/Danh-bong-Composite-ac19680.html">Đánh bóng Composite</a>
+
+                                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/63221b23-e128-4721-bc30-f07fd2dd1137.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/Vat-lieu-gan-rang-ac19683.html">Vật liệu gắn răng</a>
+
+                                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/647bb2a4-ec33-4610-b2b8-5b32a2f916ad.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/Vat-lieu-lay-dau-ac15512.html">Vật liệu lấy dấu</a>
+
+                                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/5281b28f-e68d-41b1-bedc-c9b9fc8a3d98.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/Vat-Lieu-Khac-ac15559.html">Vật Liệu Khác</a>
+
+                                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/70b4d475-7639-4265-bfa4-44ee5ef13f2b.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/Vat-lieu-Laboratory-ac19662.html">Vật liệu Laboratory</a>
+
+                                                                    </li>
+                                                            </ul>
+	</div>
+	<div class="item_view">
+		<ul class="item_list">
+		<li class="item-p clk-sh-mobile">
+                                                            <img src="/UserUpload/Category/87a3f884-b62d-4379-a1bf-80e3cb26a86b.png?width=55" class="icon-p hidden-xs hidden-sm">
+                                                        <a class="hidden-xs hidden-sm" href="/San-pham/Vat-tu--dung-cu-ac14773.html">
+                                                            <span class="name-p">Vật tư, dụng cụ</span>
+                                                        </a>
+                                                            
+                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/17caa9ea-1565-4cd2-bcd8-debb906b66d4.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/Dung-cu-phong-kham-ac14774.html">Dụng cụ phòng khám</a>
+
+                                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/688cce75-fef4-4fe5-89c9-63f39cc2a7f0.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/Mui-khoan-nha-khoa-ac14775.html">Mũi khoan nha khoa</a>
+
+                                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/0ae9b37f-c6bf-48b5-9c2f-b7dbbc52abb5.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/Tay-khoan-nha-khoa-ac19657.html">Tay khoan nha khoa</a>
+
+                                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/ffdbf485-75e1-450d-b1c7-7d3360c2698c.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/Dung-cu-chinh-nha-ac17361.html">Dụng cụ chỉnh nha</a>
+
+                                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/68c86838-10ac-4de7-8352-1558baa9ad09.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/Dung-cu-cao-cap-NORDENT-ac17499.html">Dụng cụ cao cấp NORDENT</a>
+
+                                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/33357d68-29ba-4223-bac7-04c42047eb16.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/Dung-cu-cao-cap-YDM-ac19266.html">Dụng cụ cao cấp YDM</a>
+
+                                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/325d83c7-1312-4d1b-9a41-822b50e02335.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/Dung-cu-cao-cap-IAA-ac19642.html">Dụng cụ cao cấp IAA</a>
+
+                                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/7e4eccd3-3f07-41b3-9134-055eb3a53586.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/Vat-tu-tieu-hao-ac19651.html">Vật tư tiêu hao</a>
+
+                                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/609a9036-7d1f-4fef-a2e1-c78152a68440.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/Vat-tu-chinh-nha-ac19667.html">Vật tư chỉnh nha</a>
+
+                                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/7a1a8f0b-725b-4a1b-a22e-cf4a57f1e4a9.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/Vat-tu-khac-ac14809.html">Vật tư khác</a>
+
+                                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/381363b2-e7ae-42a1-92a0-da78ef3f1f2c.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/Vat-tu-Laboratory-ac19660.html">Vật tư Laboratory</a>
+
+                                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/1d945ed5-0cf9-410a-a9e7-324c9a11827f.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/Mo-hinh-nha-khoa-ac19671.html">Mô hình nha khoa</a>
+
+                                                                    </li>
+                                                            </ul>
+	</div>
+	<div class="item_view">
+		<ul class="item_list">
+		<li class="item-p clk-sh-mobile">
+                                                            <img src="/UserUpload/Category/f8fffe00-f102-40a2-a7b3-8d90be2e8ec8.png?width=55" class="icon-p hidden-xs hidden-sm">
+                                                        <a class="hidden-xs hidden-sm" href="/San-pham/Thiet-bi--ghe-may-ac19265.html">
+                                                            <span class="name-p">Thiết bị, ghế máy</span>
+                                                        </a>
+                                                            
+                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/2d954e00-9377-4be8-a44b-1d9620334c3f.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/Ghe-nha-khoa-ac14776.html">Ghế nha khoa</a>
+
+                                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/19d162f2-2851-4f8e-93fd-8e1da83f02fb.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/May-cao-voi---Den-tram-ac14777.html">Máy cạo vôi &amp; Đèn trám</a>
+
+                                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/18c28adb-4950-4b6b-bdac-6dd9b06c75fc.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/May-nen-khi-khong-dau-ac19672.html">Máy nén khí không dầu</a>
+
+                                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/5f2903f5-c954-45d5-951b-b3be0c0f4fc7.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/May-phau-thuat-Implant-ac19630.html">Máy phẫu thuật Implant</a>
+
+                                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/d92614da-70c4-429c-8e0d-b61240d70fbc.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/Dung-cu-Implant-ac19673.html">Dụng cụ Implant</a>
+
+                                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/bd3653b1-12fb-447b-90a5-934094225923.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/Thiet-bi-chan-doan-hinh-anh-ac14778.html">Thiết bị chẩn đoán hình ảnh</a>
+
+                                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/61dca826-2f95-4f20-bbcf-592520cd8266.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/Thiet-bi-hay-say-tiet-trung-ac19674.html">Thiết bị hấy sấy tiệt trùng</a>
+
+                                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/85170620-ec72-4d7d-a1cb-d4cc937fd509.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/Thiet-bi-khac-ac14810.html">Thiết bị khác</a>
+
+                                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/9f634fd5-784c-4fbd-b992-74f2af62f29b.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/Thiet-bi-Laboratory-ac19661.html">Thiết bị Laboratory</a>
+
+                                                                    </li>
+                                                                    <li>
+                                                                            <img src="/UserUpload/Category/ab75ec6d-63ec-4ce1-ac75-31ab989eca10.png?width=30" class="icon-p hidden-xs hidden-sm">
+                                                                        <a href="/San-pham/Phu-tung---Linh-kien-thay-the-ac19678.html">Phụ tùng &amp; Linh kiện thay thế</a>
+
+                                                                    </li>
+                                                            </ul>
+	</div>
+</div>
+</div>

@@ -1,0 +1,59 @@
+﻿@model CategoryDetail
+
+@if (SiteConfig.Languages.Select(l => l.Id).Contains(Model.LanguageId))
+{
+
+    string detail = "Mô tả chi tiết";
+
+    if (ViewBag.ArticleType != null)
+    {
+        var articleType = (ArticleType)ViewBag.ArticleType;
+        if (articleType.Code == "VIDEO")
+        {
+            detail = "Liên kết đến trang YouTube";
+        }
+    }
+
+    <div id="tabs-@Model.LanguageId" class="tab-pane">
+        @Html.HiddenFor(model => model.LanguageId)
+        @Html.HiddenFor(model => model.CategoryId)
+        <div class="editor-label">
+            @Html.Label("Tên")
+        </div>
+        <div class="editor-field">
+            @Html.TextBoxFor(model => model.CategoryName, new { data_auto_copy = "true", @class = "url-source" })
+            @Html.ValidationMessageFor(model => model.CategoryName, "Tiêu đề không được trống")
+        </div>
+        <div class="editor-label">
+            @Html.Label("url")
+        </div>
+        <div class="editor-field">
+            @Html.TextBoxFor(model => model.UrlFriendly, new { name = "txtUrl_" + Model.LanguageId.ToString(), @class = "url-dest" })
+        </div>
+        @if (ViewBag.ArticleType != null)
+        {
+            var articleType = (ArticleType)ViewBag.ArticleType;
+            if (articleType.DescriptionCategory)
+            {
+                <div class="editor-label full-desc">
+                    @Html.Label(detail)
+                </div>
+                <div class="editor-field margin-bottom-7">
+                    @Html.TextAreaFor(model => model.Description, new { @class = "fck" })
+                </div>
+            }
+        }
+        <div class="editor-label">
+            @Html.Label("meta keywords")
+        </div>
+        <div class="editor-field">
+            @Html.TextBoxFor(model => model.SEOKeywords, new { @class = "keyword" })
+        </div>
+        <div class="editor-label">
+            @Html.Label("meta description")
+        </div>
+        <div class="editor-field">
+            @Html.TextBoxFor(model => model.SEODescription)
+        </div>
+    </div>
+}

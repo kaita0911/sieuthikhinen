@@ -1,0 +1,126 @@
+﻿@model ICollection<VCMS.MVC4.Data.Article>
+@{
+    var count = (int)ViewBag.Count;
+    var articles = (ViewBag.Articles as ICollection<Article>);
+}
+<div>
+    <div class="form-group row">
+        <div class="col-md-12">
+            <div class="search">
+                <input id="key_autocom_pro" type="text" name="keyword" class="txt-search" placeholder="Nhập vào tên sản phẩm muốn tìm" />
+                <div class="auto-search-pro">
+                    <div id="img-loading" title="Đang xử lý" style="display: none">
+                        <img src="@Url.Content("~/Content/Admin/Images/loading.gif")" />
+                    </div>
+                    <div class="article-auto auto">
+                        <table>
+                            <tr>
+                                <td class="chk"></td>
+                                <td><label>Tên sản phẩm</label></td>
+                            </tr>
+                            <tbody class="content">
+                                @foreach (var item in Model)
+                                {
+                                    <tr class="rows">
+                                        <td align="center">
+                                            <label class="checkbox discount">
+                                                <input name="articles" type="checkbox" value="@item.Id" class="check" @(articles != null ? (articles.Contains(item) ? "checked" : "") : "") /><i></i>
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <span class="name">
+                                                <span>@item.ArticleName</span>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    @if(count > 5)
+                        {
+                            <div><a id="view_moreauto_pro">Hiển thị thêm sản phẩm</a></div>
+                        }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    var count = $('.article-auto input[type="checkbox"]:not(:checked)').length;
+
+    $("#view_moreauto_pro").on("click", function () {
+        $('.auto-search-pro .no-data').empty();
+        count = $('.article-auto input[type="checkbox"]:not(:checked)').length;
+        $.ajax({
+            url: '@Url.Action("AddRows", "Article")',
+            dataType: "json",
+            contentType: 'application/json, charset=utf-8',
+            data: {
+                pageIndex: count / 5 + 1,
+                id:'@(ViewBag.ID!=null?ViewBag.ID:0)'
+            },
+            success: function (data) {
+                json = data;
+                for (i = 0; i < json.length; i++) {
+                    $('.auto-search-pro .content').append(json[i]);
+                }
+                var count_after = $('.article-auto input[type="checkbox"]').length;
+                if (count_after >= '@count') { $('#view_moreauto_pro').hide() }
+            },
+            error: function (xhr, status, error) {
+                alert(error);
+            }
+        });
+
+    });
+
+    $(function () {
+        $('#key_autocom_pro').autocomplete({
+            source: function (request, response) {
+                $('.auto-search-pro').show();
+                $('.auto-search-pro .no-data').empty();
+                $('#img-loading-pro').show();
+                $('.article-auto input[type="checkbox"]').each(function () {
+                    if (!$(this).is(':checked')) {
+                        $(this).parents('tr.rows').empty();
+                    }
+                });
+
+                $.ajax({
+                    url: '@Url.Action("Autocomplete", "Article")',
+                    dataType: 'json',
+                    contentType: 'application/json, charset=utf-8',
+                    data: {
+                        keyword: $("#key_autocom_pro").val().trim(),
+                        id:'@(ViewBag.ID!=null?ViewBag.ID:0)'
+                    },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            $('.auto-search-pro .content').html("");
+                            $('.auto-search-pro .content').append(item);
+                            $("#img-loading-pro").hide();
+                        }));
+                        $("#view_moreauto_pro").hide();
+                    },
+                    error: function (xhr, status, error) {
+                        alert(error);
+                    }
+                });
+            },
+            select: function (event, ui) {
+                $('#key_autocom_pro').val(ui.item.label);
+                return false;
+            },
+            minLength: 2
+        })
+    });
+
+
+    //$(document).on("click", ".f-delete i", function (e) {
+    //    e.preventDefault();
+    //    $(this).parents('tr.rows').remove();
+    //});
+
+</script>

@@ -1,0 +1,34 @@
+﻿@{
+    Layout = null;
+    var types = (List<ArticleType>)ViewBag.ArticleTypes;
+    var categories = (List<Category>)ViewBag.Categories;
+    var articles = (List<Article>)ViewBag.Articles;
+}
+@*<?xml version="1.0" encoding="UTF-8" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+    xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+    xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+    @foreach (var lang in SiteConfig.Languages)
+    {
+       
+        foreach (var t in types)
+        {
+             <url> 
+    <loc>@Url.Action( "Index", "ArticleType", new { code= t.ArticleTypeDetail[lang.Id].UrlFriendly}, Request.Url.Scheme)</loc>     
+  </url>
+        }
+        foreach (var t in categories)
+        {
+             <url> 
+    <loc>@Url.Action( "Detail", "Category", new { code= t.ArticleType.ArticleTypeDetail[lang.Id].UrlFriendly, id=t.Id, title=Unichar.UnicodeStrings.UrlString(t.CategoryDetail[lang.Id].CategoryName)}, Request.Url.Scheme)</loc>     
+  </url>
+        }
+        foreach (var t in articles)
+        {
+             <url> 
+    <loc>@Url.Action( "Detail", "Article", new { code= t.ArticleType.ArticleTypeDetail[lang.Id].UrlFriendly, id=t.Id, title=Unichar.UnicodeStrings.UrlString(t.ArticleDetail[lang.Id].ArticleName)}, Request.Url.Scheme)</loc>     
+  </url>
+        }
+    }
+ 
+</urlset>*@

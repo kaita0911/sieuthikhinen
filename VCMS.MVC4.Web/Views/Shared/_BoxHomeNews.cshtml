@@ -1,0 +1,26 @@
+﻿@using (DataContext db = new DataContext())
+{
+    var article = db.Articles.Include("ArticleDetail").Include("ArticleType.ArticleTypeDetail")
+        .FirstOrDefault(a => a.ArticleType.Code.Equals("NEWS", StringComparison.OrdinalIgnoreCase));
+    
+   
+    if (article != null)
+    {
+    <div class="home-news">
+         <div class="title">
+        <span>Tin tức mới</span>
+    </div>
+        <div class="image">
+            <img src="@Url.Content("~/UserUpload/Article/")@article.ImageUrl?width=280&height=130"  alt="@article.ArticleName"/></div>
+        <div class="name">
+            @article.ArticleName
+        </div>
+        <div class="headline">
+            @Html.Raw(VNS.Web.Helpers.HTMLHelper.GetInnerText(article.ShortDescription))
+        </div>
+        <div class="more">
+            @Html.ActionLink("Xem tiếp", "Detail", "Article", new { id = article.Id, title = Unichar.UnicodeStrings.UrlString(article.ArticleName), code = article.ArticleType.UrlFriendly }, null)
+        </div>
+    </div>
+    }
+}

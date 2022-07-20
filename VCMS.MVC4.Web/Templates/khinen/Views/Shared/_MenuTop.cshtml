@@ -1,0 +1,118 @@
+﻿@using System.Text.RegularExpressions
+@using System.Data.Entity
+@{
+    var db = new DataContext();
+    var menuItems = MenuItem.GetMenu(SiteConfig.LanguageId);
+    string code = "";
+    string action = "";
+    if (ViewContext.RouteData.Values["code"] != null)
+    {
+        code = ViewContext.RouteData.Values["code"].ToString().ToLower();
+    }
+    if (ViewContext.RouteData.Values["action"] != null)
+    {
+        action = ViewContext.RouteData.Values["action"].ToString().ToLower();
+    }
+}
+<nav id="navigation" class="hidden-sm hidden-xs">
+    <div id="vns-mainnav" class="wrap-menu">
+        <div class="container">
+            <div class="dmsp pull-left">@Html.Partial("Category")</div>
+            <div class="menu-top pull-left">
+                <ul class="nav navbar-nav megamenu">
+                    <li class="dropdown home @(code == "" && action != "contact" ? "active" : "")">
+                        <a href="@Url.Action("Index","Home")">
+                            <span class="menu-title">@Html.Locale("home")</span>
+                            @*<i class="fa fa-home" aria-hidden="true"></i>*@
+                        </a>
+                    </li>
+                    @foreach (var item in menuItems)
+                    {
+                        <li class="dropdown @(item.ArticleType.Code.ToLower()) @(code == item.ArticleType.UrlFriendly.ToLower() && item.ItemType != MenuItemType.LINK ? "active" : "")">
+                            <i class="fa fa-home visible-sm visible-xs"></i>
+                            @if (item.ItemType == MenuItemType.LINK)
+                            {
+                                <a href="@item.Url">
+                                    <span class="menu-title">@item.ItemText</span>
+                                </a>
+                                if (item.Id == -1)
+                                {
+                                    var categories = Category.GetByType(2, SiteConfig.LanguageId).OrderBy(c => c.SortOrder).ToList();
+                                    if (categories.Count > 0)
+                                    {
+                                        var submenu = Category.GetTree(categories).ToList();
+                                        <div class="dropdown-menu">
+                                            <ul class="dropdown-menu-inner">
+                                                @foreach (var sub in submenu)
+                                                {
+                                                    <li class="dropdown">
+                                                        <a href="@Url.Action("Detail", "Category", new { sub.Id, code = sub.ArticleType.UrlFriendly, title = sub.UrlFriendly })" title="">@sub.CategoryName</a>
+                                                        @if (sub.ChildrenCount > 0)
+                                                        {
+                                                            <i class="fa fa-arrow-circle-right" aria-hidden="true"></i>
+                                                            @Html.Partial("_SubmenuTop", sub)
+                                                        }
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("Index", "ArticleType", new { code = item.ArticleType.UrlFriendly })">
+                                    <span class="menu-title">@item.ItemText</span>
+                                </a>
+                                if (item.HasSubMenu)
+                                {
+                                    @*<i class="fa fa-caret-down" aria-hidden="true"></i>*@
+                                    var categories = Category.GetByType(item.ArticleTypeId ?? 0, SiteConfig.LanguageId).OrderBy(c => c.SortOrder).ToList();
+                                    if (categories.Count > 0)
+                                    {
+                                        var submenu = Category.GetTree(categories).Where(a => a.Level == 0).ToList();
+                                        <div class="dropdown-menu">
+                                            <ul class="dropdown-menu-inner">
+                                                @foreach (var sub in submenu)
+                                                {
+                                                    <li class="dropdown">
+                                                        <a href="@Url.Action("Detail", "Category", new { sub.Id, code = sub.ArticleType.UrlFriendly, title = sub.UrlFriendly })" title="">@sub.CategoryName</a>
+
+                                                        @if (sub.ChildrenCount > 0)
+                                                        {
+                                                            <i class="fa fa-arrow-circle-right" aria-hidden="true"></i>
+                                                            @Html.Partial("_SubmenuTop", sub)
+                                                        }
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    }
+                                }
+                            }
+                        </li>
+                    }
+                    <li class="dropdown contact @(action == "contact"?"active":"")">
+                        <i class="fa fa-home visible-sm visible-xs"></i>
+                        <a class="" href="@Url.Action("Contact","Home")">
+                            <span class="menu-title">@Html.Locale("contact")</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+<script>
+    $(document).ready(function () {
+        $(function () {
+            $(window).scroll(function () {
+                if ($(this).scrollTop() > 50) {
+                    $('#vns-mainnav').addClass("fix");
+                } else {
+                    $('#vns-mainnav').removeClass("fix");
+                }
+            });
+        });
+    });
+</script>

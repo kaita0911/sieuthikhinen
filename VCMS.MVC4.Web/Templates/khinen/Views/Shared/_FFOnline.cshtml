@@ -1,0 +1,16 @@
+﻿<div class="ff-online">
+    <div class="item">
+        <span class="lbl">@Html.Locale("online"):</span>
+        <span class="ctn" id="ol">49</span>
+    </div>
+    <div class="item total">
+        <span class="lbl">@Html.Locale("total"):</span>
+        <span class="ctn" id="tl">192.157</span>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $("#ol").html(onlineLog.Online);
+        $("#tl").html(String(onlineLog.Total).replace(/(.)(?=(\d{3})+$)/g, '$1.'));
+    });
+</script>

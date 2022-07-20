@@ -1,0 +1,34 @@
+﻿@model Widget
+@{
+    var article = Article.GetByType((int)Model.ArticleTypeId, SiteConfig.SiteId, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection, Model.Includes);
+    if (article.List.Count > 0)
+    {
+        var i = 0; var itemrow = 2;
+        <div class="box-sidebar box-product-hot">
+            <h2 class="heading sidebar-heading">@Model.Title</h2>
+            <div class="owl-carousel" data-plugin-options='{"items": 1, "singleItem": true, "autoPlay": false, "navigation": true, "pagination": false,"slideSpeed":400,"addClassActive":true,"transitionStyle":"fade"}' data-snap-ignore="true">
+                @foreach (var item in article.List)
+                {
+                    if (i % itemrow == 0)
+                    {
+                        @:<div class="item">
+                    }
+                    <div class="box-block box-product box-product-sidebar">
+                        <figure>
+                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                @Html.Image(item.ImageUrl, new ImageOptions { Width = 267, Height = 226, Watermark = SiteConfig.Watermark, Mode = ImageMode.pad }, new { alt = item.ArticleName, @class = "owl" })
+                            </a>
+                        </figure>
+                        <h3>
+                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">@item.ArticleName</a>
+                        </h3>
+                    </div>
+                    if (i++ % itemrow == itemrow - 1 || i == article.List.Count)
+                    {
+                        @:</div>
+                    }
+                }
+            </div>
+        </div>
+    }
+}

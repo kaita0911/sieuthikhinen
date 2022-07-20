@@ -1,0 +1,24 @@
+﻿@model CommentResult
+@{
+    <div id="id_view_comment" class="view-comment">
+        <h3 class="heading">@Html.Locale("product_comment")</h3>
+        <div class="content">
+            @foreach (var item in Model.List)
+            {
+                var logo = item.Name.Substring(0, 1);
+                <div class="item">
+                    <div class="logo">
+                        <span>@logo</span>
+                    </div>
+                    <div class="ctn">
+                        <div class="rating">
+                            @Html.Image(SiteConfig.Image(string.Format("stars-{0}.png", item.Rating)), new ImageOptions { Width = 68, Height = 11 }, new { alt = "" })
+                        </div>
+                        <div class="name"><strong>@item.Name</strong> - <span class="date">@item.DateCreated.ToString("dd/MM/yyyy")</span></div>
+                        <div class="desc">@Html.Raw(item.Message)</div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}

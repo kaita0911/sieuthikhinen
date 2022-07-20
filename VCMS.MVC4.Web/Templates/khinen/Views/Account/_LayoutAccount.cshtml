@@ -1,0 +1,88 @@
+﻿@using VCMS.MVC4.Web
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title - @SiteConfig.SiteInfo.WebsiteDetail[SiteConfig.LanguageId].Title</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,300,600,700,800&subset=latin,vietnamese' rel='stylesheet' type='text/css'>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="@ViewBag.Keywords" />
+    <meta name="description" content="@ViewBag.Description" />
+
+    <meta itemprop="image" content="@ViewBag.Image">
+    <meta itemprop="description" content="@ViewBag.Description" />
+    <meta itemprop="keywords" content="@ViewBag.Keywords" />
+
+    <meta property="og:site_name" content="@SiteConfig.SiteInfo.Title">
+    <meta property="og:title" content="@ViewBag.Title" />
+    <meta property="og:type" content="article" />
+    <meta property="og:description" content="@ViewBag.Short" />
+    <meta property="og:url" content="@HttpContext.Current.Request.Url.AbsoluteUri" />
+    <meta property="og:image" content="@ViewBag.Image" />
+
+    <meta name="twitter:title" content="@ViewBag.Title" />
+    <meta name="twitter:domain" content="@Request.Url.Scheme://@Request.Url.Host" />
+    <meta name="twitter:image:src" content="@ViewBag.Image">
+    <meta name="twitter:description" content="@ViewBag.Short" />
+
+
+    @Html.Canonical(SiteConfig.SiteInfo.DefaultDomain)
+
+    <script>
+        //<![CDATA[
+        var click = 0;
+        var message = encodeURIComponent('@ViewBag.Title');
+        var sharing_url = "@HttpContext.Current.Request.Url.AbsoluteUri";
+        //]]>
+    </script>
+    @Styles.Render("~/templates/" + SiteConfig.SiteInfo.Code + "/Content/" + (!string.IsNullOrWhiteSpace(SiteConfig.SiteInfo.Skin) ? SiteConfig.SiteInfo.Skin : "App"))
+    @RenderSection("styles", required: false)
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/LightBox")
+
+    <!--[if lt IE 9]>
+    @Scripts.Render("~/bundles/Fixie")
+         <![endif]-->
+
+    @Html.Widget("goana")
+</head>
+<body id="offcanvas-container" class="offcanvas-container fs12 page-home smoothscroll insite  @SiteConfig.SiteInfo.Skin">
+    <section id="page" class="offcanvas-pusher" role="main">
+        <header>
+            <div class="container">
+                <span class="btn btn-sidebar pull-left hidden-lg hidden-md hidden">
+                    <i class="fa fa-align-left"></i>
+                    <span class="overlay"></span>
+                </span>
+                @Html.Partial("_Logo")
+                <div class="search hidden-sm hidden-xs @(User.Identity.IsAuthenticated && System.Web.Security.Roles.IsUserInRole("Users") ? "user" : "")">
+                    @Html.Partial("_Search")
+                </div>
+                @Html.Partial("_TopMenu")
+                @Html.Partial("_ShowMobile")
+            </div>
+        </header>
+        <section id="columns">
+            <div class="container">
+                <div class="main-content insite">
+                    @Html.Breadcrumb()
+                    @RenderBody()
+                </div>
+            </div>
+        </section>
+        @Html.Partial("_NewsLetter")
+        @Html.Partial("Footer")
+        <section id="top-down" style="display:none">
+            <a class="btn-top" href="javascript:;"></a>
+        </section>
+    </section>
+
+    @RenderSection("scripts", required: false)
+    <script src="//stats.viennam.com/site/log/@SiteConfig.SiteInfo.DefaultDomain"></script>
+    @Scripts.Render("~/bundles/Custom")
+
+</body>
+</html>
+

@@ -1,0 +1,40 @@
+﻿@model ArticleResult
+@{
+   
+     <div class="article row">
+            
+            @if (Model.List.Count > 0)
+            {
+                foreach (var item in Model.List)
+                {
+                  
+                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                        <div class="box-block product border">
+                            <div class="image">
+                                <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                    @if (item.ImageUrl != null)
+                                    {
+                                        <img src="@Url.Content("~/UserUpload/Article/")@item.ImageUrl?width=335" class="width-full" alt="@item.ArticleName" />
+                                    }
+                                    else
+                                    {
+                                        <img src="@Url.Content("~/Templates/"+ SiteConfig.SiteCode +"/Content/images/no-product.jpg")?width=335" class="width-full" alt="@item.ArticleName" />
+                                    }
+                                </a>
+                            </div>
+                            <div class="box-meta">
+                                <h3 class="name">
+                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                        <span>@item.ArticleName</span>
+                                    </a>
+                                </h3>
+                               
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            
+        </div>
+ 
+}

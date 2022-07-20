@@ -1,0 +1,17 @@
+﻿@model Category
+<div class="dropdown-menu">
+    <ul class="dropdown-menu-inner">
+        @foreach (var item in Model.Children)
+        {
+            <li class="dropdown @(item.ChildrenCount > 0 ? "has-sub" : "")">
+                <a href="@Url.Action("Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.CategoryName) })" title="@item.CategoryName">
+                    @*<i class="fa @item.Font hidden-sm hidden-xs"></i>*@  @item.CategoryName
+                </a>
+                @if (item.ChildrenCount > 0)
+                {
+                    @Html.Partial("_SubmenuTop", item)
+                }
+            </li>
+        }
+    </ul>
+</div>

@@ -1,0 +1,15 @@
+﻿@model ArticleType
+@{
+    var art = Article.GetByType(Model.Id, SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 1, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.DESCENDING).List.FirstOrDefault();
+    if (art != null)
+    {
+        ViewBag.Title = art.ArticleName;
+        ViewBag.Breadcrumb = new BreadcrumbModel { Items = new List<BreadcrumbItem> { new BreadcrumbItem { Text = art.ArticleName, Url = null, IsLast = true } } };
+    }
+    else
+    {
+        ViewBag.Title = Model.Name;
+        ViewBag.Breadcrumb = new BreadcrumbModel { Items = new List<BreadcrumbItem> { new BreadcrumbItem { Text = Model.Name, Url = null, IsLast = true } } };
+    }
+}
+@Html.Action("ViewByType", "Article", new { typeId = Model.Id, viewPath = "PriceList/_List", pageSize = 12, sortOrder = ArticleSortOrder.SORT_ORDER })

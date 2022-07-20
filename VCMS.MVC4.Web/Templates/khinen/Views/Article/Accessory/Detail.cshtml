@@ -1,0 +1,163 @@
+﻿@model VCMS.MVC4.Data.Article
+@{
+    var type = ViewBag.Type != null ? ViewBag.Type as ArticleType : ArticleType.GetById(Model.ArticleType.Id, SiteConfig.SiteId, SiteConfig.LanguageId);
+    var category = ViewBag.Category as Category;
+    //var prId = Model.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("ID", StringComparison.OrdinalIgnoreCase));
+    <div class="article article-detail">
+        @if (type.ShowImage && Model.ImageList.Count > 0)
+        {
+            <div class="image-article visible-xs">
+                <div class="owl-carousel is-active" data-plugin-options='{"items": 1, "singleItem": true, "autoPlay": false, "navigation": false, "pagination": false,"slideSpeed":800,"addClassActive":true,"autoHeight":true}'>
+                    @foreach (var item in Model.ImageList.Where(i => !i.IsDefault))
+                    {
+                        <div class="item-img">
+                            @Html.Image(item.FileName, new ImageOptions { Width = 430, Height = 433, Watermark = SiteConfig.Watermark }, new { alt = Model.ArticleName, @class = "owl" })
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        <div class="row">
+            @if (type.ShowImage)
+            {
+                <div class="col-md-6 col-sm-6 col-xs-12 hidden-xs">
+                    <div class="image-article">
+                        @if (Model.ImageUrl != null)
+                        {
+                            <a href="@Url.Content(Model.ImageUrl)?Watermark=@SiteConfig.Watermark" class="lightbox" data-plugin-options="{type:image;}">
+                                <img src="@Url.Content(Model.ImageUrl)?width=418&height=421&Watermark=@SiteConfig.Watermark" id="zoom_03" data-zoom-image="@Url.Content(Model.ImageUrl)" class="lazy owl" />
+                            </a>
+                        }
+                        else
+                        {
+                            @Html.Image(Model.ImageUrl, new ImageOptions { Width = 418, Height = 421, Watermark = SiteConfig.Watermark }, new { @class = "owl" })
+                        }
+                    </div>
+                    @if (Model.ImageList.Count > 0)
+                    {
+                        <div id="gallery_01" class="more-image hidden-xs">
+                            <div class="owl-carousel is-active" data-plugin-options='{"items": 4, "singleItem": false, "autoPlay": false, "navigation": true, "pagination": false,"slideSpeed":800,"addClassActive":true,"itemsDesktop": [1199, 4],"itemsDesktopSmall": [991, 3],"itemsTablet": [768, 3],"itemsMobile": [479, 1]}'>
+                                @foreach (var item in Model.ImageList.Where(i => !i.IsDefault))
+                                {
+                                    <div class="item-img">
+                                        <a data-zoom-image="@Url.Content(item.FileName)?Watermark=@SiteConfig.Watermark" data-image="@Url.Content(item.FileName)?width=418&height=421&mode=crop&Watermark=@SiteConfig.Watermark" data-update="" class="elevatezoom-gallery" href="@Url.Content(item.FileName)?width=418&height=421&mode=crop&Watermark=@SiteConfig.Watermark" title="">
+                                            @Html.Image(item.FileName, new ImageOptions { Width = 99, Height = 100 }, new { alt = Model.ArticleName })
+                                        </a>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                    @Html.Widget("ProductZoomImage")
+                </div>
+            }
+            <div class="@(!type.ShowImage?"col-xs-12":" col-md-6 col-sm-6 col-xs-12") article-detail">
+                <h1 class="title product-detail">
+                    <span>@Model.ArticleName</span>
+                </h1>
+                <div class="property">
+                    @if (type.HasRating)
+                    {
+                        <span class="rating">
+                            @Html.Image(SiteConfig.Image(string.Format("stars-{0}.png", Model.Rating)), new ImageOptions { Width = 68, Height = 11 }, new { alt = Model.ArticleName, @class = "owl" })
+                        </span>
+                    }
+                    @*@if (category != null)
+                        {
+                            <span class="category">
+                                <strong class="lbl">
+                                    <i class="fa fa-angle-down"></i>
+                                    @Html.Locale("menu"):
+                                </strong>
+                                <a href="@Url.Action("Detail", "Category", new { id = category.Id, code = category.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(category.CategoryName) })" title="@category.CategoryName">
+                                    <span>@category.CategoryName</span>
+                                </a>
+                            </span>
+                        }*@
+                        @*<span class="id">
+                                <strong class="lbl">
+                                    <i class="fa fa-angle-down"></i>
+                                    @Html.Locale("product_id"):
+                                </strong>
+                                <span>@prId.Value</span>
+                            </span>*@
+                        @if (type.HasPrice)
+                        {
+                            <span class="price-all">
+                                <span class="lbl">Giá: </span>
+                                @if (Model.DiscountPrice > 0)
+                                {
+                                    <span class="price">@Html.DiscountPrice(Model.ItemPrice)</span>
+                                    <span class="price-old">@Html.Price(Model.ItemPrice)</span>
+                                }
+                                else
+                                {
+                                    <span class="price">@Html.Price(Model.ItemPrice)</span>
+                                }
+                            </span>
+                        }
+
+                    </div>
+                    <div class="clearfix"></div>
+                    @if (type.HasPrice)
+                    {
+                        <div id="cart" class="cart btn-group">
+                            @*<input type="text" class="number-cart" value="1" />*@
+                            @if (Model.Price > 0)
+                            {
+                                <a class="btn bt-cart" href="@Url.Action("AddToCart", "ShoppingCart", new { id = Model.Id })">
+                                    Cho vào giỏ <i class="fa fa-shopping-cart"></i>
+                                </a>
+                            }
+                            else
+                            {
+                                <a class="btn bt-cart" href="@Url.Action("Contact", "Home", new { id = Model.Id })">
+                                    Liên hệ <i class="fa fa-shopping-cart"></i>
+                                </a>
+                            }
+
+                            @*<button class="btn bt-cart" id="addcart" data-submit="@Url.Action("AddToCart", "ShoppingCart", new { id = Model.Id })" data-id="@Model.Id" data-load="@Url.Action("CartList", "ShoppingCart")"><span>@Html.Locale("cart_add")</span></button>*@
+                        </div>
+                    }
+
+                    <div class="description short" itemprop="description">
+                        @Html.Raw(Model.ShortDescription)
+                    </div>
+                    @if (type.ShowShareArticle)
+                    {
+                        <div class="row">
+                            @Html.Partial("_ShareArticle")
+                            <div class="fb-like" data-href="@HttpContext.Current.Request.Url.AbsoluteUri" data-layout="button_count" data-action="like" data-show-faces="false" data-share="false">
+                            </div>
+                        </div>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.SEOKeywords))
+                    {
+                        <div class="tags">
+                            <strong>Tags:</strong>
+                            @foreach (var item in Model.SEOKeywords.Split(','))
+                            {
+                                <a href="@Url.Action("SearchTag", "Home", new { keyword = Unichar.UnicodeStrings.LatinToAscii(item) })" itemprop="keywords">
+                                    <span>
+                                        <i class="fa fa-tags"></i>
+                                        @item
+                                    </span>
+                                </a>
+                            }
+                        </div>
+                    }
+
+                </div>
+            </div>
+            <div class="description full" itemprop="text">
+                @Html.Raw(Model.Description)
+            </div>
+        </div>
+    if (type.ShowComment)
+    {
+        <div class="load-iframe" data-iframe-load="@Url.Action("IFrameLoad", "Home", new { view = "_Comment" })"></div>
+    }
+    @Html.Action("Other", "Article", new { id = Model.Id, typeid = Model.ArticleTypeId, categoryId = Model.Categories.Count > 0 ? Model.Categories.Skip(Model.Categories.Count - 1).FirstOrDefault().Id : 0, pageSize = 8 })
+
+}

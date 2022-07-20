@@ -1,0 +1,64 @@
+﻿@model IEnumerable<VCMS.MVC4.Data.UserProfile>
+@{
+    Layout = "~/Templates/" + SiteConfig.SiteCode + "/Views/Shared/_LayoutAccount.cshtml";
+    ViewBag.Title = Html.Locale("account_list_genu_booth").ToHtmlString();
+    ViewBag.Breadcrumb = new BreadcrumbModel { Items = new List<BreadcrumbItem> { new BreadcrumbItem { Text = Html.Locale("account_list_genu_booth").ToHtmlString(), Url = null, IsLast = true } } };
+}
+<div class="genu-info">
+    <h2 class="heading">
+        @Html.Locale("account_list_genu_booth")
+    </h2>
+    <div class="container">
+        <div class="content">
+            <div class="row">
+                @foreach (var item in Model)
+                {
+                    var art = Article.GetByUser(item.UserId, 2, SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 6, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING);
+                    <div class="col-md-4">
+                        <div class="item">
+                            <figure>
+                                <a href="@Url.Action("GenuineBoothDetail", "Account", new { id = item.UserId })" title="@item.UserProfileDetail[SiteConfig.LanguageId].Title">
+                                    @if (item.Banner != null)
+                                    {
+                                        @Html.Image(item.Banner, new ImageOptions { Width = 380, Height = 160, Mode = ImageMode.crop, Lazy = false }, new { alt = item.UserProfileDetail[SiteConfig.LanguageId].Title })
+                                    }
+                                </a>
+                                <div class="s-logo">       
+                                    <a href="@Url.Action("GenuineBoothDetail", "Account", new { id = item.UserId })" title="@item.UserProfileDetail[SiteConfig.LanguageId].Title">
+                                        @if (item.Logo != null)
+                                        {
+                                            @Html.Image(item.Logo, new ImageOptions { Width = 105, Height = 105, Mode = ImageMode.crop, Lazy = false }, new { alt = item.UserProfileDetail[SiteConfig.LanguageId].Title })
+                                        }
+                                    </a>
+                                </div>
+                            </figure>
+                            <div class="meta">
+                                <h3>
+                                    <a href="@Url.Action("GenuineBoothDetail", "Account", new { id = item.UserId })">@item.UserProfileDetail[SiteConfig.LanguageId].Title</a>
+                                </h3>
+                                <div class="slogan"><span>@item.UserProfileDetail[SiteConfig.LanguageId].ShortDesc</span></div>
+                            </div>
+                            <div class="product">
+                                <div class="row">
+                                    @foreach (var p in art.List)
+                                    {
+                                        <div class="col-md-2">
+                                            <div class="p-item">
+                                                <a href="@Url.Action("Detail", "Article", new { id = p.Id, code = p.ArticleType.UrlFriendly, title = p.UrlFriendly })" title="@p.ArticleName">
+                                                    @if (p.ImageUrl != null)
+                                                    {
+                                                        @Html.Image(p.ImageUrl, new ImageOptions { Width = 50, Height = 50, Mode = ImageMode.pad, Lazy = false }, new { alt = p.ArticleName })
+                                                    }
+                                                </a>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

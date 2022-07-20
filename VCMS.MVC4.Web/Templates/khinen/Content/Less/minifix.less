@@ -1,0 +1,465 @@
+﻿.button-vns(@color, @background, @hover-background, @active-background,@color-hover: @color-hover, @disabled-background: @gray-light) {
+    color: @color;
+    background-color: @background;
+
+    &:hover,
+    &.hover,
+    &:focus,
+    &:active,
+    &.active,
+    .open > .dropdown-toggle& {
+        color: @color-hover;
+        background-color: @hover-background;
+        border-color: @hover-background;
+    }
+
+    &:active,
+    &.active,
+    .open > .dropdown-toggle& {
+        background: @active-background;
+        border-color: @active-background;
+    }
+
+    &.disabled,
+    &[disabled],
+    fieldset[disabled] & {
+        &,
+        &:hover,
+        &.hover,
+        &:focus,
+        &:active,
+        &.active {
+            background-color: @disabled-background;
+            border-color: @background;
+        }
+    }
+}
+
+.has-before-after() {
+    position: absolute;
+    content: '';
+}
+
+.has-before-after-full() {
+    .has-before-after();
+    .square(100%);
+}
+
+.opacity(@opacity) {
+    opacity: @opacity;
+    // IE8 filter
+    @opacity-ie: (@opacity * 100);
+    filter: ~"alpha(opacity=@{opacity-ie})";
+}
+
+//
+// TRANSITION
+//-------------------------------------------
+.transition(@transition: all 0.2s ease 0s) {
+    -webkit-transition: @transition;
+    -moz-transition: @transition;
+    -ms-transition: @transition;
+    -o-transition: @transition;
+    transition: @transition;
+}
+
+.transition-delay(@transition-delay) {
+    -webkit-transition-delay: @transition-delay;
+    -moz-transition-delay: @transition-delay;
+    -ms-transition-delay: @transition-delay;
+    -o-transition-delay: @transition-delay;
+    transition-delay: @transition-delay;
+}
+
+.transition-duration(@transition-duration) {
+    -webkit-transition-duration: @transition-duration;
+    -moz-transition-duration: @transition-duration;
+    -ms-transition-duration: @transition-duration;
+    -o-transition-duration: @transition-duration;
+    transition-duration: @transition-duration;
+}
+
+.transition-timing-function(@timing-function) {
+    -webkit-transition-timing-function: @timing-function;
+    -moz-transition-timing-function: @timing-function;
+    -ms-transition-timing-function: @timing-function;
+    -o-transition-timing-function: @timing-function;
+    transition-timing-function: @timing-function;
+}
+
+.transition-transform(@transition) {
+    -webkit-transition: -webkit-transform @transition;
+    -moz-transition: -moz-transform @transition;
+    -ms-transition: -ms-transform @transition;
+    -o-transition: -o-transform @transition;
+    transition: transform @transition;
+}
+
+.transition-property(@transition-property) {
+    -webkit-transition-property: @transition-property;
+    -moz-transition-property: @transition-property;
+    -ms-transition-property: @transition-property;
+    -o-transition-property: @transition-property;
+    transition-property: @transition-property;
+}
+
+.transform-origin(@origin) {
+    -webkit-transform-origin: @origin;
+    -moz-transform-origin: @origin;
+    -ms-transform-origin: @origin; // IE9 only
+    -o-transform-origin: @origin; // IE9 only
+    transform-origin: @origin;
+}
+
+.scale(@ratio) {
+    -webkit-transform: scale(@ratio);
+    -moz-transform: scale(@ratio);
+    -ms-transform: scale(@ratio); // IE9 only
+    -o-transform: scale(@ratio);
+    transform: scale(@ratio);
+}
+
+.scale(@ratioX,@ratioY) {
+    -webkit-transform: scale(@ratioX, @ratioY);
+    -moz-transform: scale(@ratioX, @ratioY);
+    -ms-transform: scale(@ratioX, @ratioY); // IE9 only
+    -o-transform: scale(@ratioX, @ratioY);
+    transform: scale(@ratioX, @ratioY);
+}
+
+.scaleX(@ratio) {
+    -webkit-transform: scaleX(@ratio);
+    -ms-transform: scaleX(@ratio); // IE9 only
+    -o-transform: scaleX(@ratio);
+    transform: scaleX(@ratio);
+}
+
+.scaleY(@ratio) {
+    -webkit-transform: scaleY(@ratio);
+    -ms-transform: scaleY(@ratio); // IE9 only
+    -o-transform: scaleY(@ratio);
+    transform: scaleY(@ratio);
+}
+
+.rotate(@degrees) {
+    -webkit-transform: rotate(@degrees);
+    -ms-transform: rotate(@degrees); // IE9 only
+    -o-transform: rotate(@degrees);
+    transform: rotate(@degrees);
+}
+
+.rotateX(@degrees) {
+    -webkit-transform: rotateX(@degrees);
+    -ms-transform: rotateX(@degrees); // IE9 only
+    -o-transform: rotateX(@degrees);
+    transform: rotateX(@degrees);
+}
+
+.rotateY(@degrees) {
+    -webkit-transform: rotateY(@degrees);
+    -ms-transform: rotateY(@degrees); // IE9 only
+    -o-transform: rotateY(@degrees);
+    transform: rotateY(@degrees);
+}
+
+.translate(@x,@y) {
+    -webkit-transform: translate(@x, @y);
+    -ms-transform: translate(@x, @y); // IE9 only
+    -o-transform: translate(@x, @y);
+    transform: translate(@x, @y);
+}
+
+.translateY(@px) {
+    -webkit-transform: translateY(@px);
+    -ms-transform: translateY(@px); // IE9 only
+    -o-transform: translateY(@px);
+    transform: translateY(@px);
+}
+
+.translate3d(@x,@y,@z) {
+    -webkit-transform: translate3d(@x, @y, @z);
+    transform: translate3d(@x, @y, @z);
+}
+
+.translateZ(@ratio: 0) {
+    -webkit-text-size-adjust: none;
+    -webkit-transform: translateZ(@ratio);
+}
+
+.animaton(@string) {
+    -webkit-animation: @string;
+    -moz-animation: @string;
+    -o-animation: @string;
+    -ms-animation: @string;
+    animation: @string;
+}
+
+.border-radius(@radius: 0) {
+    -webkit-border-radius: @radius;
+    -moz-border-radius: @radius;
+    -ms-border-radius: @radius;
+    -o-border-radius: @radius;
+    border-radius: @radius;
+    -moz-background-clip: padding;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+}
+
+.box-shadow (@string: 0 0 0px #fff) {
+    -webkit-box-shadow: @string;
+    -moz-box-shadow: @string;
+    -ms-box-shadow: @string;
+    -o-box-shadow: @string;
+    box-shadow: @string;
+}
+
+
+
+// Placeholder text
+// -------------------------
+.placeholder(@color: @input-placeholder-color, @font-size: 12px, @font-style: italic) {
+    &:-moz-placeholder {
+        color: @color;
+        font-size: @font-size;
+        font-style: @font-style;
+        .transition(all 0.3s ease);
+    }
+
+    &:-ms-input-placeholder {
+        color: @color;
+        font-size: @font-size;
+        font-style: @font-style;
+        .transition(all 0.3s ease);
+    }
+
+    &::-webkit-input-placeholder {
+        color: @color;
+        font-size: @font-size;
+        font-style: @font-style;
+        .transition(all 0.3s ease);
+    }
+}
+
+.size(@width,@height) {
+    width: @width;
+    height: @height;
+}
+
+.square(@size) {
+    .size(@size,@size);
+}
+
+.hide-text() {
+    font: 0/0 a;
+    color: transparent;
+    text-shadow: none;
+    background-color: transparent;
+    border: 0;
+}
+
+.text-overflow() {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nav-divider(@color: #e5e5e5) {
+    height: 1px;
+    margin: 3px 0;
+    overflow: hidden;
+    background-color: @color;
+}
+
+
+.border-top-radius(@radius) {
+    border-top-right-radius: @radius;
+    border-top-left-radius: @radius;
+}
+
+.border-right-radius(@radius) {
+    border-bottom-right-radius: @radius;
+    border-top-right-radius: @radius;
+}
+
+.border-bottom-radius(@radius) {
+    border-bottom-right-radius: @radius;
+    border-bottom-left-radius: @radius;
+}
+
+.border-left-radius(@radius) {
+    border-bottom-left-radius: @radius;
+    border-top-left-radius: @radius;
+}
+
+
+.bg-variant(@color) {
+    background-color: @color;
+
+    a&:hover {
+        background-color: darken(@color, 10%);
+    }
+}
+
+.text-emphasis-variant(@color) {
+    color: @color;
+
+    a&:hover {
+        color: darken(@color, 10%);
+    }
+}
+
+.form-control-focus(@color: @input-color-focus) {
+    .form-group.focus &,
+    &:focus {
+        border-color: @color;
+        outline: 0;
+        box-shadow: 0 0 0 3px mix(@color, white, 15%);
+    }
+}
+
+.form-controls-corners-reset() {
+    .input-group .form-control:first-child,
+    .input-group-addon:first-child,
+    .input-group-btn:first-child > .btn,
+    .input-group-btn:first-child > .dropdown-toggle,
+    .input-group-btn:last-child > .btn:not(:last-child):not(.dropdown-toggle) {
+        .border-right-radius(0);
+    }
+
+    .input-group .form-control:last-child,
+    .input-group-addon:last-child,
+    .input-group-btn:last-child > .btn,
+    .input-group-btn:last-child > .dropdown-toggle,
+    .input-group-btn:first-child > .btn:not(:first-child) {
+        .border-left-radius(0);
+    }
+}
+
+.input-size(@input-height,@padding-vertical,@padding-horizontal,@font-size,@line-height,@border-radius: @border-radius-large) {
+    height: @input-height;
+    padding: @padding-vertical @padding-horizontal;
+    font-size: @font-size;
+    line-height: @line-height;
+    border-radius: @border-radius;
+
+    select& {
+        height: @input-height;
+        line-height: @input-height;
+    }
+
+    textarea&,
+    select[multiple]& {
+        height: auto;
+    }
+}
+
+.button-variant(@color,@background,@hover-background,@active-background,@disabled-background: @gray-light) {
+    color: @color;
+    background-color: @background;
+
+    &:hover,
+    &.hover,
+    &:focus,
+    &:active,
+    &.active,
+    .open > .dropdown-toggle& {
+        color: @color;
+        background-color: @hover-background;
+        border-color: @hover-background;
+    }
+
+    &:active,
+    &.active,
+    .open > .dropdown-toggle& {
+        background: @active-background;
+        border-color: @active-background;
+    }
+
+    &.disabled,
+    &[disabled],
+    fieldset[disabled] & {
+        &,
+        &:hover,
+        &.hover,
+        &:focus,
+        &:active,
+        &.active {
+            background-color: @disabled-background;
+            border-color: @background;
+        }
+    }
+
+    .badge {
+        color: @background;
+        background-color: @inverse;
+    }
+}
+
+.button-size(@padding-vertical,@padding-horizontal,@font-size,@line-height,@border-radius) {
+    padding: @padding-vertical @padding-horizontal;
+    font-size: @font-size;
+    line-height: @line-height;
+    border-radius: @border-radius;
+}
+
+.reflect (@length: 50%, @opacity: 0.2) {
+    -webkit-box-reflect: below 0px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(@length, transparent), to(rgba(255,255,255,@opacity)));
+}
+
+/**
+  * Select
+  */
+.select-variant(@color, @background, @hover-background, @active-background, @disabled-background: @gray-light, @arrow-color) {
+    .select2-choice {
+        color: @color;
+        background-color: @background;
+
+        &:hover,
+        &.hover,
+        &:focus,
+        &:active {
+            color: @color;
+            background-color: @hover-background;
+            border-color: @hover-background;
+        }
+
+        &:active {
+            background: @active-background;
+            border-color: @active-background;
+        }
+
+        .select2-container-disabled& {
+            &,
+            &:hover,
+            &:focus,
+            &:active {
+                background-color: @disabled-background;
+                border-color: @background;
+            }
+        }
+
+        .select2-arrow {
+            border-top-color: @arrow-color;
+        }
+    }
+}
+
+.select-size(@padding-vertical, @padding-horizontal, @font-size, @line-height, @border-radius) {
+    .button-size(@padding-vertical, @padding-horizontal, @font-size, @line-height, @border-radius);
+    padding-right: (@padding-horizontal * 2 + 9px);
+    min-height: round((@line-height*@font-size + 2*@padding-vertical)); // we need min-height for empty ones
+}
+
+.multiple-select-variant(@background, @hover-background, @border-color) {
+    .select2-container-multi& {
+        border-color: @border-color;
+
+        .select2-search-choice {
+            background-color: @background;
+
+            &:hover {
+                background-color: @hover-background;
+            }
+        }
+    }
+}

@@ -1,0 +1,70 @@
+﻿@model Comment
+@{
+
+    var name = Model.Name.Split(new char[] { ' ' });
+
+
+   
+        <div class="cm-displayname">
+            @for (int i = 0; i < name.Length; i++)
+            {
+                if (i > name.Length - 3)
+                {
+                    @name[i].ToString().FirstOrDefault();
+                }
+            }
+        </div>
+        <div class="cm-name">
+            @if (Request.IsAuthenticated && !Model.UserID.HasValue)
+            {
+                <div class="cm-gender">@(Model.Gender ? "Anh" : "Chị")</div>
+            }
+            @Model.Name
+            @if (Model.UserID.HasValue)
+            {
+                <span class="user-role badge">@Html.Locale("qtv")</span>
+            }
+        </div>
+        <div class="cm-info" data-id="@Model.Id">
+            <div class="cm-message">
+                @Model.Message
+            </div>
+            @if (Request.IsAuthenticated)
+            {
+                <div class="cm-email">
+                    <strong>Email :</strong> @Model.Email
+                </div>
+            }
+            <div class="cm-group">
+                <div class="cm-reply">
+                    @Html.Locale("reply")
+                </div>
+                @if(Model.UserID>0)
+                {
+                    <div class="cm-like" data-like="0">
+                        @Html.Locale("hl") <span class="like-number">(@Model.LikeNumber)</span>
+                    </div>
+                }
+                else
+                {
+                     <div class="cm-like" data-like="0">
+                        @Html.Locale("like") <span class="like-number">(@Model.LikeNumber)</span>
+                    </div>
+                }
+                <time class="timeago" datetime="@(string.Format("{0:o}", Model.DateCreated))"></time>
+                @if (Roles.IsUserInRole("Super Administrators") || Roles.IsUserInRole("Administrators"))
+                {
+                    if(Model.IsPending)
+                    {
+                        <div class="cm-status badge">
+                            <i class="fa fa-check" aria-hidden="true"></i> Duyệt
+                        </div>
+                    }
+                    <div class="cm-delete badge">
+                        <i class="fa fa-trash" aria-hidden="true"></i> Xóa
+                    </div>
+                }
+            </div>
+        </div>
+    
+}

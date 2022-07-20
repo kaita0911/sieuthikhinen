@@ -1,0 +1,4 @@
+﻿@{
+    Layout = Request.IsAjaxRequest() ? "~/Views/Shared/_LayoutAjax.cshtml" : "~/Views/Shared/_Layout.cshtml";
+    Culture = UICulture = SiteConfig.LanguageCode;
+}

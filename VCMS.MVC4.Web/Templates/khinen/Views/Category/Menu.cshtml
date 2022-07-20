@@ -1,0 +1,45 @@
+﻿@*@model ICollection<Category>
+@{
+    Layout = null;
+    var level0 = Model.Where(c => c.Level == 0).ToList();
+    int id = ViewBag.CategoryID;
+    if (level0.Count > 0)
+    {
+        <div id="box-right">
+            <div class="box-heading">
+                <h2 class="heading font-UTMHelvetIns">
+                    <span>@Resources.VCMS.category </span>
+                </h2>
+            </div>
+            <div class="box-content box-category">
+                <ul id="category-menu">
+                    @foreach (var item in level0)
+                    {
+                        <li class="items">
+                            <a href="@Url.Action("Detail", "Category", new {id=item.Id,code=item.ArticleType.UrlFriendly,title=Unichar.UnicodeStrings.UrlString(item.CategoryName) })" class="@(item.Id == id ? "active":"")" >
+                                @if (item.ImageUrl != null)
+                                {
+                                    <img src="@Url.Content("~/UserUpload/Category/")@item.ImageUrl?width=22" alt="@item.CategoryName" />
+                                }
+                                else
+                                {
+                                    <img src="@Url.Content("~/Content/NganAnhPhat/images/li.png")?width=22" alt="@item.CategoryName" />
+                                }
+                                <span>@item.CategoryName</span>
+                            </a>
+                            @if (item.ChildrenCount > 0)
+                            {
+                                @Html.Partial("_Submenu", item)
+                            }
+                        </li>
+                    }
+                </ul>
+                <script>
+                    $('#category-menu').find('a.active').addClass("in");
+                    $('#category-menu').find('a.active').parents("li").children('a').addClass("active");
+                </script>
+            </div>
+        </div>
+    }
+}*@
+

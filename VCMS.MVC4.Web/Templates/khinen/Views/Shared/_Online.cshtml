@@ -1,0 +1,17 @@
+﻿<div id="online" class="hidden-sm hidden-xs">
+    <h2 class="title-footer">Thống kê truy cập</h2>
+    <div class="item online">
+        <span class="lbl">Đang online:</span>
+        <span class="ctn" id="ol">49</span>
+    </div>
+    <div class="item total">
+        <span class="lbl">Tổng truy cập:</span>
+        <span class="ctn" id="tl">192.157</span>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $("#ol").html(onlineLog.Online + 5);
+        $("#tl").html(onlineLog.Total + 15000);
+    });
+</script>

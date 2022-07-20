@@ -1,0 +1,161 @@
+﻿@model OrderSearchResult
+@{
+    ViewBag.Title = "Đơn hàng";
+    ViewBag.Breadcrumb = new BreadcrumbModel { Items = new BreadcrumbItem[] { new BreadcrumbItem { Text = "Trang chủ", Url = Url.Action("Index", "Home") }, new BreadcrumbItem { Url = null, Text = "Đơn hàng", IsLast = true } } };
+}
+
+<div class="btn-group">
+    <span class="btn delete">
+        <a href="javascript:void(0)" id="delete">
+            <i class="fa fa-trash-o"></i> <span class="hidden-xs">Xóa Đơn hàng</span>
+        </a>
+    </span>
+    @if (Request["status"] != OrderStatus.CANCELLED.ToString())
+    {
+        <div class="btn-group btn type">
+            <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                <i class="fa fa-table"></i>
+                @(Request["status"] == null || Request["status"] == OrderStatus.ALL.ToString() ? "Đơn hàng" : Request["status"] == OrderStatus.PENDING.ToString() ? "Chờ duyệt" : Request["status"] == OrderStatus.SHIPPED.ToString() ? "Đã giao hàng" : Request["status"] == OrderStatus.PAID.ToString() ? "Đã thanh toán" : Request["status"] == OrderStatus.SUCCESS.ToString() ? "Đã hoàn thành" : Request["status"] == OrderStatus.VIEW.ToString() ? "Đã duyệt" : "")
+            </a>
+            <ul class="dropdown-menu fa-ul">
+                <li>
+                    <a href="@Html.FilterLinkString(new { status=OrderStatus.ALL})">
+                        <i class="fa fa-edit fs15"></i> <span>Tất cả</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="@Html.FilterLinkString(new { status=OrderStatus.PENDING})">
+                        <i class="fa fa-edit fs15"></i> <span>Chờ duyệt</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="@Html.FilterLinkString(new { status=OrderStatus.SHIPPED})">
+                        <i class="fa fa-ambulance fs15"></i> <span>Đã giao hàng</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="@Html.FilterLinkString(new { status=OrderStatus.PAID})">
+                        <i class="fa fa-cc-paypal fs15"></i> <span>Đã thanh toán</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="@Html.FilterLinkString(new { status=OrderStatus.SUCCESS})">
+                        <i class="fa fa-check fs15"></i> <span>Hoàn thành</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    }
+</div>
+@*@Html.Partial("_Search")*@
+<table class="table table-hover">
+    <thead class="header">
+        <tr>
+            <th class="check">
+                <label class="checkbox single noborder">
+                    <input id="check-all" type="checkbox" /><i></i>
+                </label>
+            </th>
+            <th class="img">Mã đơn hàng</th>
+            <th class="width-200">Tên khách hàng</th>
+            <th class="text-center">Giao hàng</th>
+            <th class="text-center">Thanh toán</th>
+            <th class="text-center">Hoàn thành</th>
+            <th class="text-center">Số lượng</th>
+            <th class="amount text-right">Tạm tính</th>
+            @*<th class="amount text-right">Phí ship</th>*@
+            <th class="amount text-right">Tổng tiền</th>
+            <th class="text-right hidden-xs">Ngày đặt hàng</th>
+            <th class="action hidden-xs">Action</th>
+        </tr>
+    </thead>
+    <tbody class="items">
+        @foreach (var item in Model.Items)
+        {
+            <tr class="item @(item.Status==OrderStatus.PENDING?"bold":"")">
+                <td class="check">
+                    <label class="checkbox fix">
+                        <input value="@item.Id" type="checkbox" /><i></i>
+                    </label>
+                </td>
+                <td class="img">
+                    @Html.ActionLink(item.OrderNumber ?? "NONE", "Detail", "Order", new { id = item.Id, returnUrl = ViewContext.HttpContext.Request.Url.PathAndQuery }, null)
+                </td>
+                <td class="">
+                    @(item.Customer != null ? item.Customer.DisplayName : item.FullName)
+                </td>
+                <td class="text-center">
+                    @if (item.Status == OrderStatus.SUCCESS)
+                    {
+                        <span class="info nowarp fs9"><i class="fa fa-check"></i></span>
+                    }
+                    else if (item.Status == OrderStatus.SHIPPED)
+                    {
+                        <span class="info nowarp fs9"><i class="fa fa-ambulance"></i><span class="hidden-xs"> @Html.Locale("order_" + OrderStatus.SHIPPED.ToString().ToLower())</span></span>
+                    }
+                    else
+                    {
+                        <span>-</span>
+                    }
+                </td>
+                <td class="text-center">
+                    @if (item.Status == OrderStatus.SUCCESS)
+                    {
+                        <span class="info nowarp fs9"><i class="fa fa-check"></i></span>
+                    }
+                    else if (item.Status == OrderStatus.PAID)
+                    {
+                        <span class="info nowarp fs9"><i class="fa fa-cc-paypal"></i><span class="hidden-xs"> @Html.Locale("order_" + OrderStatus.PAID.ToString().ToLower())</span></span>
+                    }
+                    else
+                    {
+                        <span>-</span>
+                    }
+                </td>
+                <td class="text-center">
+                    @if (item.Status == OrderStatus.SUCCESS)
+                    {
+                        <span class="info nowarp fs9"><i class="fa fa fa-check"></i><span class="hidden-xs"> @Html.Locale("order_" + OrderStatus.SUCCESS.ToString().ToLower())</span></span>
+                    }
+                    else
+                    {
+                        <span>-</span>
+                    }
+                </td>
+                <td class="text-center">
+                    @item.TotalQty.ToString("#,##0")
+                </td>
+                <td class="text-right">
+                    @Html.Amount(item.TotalAmount)
+                </td>
+                @*<td class="text-right">
+                    @Html.Amount(item.AmountShipping)
+                </td>*@
+                <td class="text-right">
+                    @Html.Amount(item.TotalAmount + item.AmountShipping)
+                </td>
+                <td class="hidden-xs text-right nowarp">
+                    @item.DateCreated.ToString("dd/MM/yyyy HH:mm")
+                </td>
+                <td class="action hidden-xs nowarp">
+                    <a href="@Url.Action("Detail", "Order", new { id=item.Id})" class="edit-link" data-toggle="tooltip" data-placement="top" title="Xem chi tiết thông tin khách hàng"><i class="fa fa-eye"></i> <span class="hidden-xs hidden-sm"></span></a>
+                    @*@Html.ActionLink(item.OrderNumber ?? "NONE", "Detail", "Order", new { id = item.Id }, null)*@
+                    <a href="@Url.Action("Edit", "Order", new {id=item.Id })" title="Sửa thông tin khách hàng"><i class="fa fa-edit"></i> <span class="hidden-xs">Sửa</span></a>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@Html.Pager(new PagerOptions { ItemCount = Model.ItemCount, PageSize = 20 }, null)
+
+@section Scripts
+{
+    <script>
+        $("#check-all").checkAll(".item .check input[type='checkbox']");
+        $("#delete").sdelete({
+            url: '@Url.Action("Delete")',
+            selector: ".item .check input[type='checkbox']",
+        });
+    </script>
+}

@@ -1,0 +1,37 @@
+﻿@model Widget
+@{
+    var article = Article.GetByType((int)Model.ArticleTypeId, SiteConfig.SiteId, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection, Model.Includes);
+    if (article.List.Count > 0)
+    {
+        var i = 1;
+        <div class="box-project-home">
+            <h2 class="heading main-heading">@Model.Title</h2>
+            <div class="content-background">
+                <div class="row">
+                    @foreach (var item in article.List)
+                    {
+                        <div class="col-sm-4 col-xs-4 col-xs-6 box-block box-product box-project item-@(i)">
+                            <figure>
+                                <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                    @Html.Image(item.ImageUrl, new ImageOptions { Width = 255, Height = 215, Watermark = SiteConfig.Watermark, Mode = ImageMode.pad }, new { alt = item.ArticleName, @class = (Model.LazyOwl ? "owl" : "") })
+                                </a>
+                                @if (Model.ShowIconFly && item.ImageUrl != null)
+                                {
+                                    <a class="zoom lightbox" href="@Url.Content(item.ImageUrl)" data-plugin-options="{type:image;}" title="@item.ArticleName"><i class="fa fa-search-plus"></i></a>
+                                }
+                            </figure>
+                            <div class="meta">
+                                <h3><a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">@item.ArticleName</a></h3>
+                                @if (Model.ShowDate)
+                                {
+                                    <span class="date"><i class="fa fa-calendar"></i> Cập nhật: <span>@item.Day</span></span>
+                                }
+                            </div>
+                        </div>
+                                i++;
+                    }
+                </div>
+            </div>
+        </div>
+    }
+}

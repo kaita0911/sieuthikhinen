@@ -1,0 +1,95 @@
+﻿@model ArticleResult
+@if (Model.List.Count > 0)
+{
+    var i = 0;
+    var itemPerRow = 4;
+
+    string pname = "";
+    if (ViewBag.PName != null)
+    {
+        pname = ViewBag.PName + " / ";
+    }
+    var type = ViewBag.Type != null ? ViewBag.Type as ArticleType : Model.List.FirstOrDefault().ArticleType;
+    if (type.DescriptionCategory)
+    {
+        <div id="description-type">
+            @Html.Raw(type.ArticleTypeDetail[SiteConfig.LanguageId].Description)
+        </div>
+    }
+    <div class="box-products">
+        <h1 class="title">
+            <label>
+                @pname @(ViewBag.Title != null ? ViewBag.Title : type.Name)
+            </label>
+        </h1>
+        <div class="content">
+
+            @foreach (var item in Model.List)
+            {
+                if (i % itemPerRow == 0)
+                {
+                    @:<div class="row">
+                }
+
+                <div class="col-sm-3 col-md-3 col-xs-6">
+                    <div class="box-block box-product">
+                        <figure>
+                            <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                @Html.Image(item.ImageUrl, new ImageOptions { Width = 256, Height = 215, Watermark = SiteConfig.Watermark, Mode = ImageMode.pad }, new { alt = item.ArticleName })
+                            </a>
+                            @if (type.ShowIconFly && item.ImageUrl != null)
+                            {
+                                <a class="zoom lightbox" href="@Url.Content(item.ImageUrl)" data-plugin-options="{type:image;}" title="@item.ArticleName">
+                                    <i class="fa fa-search-plus"></i>
+                                </a>
+                                <a class="zoom" href="@Url.Action("Contact", "Home", new { id = item.Id })">
+                                    @Html.Locale("contact")
+                                </a>
+                            }
+                        </figure>
+                        <div class="meta">
+                            <div class="clearfix"></div>
+                            <div class="action">
+                                @if (item.Price > 0)
+                                {
+                                    <a href="@Url.Action("AddToCart", "ShoppingCart", new { id = item.Id })" class="cart @(item.Price > 0 ? "addToCart" : "")">
+                                        Thêm vào giỏ <i class="fa fa-shopping-cart"></i>
+                                    </a>
+                                }
+                            </div>
+                            <h3>
+                                <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.ArticleTypeDetail[SiteConfig.LanguageId].UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">@item.ArticleName</a>
+                            </h3>
+                            <div class="price-all">
+                                @if (item.DiscountPrice > 0)
+                                {
+                                    <span class="price">@Html.DiscountPrice(item.ItemPrice)</span>
+                                    <span class="price-old">@Html.Price(item.ItemPrice)</span>
+                                }
+                                else
+                                {
+                                    <span class="price">@Html.Price(item.ItemPrice)</span>
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                if (i++ % itemPerRow == itemPerRow - 1 || i == Model.List.Count)
+                {
+                    @:</div>
+                }
+            }
+
+
+        </div>
+        <div class="col-xs-12">
+            @Html.Pager(new PagerOptions { VisibleItemCount = 5, ItemCount = Model.TotalItemCount, PageSize = Model.PageSize, FirstText = Html.Locale("text_first").ToHtmlString(), LastText = Html.Locale("text_last").ToHtmlString() }, null)
+        </div>
+    </div>
+}
+else
+{
+    <span>@Html.Locale("article_null")</span>
+}

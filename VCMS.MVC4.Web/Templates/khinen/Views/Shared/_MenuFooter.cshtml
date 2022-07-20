@@ -1,0 +1,58 @@
+﻿@using System.Text.RegularExpressions
+@using System.Data.Entity
+@{
+    var db = new DataContext();
+    var menuItems = MenuItem.GetMenu(SiteConfig.SiteId, SiteConfig.LanguageId);
+    string code = "";
+    string action = "";
+    if (ViewContext.RouteData.Values["code"] != null)
+    {
+        code = ViewContext.RouteData.Values["code"].ToString().ToLower();
+    }
+    if (ViewContext.RouteData.Values["action"] != null)
+    {
+        action = ViewContext.RouteData.Values["action"].ToString().ToLower();
+    }
+}
+<div class="clearfix"></div>
+<div class="mn-footer hidden-sm hidden-xs">
+    @*<div class="pull-left left">
+        @Html.Partial("_FNewsletter")
+    </div>*@
+    <div class="container">
+        <div class="pull-right right">
+            <ul>
+                <li class="home">
+                    <a href="@Url.Action("Index","Home")">
+                        @Html.Locale("home")
+                    </a>
+                </li>
+                @foreach (var item in menuItems)
+                {
+                    <li class="@(item.ArticleType.Code.ToLower()) @((code == item.ArticleType.UrlFriendly.ToLower())? "active" : "")">
+                        @if (item.ItemType == MenuItemType.LINK)
+                        {
+                            <a href="@item.Url">
+                                <span class="menu-title">@item.ItemText</span>
+                            </a>
+                        }
+                        else
+                        {
+
+                            <a href="@Url.Action("Index", "ArticleType", new { code = item.ArticleType.UrlFriendly })">
+                                <span class="menu-title">@item.ItemText</span>
+                            </a>
+
+                        }
+                    </li>
+                }
+                <li class="contact @(action == "contact"?"active":"")">
+                    <a href="@Url.Action("Contact","Home")">
+                        <span class="menu-title">@Html.Locale("contact")</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+   
+</div>

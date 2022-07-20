@@ -1,0 +1,112 @@
+﻿@model Category
+@using System.Data.Entity;
+@{
+    if (Model.ArticleTypeId == 2)
+    {
+        Layout = "~/Templates/" + SiteConfig.SiteCode + "/Views/Shared/_Layout2Column.cshtml";
+    }
+    ViewBag.Title = Model.CategoryName;
+    ViewBag.Keywords = Model.CategoryDetail[SiteConfig.LanguageId].SEOKeywords;
+    ViewBag.Description = Model.CategoryDetail[SiteConfig.LanguageId].SEODescription;
+    ViewBag.DateCreate = Model.DateCreated;
+    ViewBag.DateUpdate = Model.DateUpdated;
+    ViewBag.Category = Model;
+
+    Model.ArticleType.LanguageId = SiteConfig.LanguageId;
+    int pId = 0;
+    if (Model.ParentId != null)
+    {
+        pId = (int)Model.ParentId;
+    }
+    var prop = Category.GetById(pId, SiteConfig.LanguageId);
+    string pn = "";
+    if (prop != null)
+    {
+        pn = prop.CategoryName;
+    }
+    ViewBag.PName = pn;
+    var breadcrumb = new BreadcrumbModel
+    {
+        Items = new List<BreadcrumbItem>{
+new BreadcrumbItem{Url=Url.Action("Index","ArticleType",new{code=Model.ArticleType.UrlFriendly}),Text = Model.ArticleType.Name },
+}
+    };
+
+    foreach (var item in Category.BuildTreeReverse(Model.Id))
+    {
+        breadcrumb.Items.Add(new BreadcrumbItem { Text = item.CategoryName, Url = Url.Action("Detail", "Category", new { id = item.Id, code = Model.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.UrlFriendly) }) });
+    }
+    //breadcrumb.Items.Add(new BreadcrumbItem { Url = null, Text = Model.CategoryName })
+    ViewBag.Breadcrumb = breadcrumb;
+
+    string viewName = null;
+    var articleType = Model.ArticleType;
+    if (articleType != null)
+    {
+        if (File.Exists(Server.MapPath("~/Templates/" + SiteConfig.SiteInfo.Code + "/Views/Article/" + articleType.Code + "/_List.cshtml")))
+        {
+            viewName = articleType.Code + "/_List.cshtml";
+        }
+    }
+    var pageSize = 10;
+    if (articleType.Code.Equals("Product", StringComparison.OrdinalIgnoreCase) || articleType.Code.Equals("Brand", StringComparison.OrdinalIgnoreCase))
+    {
+        pageSize = 36;
+    }
+    //if (Request["pageSize"] != null)
+    //{
+    //    int.TryParse(Request["pageSize"], out pageSize);
+    //}
+
+    var pageIndex = 1;
+    if (Request["page"] != null)
+    {
+        int.TryParse(Request["page"], out pageIndex);
+    }
+    var ids = ViewBag.ListId as int[];
+    ArticleSortOrder sortOrder = ArticleSortOrder.SORT_ORDER;
+    VCMS.MVC4.Data.SortDirection direction = VCMS.MVC4.Data.SortDirection.DESCENDING;
+    ArticleFlags flag = ArticleFlags.ACTIVE;
+
+    if (Request["sortorder"] != null)
+    {
+        sortOrder = (ArticleSortOrder)Enum.Parse(typeof(ArticleSortOrder), Request["sortorder"]);
+    }
+    if (Request["sortdirection"] != null)
+    {
+        direction = (VCMS.MVC4.Data.SortDirection)Enum.Parse(typeof(VCMS.MVC4.Data.SortDirection), Request["sortdirection"]);
+    }
+    if (Request["flag"] != null)
+    {
+        if (Request["flag"] == "all")
+        {
+            flag = ArticleFlags.ACTIVE;
+        }
+        else
+        {
+            flag = (ArticleFlags)Enum.Parse(typeof(ArticleFlags), Request["flag"]);
+        }
+    }
+    var list = Article.GetByCategory(Model.Id, SiteConfig.LanguageId, flags: flag, pageIndex: pageIndex, pageSize: pageSize, sortOrder: sortOrder, direction: direction, resultFlag: ArticleResultFlags.ALL, includeflags: ArticleIncludeFlags.PROPERTIES |  ArticleIncludeFlags.PRICES |   ArticleIncludeFlags.ARTICLE_TYPE | ArticleIncludeFlags.ARTICLE_DETAIL);
+}
+@using (VCMS.MVC4.Data.DataContext db = new VCMS.MVC4.Data.DataContext())
+{
+    //var lstcate = Category.GetByParent(Model.Id, 2, SiteConfig.LanguageId);
+    @*if (articleType.Id == 2 && lstcate.Count > 0)
+        {
+            @Html.Partial("~/Templates/" + SiteConfig.SiteInfo.Code + "/Views/Article/Product/_ListCate.cshtml", lstcate)
+        }
+        else
+        {*@
+    var itemCount = Article.CountByCategory(Model.Id, SiteConfig.LanguageId);
+    ViewBag.Count = itemCount;
+    if (viewName != null)
+    {
+        @Html.Partial("~/Templates/" + SiteConfig.SiteInfo.Code + "/Views/Article/" + viewName, list)
+    }
+    else
+    {
+        @Html.Partial("~/Templates/" + SiteConfig.SiteInfo.Code + "/Views/Article/_List.cshtml", list)
+    }
+    @*}*@
+}

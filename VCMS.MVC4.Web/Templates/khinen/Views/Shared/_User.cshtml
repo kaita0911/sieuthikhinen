@@ -1,0 +1,19 @@
+﻿<div class="top-user visible-lg visible-md">
+    <ul>
+        <li><a href="#">@Html.Locale("my_account")</a></li>
+        <li><a href="#">@Html.Locale("order_manage")</a></li>
+        <li><a href="#">@Html.Locale("like_list")</a></li>
+        <li>
+            <div id="shop-cart" class="carts">
+                <div class="icon-cart">
+                    <a href="#">@Html.Locale("shopping_cart") <span id="number">@SiteConfig.ShoppingCart.Items.Sum(a => a.Quantity)</span></a>    
+                </div>
+                <div class="content" style="display:none">
+                    @Html.Partial("_MiniCart")
+                </div>
+            </div>
+        </li>
+        <li><a href="#">@Html.Locale("login")</a></li>
+        <li><a href="#">@Html.Locale("register")</a></li>
+    </ul>
+</div>

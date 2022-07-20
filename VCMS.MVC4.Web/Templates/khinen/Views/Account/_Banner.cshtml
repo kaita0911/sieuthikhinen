@@ -1,0 +1,7 @@
+﻿@model VCMS.MVC4.Data.UserProfile
+<div class="u-banner">
+    @if (Model.Banner != null)
+    {
+        @Html.Image(Model.Banner, new ImageOptions { Width = 1172, Height = 280, Mode = ImageMode.crop, Lazy = false }, new { alt = Model.UserProfileDetail[SiteConfig.LanguageId].Title })
+    }
+</div>

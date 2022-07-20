@@ -1,0 +1,20 @@
+﻿@using System.Data.Entity;
+@using (DataContext db = new DataContext())
+{
+    var article = Article.GetByTypeCode("ABOUTUS", SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 1, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING).List.FirstOrDefault();
+    if (article != null)
+    {
+        <div class="box-footer f-aboutus">
+            @*<h2 class="heading">@SiteConfig.SiteInfo.DefaultDomain</h2>*@
+            <div class="content">
+                @*<h4>@article.ArticleName</h4>*@
+                <div class="col-lg-12">
+                    <center>
+                        @Html.Image(article.ImageUrl, new ImageOptions { Width = 570, Height = 330, Watermark = SiteConfig.WatermarkFill, Lazy = false }, new { alt = article.ArticleName })
+                    </center>
+                </div>
+                @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(article.ShortDescription, 50))
+            </div>
+        </div>
+    }
+}

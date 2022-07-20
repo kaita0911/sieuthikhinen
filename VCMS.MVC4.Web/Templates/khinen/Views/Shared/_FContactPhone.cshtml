@@ -1,0 +1,23 @@
+﻿@using System.Data.Entity;
+@using (DataContext db = new DataContext())
+{
+    var lstArt = db.Articles.Include(a => a.ArticleDetail).Include(a => a.PropertyValues.Select(pv => pv.Property)).OrderBy
+        (a => a.SortOrder).Where(a => a.ArticleType.Code.Equals("CONTACTPHONE", StringComparison.OrdinalIgnoreCase)).ToList();
+
+    if (lstArt.Count > 0)
+    {
+
+        <div class="contact-phone">
+            @foreach (var item in lstArt)
+            {
+                var phone = item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("PHONE", StringComparison.OrdinalIgnoreCase));
+                <div class="items">
+                    <div class="lbl"><span>@item.ArticleName</span></div>
+                    <div class="dot"><span>:</span></div>
+                    <div class="ctn"><span>@phone.Value</span></div>
+                </div>
+            }
+        </div>
+    }
+
+}

@@ -1,0 +1,74 @@
+﻿@{
+    ViewBag.Title = "Thống kê truy cập";
+
+    ViewBag.Breadcrumb = new BreadcrumbModel()
+    {
+        Items = new List<BreadcrumbItem>()
+        {
+            new BreadcrumbItem(){Url = Url.Action("Index","Home"), Text="Home", IsFirst=true},
+
+            new BreadcrumbItem(){Url = Url.Action("Online","Website"), Text=ViewBag.Title.ToString(), IsLast=true},
+
+        }
+    };
+}
+<div class="summary">
+    <p class="float">
+        Số người đang online:
+        <span class="number" id="lblOnline"></span>
+    </p>
+</div>
+<table class="table table-hover online">
+    <thead class="header hidden-sm hidden-xs">
+        <tr>
+            <th class="check">
+                #
+            </th>
+            <th class="ip">
+                @Html.Label("Địa chỉ IP")
+            </th>
+            <th class="time">
+                @Html.Label("Thời gian truy cập")
+            </th>
+            <th class="">
+                @Html.Label("Đang xem trang")
+            </th>
+        </tr>
+    </thead>
+    <tbody class="items"></tbody>
+</table>
+<div id="online-list" style="font-size:0.9em">
+</div>
+@section Scripts
+{
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmplPlus.min.js"></script>
+    @Scripts.Render("~/Scripts/jquery.jsonp.js")
+
+    <script id="online-tpl" type="text/x-jQuery-tmpl">
+        <tr class="item">
+            <td class="check" data-label="#">${$item.index($item.data)}</td>
+            <td class="ip" data-label="Địa chỉ ip">${IP}</td>
+            <td class="time" data-label="Thời gian truy cập">${formatDate(LastUpdated)}</td>
+            <td class="" data-label="Đang xem trang">${Url}</td>
+        </tr>
+    </script>
+    <script>
+        function formatDate(date) {
+            var dateObj = new Date(parseInt(date.substr(6)));
+            dateObj.setHours(dateObj.getHours() + 14);
+            return dateObj.getDate() + "-" + (dateObj.getMonth() + 1) + "-" + dateObj.getFullYear() + " " + dateObj.getHours() + ":" + dateObj.getMinutes() + ":" + dateObj.getSeconds();
+        }
+
+        $(function () {
+            $.jsonp({
+                'url': '//stats.viennam.com/site/onlineJSON/@SiteConfig.SiteInfo.DefaultDomain?callback=?',
+                'success': function (json) {
+
+                    $("#lblOnline").html(json.length);
+                    $("#online-tpl").tmpl(json, { index: function (item) { return $.inArray(item, json) + 1; } }).appendTo('.items');
+                }
+            })
+        })
+    </script>
+}

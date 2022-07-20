@@ -1,0 +1,26 @@
+﻿@using System.Data.Entity;
+@{
+    var article = Article.GetByTypeCode("CONSULTING", SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 5, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING, ArticleIncludeFlags.ARTICLE_TYPE).List;
+    if (article.Count > 0)
+    {
+        <div class="box-footer box-footer-consulting">
+            <h2 class="heading">Trả Hàng & Bảo Hành</h2>
+            <div class="content eded">
+              
+                @foreach (var item in article)
+                {
+                    <p class="item">
+                        <a href="@Url.Action("Detail", "Article", new { id=item.Id, code=item.ArticleType.UrlFriendly,title = item.UrlFriendly})">
+                            <i class="fa fa-angle-double-right"></i>  @item.ArticleName
+                        </a>
+                    </p>
+                }
+
+            
+
+            </div>
+        </div>
+    }
+}
+
+

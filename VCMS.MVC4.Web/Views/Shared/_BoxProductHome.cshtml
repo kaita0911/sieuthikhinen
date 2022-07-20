@@ -1,0 +1,12 @@
+﻿@using System.Data.Entity
+@using (DataContext db = new DataContext())
+{
+
+    var products = Article.GetByType(db.ArticleTypes.FirstOrDefault(at => at.Code == "PRODUCT").Id, SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.HOT, 1, 10, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING);
+    <div class="home-product">
+        <div class="title">
+            <span>Sản phẩm</span>
+        </div>
+        @Html.Partial("~/Views/Article/Product/_list.cshtml", products)
+    </div>
+}

@@ -1,0 +1,111 @@
+<html>
+
+<head>
+    <title>jQuery Star Rating Plugin v3.14 (2012-02-08)</title>
+    <!--// documentation resources //-->
+    <script src='jquery.js' type="text/javascript"></script>
+    <script src='documentation/documentation.js' type="text/javascript"></script>
+    <link href='documentation/documentation.css' type="text/css" rel="stylesheet" />
+    <!--// code-highlighting //-->
+    <script type="text/javaScript" src="documentation/chili/jquery.chili-2.0.js"></script>
+    <!--//documentation/chili-toolbar/jquery.chili-toolbar.pack.js//-->
+    <script type="text/javascript">        try { ChiliBook.recipeFolder = "documentation/chili/" } catch (e) { }</script>
+    <!--// plugin-specific resources //-->
+    <!--<script src='jquery.MetaData.js' type="text/javascript" language="javascript"></script>-->
+    <script src='jquery.rating.js' type="text/javascript" language="javascript"></script>
+    <link href='jquery.rating.css' type="text/css" rel="stylesheet" />
+</head>
+<body>
+    <table width="100%" cellspacing="10">
+        <tr>
+            <td valign="top" width="">
+                <table width="100%">
+                    <tr>
+                        <td valign="top" width="50%">
+                            <div class="Clear">
+                                Rating 1: (N/M/Y, default M)
+                            </div>
+                            <div class="Clear">
+                                <input class="star" type="radio" name="test-2-rating-1" value="N" title="No" />
+                                <input class="star" type="radio" name="test-2-rating-1" value="M" title="Maybe" checked="checked" />
+                                <input class="star" type="radio" name="test-2-rating-1" value="Y" title="Yes" />
+                            </div>
+                            <div class="Clear">
+                                Rating 2: (10 - 50, default 30)
+                            </div>
+                            <div class="Clear">
+                                <input class="star" type="radio" name="test-2-rating-2" value="10" />
+                                <input class="star" type="radio" name="test-2-rating-2" value="20" />
+                                <input class="star" type="radio" name="test-2-rating-2" value="30" checked="checked" />
+                                <input class="star" type="radio" name="test-2-rating-2" value="40" />
+                                <input class="star" type="radio" name="test-2-rating-2" value="50" />
+                            </div>
+                            <div class="Clear">
+                                Rating 3: (1 - 7, default 4)
+                            </div>
+                            <div class="Clear">
+                                <input class="star" type="radio" name="test-2-rating-3" value="1" />
+                                <input class="star" type="radio" name="test-2-rating-3" value="2" />
+                                <input class="star" type="radio" name="test-2-rating-3" value="3" />
+                                <input class="star" type="radio" name="test-2-rating-3" value="4" checked="checked" />
+                                <input class="star" type="radio" name="test-2-rating-3" value="5" />
+                                <input class="star" type="radio" name="test-2-rating-3" value="6" />
+                                <input class="star" type="radio" name="test-2-rating-3" value="7" />
+                            </div>
+                        </td>
+                        <td valign="top" width="50%">
+                            <div class="Clear">
+                                Rating 4: (1 - 5, default 1)
+                            </div>
+                            <div class="Clear">
+                                <input class="star" type="radio" name="test-2-rating-4" value="1" title="Worst" checked="checked" />
+                                <input class="star" type="radio" name="test-2-rating-4" value="2" title="Bad" />
+                                <input class="star" type="radio" name="test-2-rating-4" value="3" title="OK" />
+                                <input class="star" type="radio" name="test-2-rating-4" value="4" title="Good" />
+                                <input class="star" type="radio" name="test-2-rating-4" value="5" title="Best" />
+                            </div>
+                            <div class="Clear">
+                                Rating 5: (1 - 5, default 5, required)
+                            </div>
+                            <div class="Clear">
+                                <input class="star required" type="radio" name="test-2-rating-5" value="1" />
+                                <input class="star" type="radio" name="test-2-rating-5" value="2" />
+                                <input class="star" type="radio" name="test-2-rating-5" value="3" />
+                                <input class="star" type="radio" name="test-2-rating-5" value="4" />
+                                <input class="star" type="radio" name="test-2-rating-5" value="5" checked="checked" />
+                            </div>
+                            <div class="Clear">
+                                Rating 6 (readonly): (1 - 5, default 3)
+                            </div>
+                            <div class="Clear">
+                                <input class="star" type="radio" name="test-2-rating-6" value="1" disabled="disabled" />
+                                <input class="star" type="radio" name="test-2-rating-6" value="2" disabled="disabled" />
+                                <input class="star" type="radio" name="test-2-rating-6" value="3" disabled="disabled"
+                                    checked="checked" />
+                                <input class="star" type="radio" name="test-2-rating-6" value="4" disabled="disabled" />
+                                <input class="star" type="radio" name="test-2-rating-6" value="5" disabled="disabled" />
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td valign="top" width="5">
+                &nbsp;
+            </td>
+            <td valign="top" width="50">
+                <input type="submit" value="Submit scores!" />
+            </td>
+            <td valign="top" width="5">
+                &nbsp;
+            </td>
+            <td valign="top" width="160">
+                <u>Test results</u>:<br />
+                <br />
+                <div class="test Smaller">
+                    <span style="color: #FF0000">Results will be displayed here</span>
+                </div>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

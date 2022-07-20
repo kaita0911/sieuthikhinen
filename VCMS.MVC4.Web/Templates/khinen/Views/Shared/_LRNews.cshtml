@@ -1,0 +1,39 @@
+﻿@using (DataContext db = new DataContext())
+{
+    var type = db.ArticleTypes.FirstOrDefault(a => a.Code == "PROJECT");
+    if (type != null)
+    {
+        var list = Article.GetByType(type.Id, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 5, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING);
+        <div class="box-sidebar-3 box-news hidden-sm hidden-xs">
+            <h2 class="heading">Kiến thức</h2>@*@Html.Locale("news")*@
+            <div class="content">
+                <ul>
+                    @foreach (var item in list.List)
+                    {
+                        //var url = item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("LINK", StringComparison.OrdinalIgnoreCase));
+                        <li class="item">
+                            @*<figure>
+                                    <a target="@(!string.IsNullOrEmpty(url.Value) ? "_blank" : "_parent")" href="@(!string.IsNullOrEmpty(url.Value)?url.Value:Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.UrlFriendly) }))" title="@item.ArticleName">
+                                        @Html.Image(item.ImageUrl, new ImageOptions { Width = 237, Height = 192,Lazy = false}, new { alt = item.ArticleName, @class = "width-full" })
+                                    </a>
+                                </figure>*@
+                            <div class="name">
+                                <a href="@Url.Action("Detail", "Article", new { id=item.Id, code=item.ArticleType.UrlFriendly,title=item.UrlFriendly})">@item.ArticleName</a>
+                            </div>
+                            @*<div class="s-desc">
+                                    @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(item.ShortDescription, 25))
+                                </div>*@
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+}
+
+
+
+
+
+
+

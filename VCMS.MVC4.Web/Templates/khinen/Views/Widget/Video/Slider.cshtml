@@ -1,0 +1,42 @@
+﻿@model Widget
+@{
+    var type = ArticleType.GetById((int)Model.ArticleTypeId, SiteConfig.LanguageId);
+    var article = Article.GetByType((int)Model.ArticleTypeId, SiteConfig.LanguageId, Model.Attribute, 1, Model.Number, Model.SortOrder, Model.SortDirection, Model.Includes);
+    if (article.List.Count > 0)
+    {
+        <div class="box-home box-slider-video">
+            <div class="container">
+                <h2 class="heading">
+                    <span>@Model.Title</span>
+                </h2>
+                <div class="content">
+                    <div class="owl-carousel" data-plugin-options='{"items": 4, "singleItem": false, "autoPlay": true, "navigation": true, "pagination": false,"slideSpeed":400,"addClassActive":true,"itemsDesktop": [1199, 4],"itemsDesktopSmall": [991, 3],"itemsTablet": [768, 2],"itemsMobile": [479, 2]}' data-snap-ignore="true">
+                        @foreach (var item in article.List)
+                        {
+                            <div class="items">
+                                <a class="banner-cubic-3" href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="@item.ArticleName">
+                                    <figure>
+                                        @Html.Image(item.ImageUrl, new ImageOptions { Width = 270, Height = 195, Mode = ImageMode.crop, Lazy = false }, new { alt = item.ArticleName, @class = "owl" })
+                                    </figure>
+                                </a>
+                                <div class="title">
+                                    <a href="@Url.Content(item.ImageUrl)" title="@item.ArticleName">
+                                        @*<span class="plus">+</span>*@
+                                        <span class="name">@item.ArticleName</span>
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    @*<div class="view-all">
+                        <a href="@Url.Action("Index", "ArticleType", new { code = type.UrlFriendly })">
+                            @Html.Locale("view_more")
+                        </a>
+                    </div>*@
+                </div>
+            </div>
+        </div>
+    }
+}
+
+

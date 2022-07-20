@@ -1,0 +1,47 @@
+﻿@using System.Data.Entity;
+@using (DataContext db = new DataContext())
+{
+    var id = ArticleType.GetIdByCode("COMPANY");
+    var article = Article.GetByType(id, SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 1, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.ASCENDING, ArticleIncludeFlags.PROPERTIES).List.FirstOrDefault();
+    if (article != null)
+    {
+        var address = article.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("ADDRESS", StringComparison.OrdinalIgnoreCase) && a.LanguageId == SiteConfig.LanguageId);
+        //var vpgd = article.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("VPGD", StringComparison.OrdinalIgnoreCase) && a.LanguageId == SiteConfig.LanguageId);
+        var phone = article.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("PHONE", StringComparison.OrdinalIgnoreCase));
+        //var fax = article.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("FAX", StringComparison.OrdinalIgnoreCase));
+        var mail = article.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("EMAIL", StringComparison.OrdinalIgnoreCase));
+        <div class="box-footer f-address">
+            <h2 class="heading">Liên hệ</h2>
+            <div class="content">
+                <p class="address">
+                    <i class="fa fa-map-marker"></i>
+                    <strong>Trụ sở: </strong>@*@Html.Locale("address"):*@
+                    @address.Value
+                </p>
+                @*<p class="address">
+                        <i class="fa fa-map-marker"></i>
+                        <strong>VPGD: </strong>
+                        @vpgd.Value
+                    </p>*@
+                <p class="phone">
+                    <i class="fa fa-phone"></i>
+                    <strong>@Html.Locale("phone"):</strong>
+                    @Html.Phone(phone.Value)
+                </p>
+                <p class="phone">
+                    <i class="fa fa-mobile-phone" style="font-size: 26px"></i>
+                    <strong>Hotline:</strong>
+                    @Html.Phone(SiteConfig.SiteInfo.Hotline)
+                </p>
+                @*<p class="fax"><strong>Fax:</strong> @Html.Phone(fax.Value)</p>*@
+                <p class="email">
+                    <i class="fa fa-envelope"></i>
+                    <strong>Email:</strong>
+                    @Html.Email(mail.Value)
+                </p>
+                @*<p class="website"><strong>Website:</strong> <a href="/">hungkhangautomation.com.vn</a></p>*@
+            </div>
+        </div>
+    }
+
+}

@@ -1,0 +1,14 @@
+﻿@using VCMS.MVC4.Web
+@if (Request.IsAuthenticated)
+{
+    <text>
+
+        <i class="fa fa-user fs18"></i> Hello, @Html.ActionLink(SiteConfig.CurrentUser.DisplayName, "Manage", "Account", routeValues: null, htmlAttributes: new { @class = "username", title = "Manage" })!
+        @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+        {
+            @Html.AntiForgeryToken()
+            <a href="javascript:document.getElementById('logoutForm').submit()"><i class="fa fa-sign-out"></i> Thoát</a>
+            @Html.ActionLink("Xem trang chủ", "Index", "Home", new { area = "" }, new { target = "_blank" })
+        }
+    </text>
+} 

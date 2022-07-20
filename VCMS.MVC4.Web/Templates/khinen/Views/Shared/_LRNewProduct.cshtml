@@ -1,0 +1,49 @@
+﻿@Scripts.Render("~/Content/Plugin/jquery.bxslider.js")
+@using (DataContext db = new DataContext())
+{
+    var product = Article.GetByType(db.ArticleTypes.FirstOrDefault(a => a.Code == "PRODUCT").Id, SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.NEW, 1, 15, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.DESCENDING);
+    if (product.List.Count > 0)
+    {
+        <div class="box-lr lr-hot-product">
+            <h2 class="header">
+               Sản phẩm khuyến mãi
+            </h2>
+            <div class="content">
+                <ul class="bxslider">
+                    @foreach (var item in product.List)
+                    {
+                        <li class="box-block item">
+                            <figure>
+                                <a href="@Url.Action("Detail", "Article", new { id=item.Id,code=item.ArticleType.UrlFriendly,title=Unichar.UnicodeStrings.UrlString(item.ArticleName)})" title="@item.ArticleName">
+                                    @if (item.ImageUrl != null)
+                                    {
+                                        <img src="@Url.Content("~/UserUpload/Article/")@item.ImageUrl?height=240" alt="@item.ArticleName" />
+                                    }
+                                    else
+                                    {
+                                        <img src="@Url.Content("~/Templates/"+ SiteConfig.SiteCode +"/Content/images/no-product.jpg")?width=335" alt="@item.ArticleName" />
+                                    }
+                                </a>
+                            </figure>
+                            <div class="meta">
+                                <h3><a href="@Url.Action("Detail", "Article", new { id=item.Id,code=item.ArticleType.UrlFriendly,title=Unichar.UnicodeStrings.UrlString(item.ArticleName)})" title="@item.ArticleName">@item.ArticleName</a></h3>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <script>
+                $('.bxslider').bxSlider({
+                    mode: 'vertical',
+                    slideMargin: 5,
+                    minSlides: 5,
+                    maxSlides: 5,
+                    controls: false,
+                    pager: false,
+                    auto: true,
+                    moveSlides: 1
+                });
+            </script>
+        </div>
+    }
+}

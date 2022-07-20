@@ -1,0 +1,440 @@
+﻿@model Order
+@{
+    ViewBag.Title = "Chi tiết đơn hàng";
+    ViewBag.Breadcrumb = new BreadcrumbModel { Items = new BreadcrumbItem[] { new BreadcrumbItem { Text = "Trang chủ", Url = Url.Action("Index", "Home") }, new BreadcrumbItem { Url = Url.Action("Index", "Order"), Text = "Đơn hàng" }, new BreadcrumbItem { Url = null, Text = "Chi tiết " + Model.OrderNumber, IsLast = true } } };
+    var i = 1;
+    decimal total = 0;
+    var user = ViewBag.User as UserProfile;
+}
+
+<div class="form order">
+    <h1 class="name-order">RE: Đơn hàng @Model.OrderNumber</h1>
+    <div class="clearfix"></div>
+    <div id="sys-notification"></div>
+    <div id="order-status" class="btn-group display-block">
+        @*<span class="btn save">
+                <a href="#" data-submit="@Url.Action("Update", "Order", new { id = Model.Id, status = OrderStatus.PENDING, returnUrl = ViewBag.ReturnUrl })">
+                    <i class="fa fa-ambulance fs15"></i> <span>Pending</span>
+                </a>
+            </span>*@
+        @if (Model.Status != OrderStatus.SUCCESS && Model.Status != OrderStatus.CANCELLED)
+        {
+            if (Model.Status == OrderStatus.PENDING)
+            {
+                <div class="btn-group btn delete">
+                    <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        <span>Duyệt đơn hàng</span> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu fa-ul">
+                        <li>
+                            <a href="#" data-submit="@Url.Action("Update", "Order", new { id = Model.Id, status = OrderStatus.VIEW, returnUrl = ViewBag.ReturnUrl })" title="">
+                                <i class="fa fa-stack-exchange fs15"></i> <span>Duyệt</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" data-submit="@Url.Action("Update", "Order", new { id = Model.Id, status = OrderStatus.CANCELLED, returnUrl = ViewBag.ReturnUrl })" title="">
+                                <i class="fa fa-remove fs15"></i> <span>Hủy</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            }
+            if (Model.Status != OrderStatus.SHIPPED)
+            {
+                <span class="btn save">
+                    <a href="#" data-submit="@Url.Action("Update", "Order", new { id = Model.Id, status = OrderStatus.SHIPPED, returnUrl = ViewBag.ReturnUrl })">
+                        <i class="fa fa-ambulance fs15"></i> <span>Đã giao hàng</span>
+                    </a>
+                </span>
+            }
+            if (Model.Status != OrderStatus.PAID)
+            {
+                <span class="btn create">
+                    <a href="#" data-submit="@Url.Action("Update", "Order", new { id = Model.Id, status = OrderStatus.PAID, returnUrl = ViewBag.ReturnUrl })">
+                        <i class="fa fa-cc-paypal fs15"></i> <span>Đã thanh toán</span>
+                    </a>
+                </span>
+            }
+            <span class="btn type">
+                <a href="#" data-submit="@Url.Action("Update", "Order", new { id = Model.Id, status = OrderStatus.SUCCESS, returnUrl = ViewBag.ReturnUrl })">
+                    <i class="fa fa-check fs15"></i> <span>Hoàn thành</span>
+                </a>
+            </span>
+        }
+        @if (Model.Status != OrderStatus.PENDING)
+            {
+                <span class="btn btn-primary pull-right">
+                    <a href="@Url.Action("Print", "Order", new { id = Model.Id })" target="_blank">
+                        <i class="fa fa-print fs15"></i> <span>In đơn hàng</span>
+                    </a>
+                </span>
+                <span class="btn btn-print pull-right">
+                    <a href="@Url.Action("PrintPdf", "Order", new { id = Model.Id })">
+                        <i class="fa fa-file-pdf-o fs15"></i> <span>In Pdf</span>
+                    </a>
+                </span>
+            }
+        @if (Model.Status == OrderStatus.SUCCESS || Model.Status == OrderStatus.CANCELLED)
+        {
+            <span class="btn delete pull-right">
+                <a href="@Url.Action("DeleteOrder", "Order", new { id = Model.Id, returnUrl = Request["returnUrl"] })">
+                    <i class="fa fa-trash-o fs15"></i> <span>Xóa đơn hàng</span>
+                </a>
+            </span>
+        }
+    </div>
+    <div class="clearfix"></div>
+    <fieldset>
+        <legend>Thông tin đặt hàng</legend>
+        <div class="width-50">
+            <p>
+                <label class="label">
+                    Mã đơn hàng:
+                </label>
+                <span class="info">#@Model.OrderNumber</span>
+            </p>
+            <p>
+                <label class="label">
+                    Số lượng:
+                </label>
+                <span class="info">@Model.TotalQty</span>
+            </p>
+            <p>
+                <label class="label">
+                    Tổng tiền:
+                </label>
+                <span class="info">@Html.Amount(Model.TotalAmount + Model.AmountShipping)</span>
+            </p>
+            @if (Model.HasPayment)
+            {
+                <p>
+                    <label class="label">
+                        Hình thức thanh toán:
+                    </label>
+                    <span class="info">Thanh toán qua địa chỉ ngân hàng.</span>
+                </p>
+            }
+
+        </div>
+        <div class="width-50">
+            <p>
+                <label class="label">
+                    Ngày đặt hàng:
+                </label>
+                <span class="info">@Model.DateCreated</span>
+            </p>
+            @*<p>
+                    <label class="label">
+                        Ngày giao hàng:
+                    </label>
+                    <span class="info">@Model.DateDelivery.Value.ToShortDateString(), @Model.TimeShipping</span>
+                </p>*@
+            <p>
+                <label class="label">
+                    Trạng thái:
+                </label>
+                @if (Model.Status == OrderStatus.SUCCESS)
+                {
+                    <span class="info status success"><i class="fa fa fa-check"></i>@Html.Locale("order_" + Model.Status.ToString().ToLower())</span>
+                }
+                else
+                {
+                    <span class="info status @Model.Status.ToString().ToLower()"><i class="fa @(Model.Status == OrderStatus.PENDING ? "fa-recycle" : Model.Status == OrderStatus.SHIPPED ? "fa-truck" : Model.Status == OrderStatus.PAID ? "fa fa-check" : Model.Status == OrderStatus.VIEW ? "fa fa-edit" : "")"></i> @Html.Locale("order_" + Model.Status.ToString().ToLower())</span>
+                }
+            </p>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>Thông tin khách hàng</legend>
+        @if (user != null)
+        {
+            <div class="customner @(!string.IsNullOrWhiteSpace(Model.Email) ? "width-50" : "")">
+                <p>
+                    <label>Địa chỉ thanh toán:</label>
+                </p>
+                <p>
+                    <span><i class="fa fa-user"></i>Tên khách hàng: </span>
+                    <label class="font-bold">@user.DisplayName</label>
+                </p>
+                <p>
+                    <span><i class="fa fa-envelope"></i>Email: </span>
+                    <label class="font-bold">@user.Email</label>
+                </p>
+                <p>
+                    <span><i class="fa fa-phone"></i>Điện thoại: </span>
+                    <label class="font-bold">@user.Phone</label>
+                </p>
+                <p>
+                    <span><i class="fa fa-map-marker"></i>Địa chỉ: </span>
+                    <label class="font-bold">@user.Address</label>
+                </p>
+                @*<p>
+                        <span><i class="fa fa-wifi"></i>Mã bưu chính: </span>
+                        <label class="font-bold">@user.PostalCode</label>
+                    </p>*@
+                @*<p>
+                        <span><i class="fa fa-yelp"></i>Tỉnh/Thành phố: </span>
+                        <label class="font-bold">@user.NameCity</label>
+                    </p>
+                    <p>
+                        <span><i class="fa fa-crop"></i>Quận/Huyện: </span>
+                        <label class="font-bold">@user.NameState</label>
+                    </p>*@
+                @*<p>
+                        <span><i class="fa fa-building-o"></i>Công ty: </span>
+                        <label class="font-bold">@user.Company</label>
+                    </p>
+                    <p>
+                        <span><i class="fa fa-fax"></i>Fax: </span>
+                        <label class="font-bold">@user.Fax</label>
+                    </p>*@
+                @*<p>
+                        <span><i class="fa fa-file-text"></i>Ghi chú: </span>
+                        <label class="font-bold">@Model.Notes</label>
+                    </p>*@
+                @*<p>
+                    <br />
+                    <span><i class="fa fa-image"></i></span>
+                    <label class="font-bold"><a href="http://maps.google.com/?q=@user.Address" target="_blank">Xem địa chỉ trên Google Maps</a></label>
+                </p>*@
+            </div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(Model.Email))
+        {
+            <div class="customner width-50">
+                <p>
+                    <label>@(Model.CustomerId == null ? "Địa chỉ giao hàng và thanh toán:" : "Địa chỉ giao hàng:")</label>
+                </p>
+                <p>
+                    <span><i class="fa fa-user"></i>Tên khách hàng: </span>
+                    <label class="font-bold">@Model.FullName</label>
+                </p>
+                <p>
+                    <span><i class="fa fa-envelope"></i>Email: </span>
+                    <label class="font-bold">@Model.Email</label>
+                </p>
+                <p>
+                    <span><i class="fa fa-phone"></i>Điện thoại: </span>
+                    <label class="font-bold">@Model.Phone</label>
+                </p>
+                <p>
+                    <span><i class="fa fa-map-marker"></i>Địa chỉ: </span>
+                    <label class="font-bold">@Model.Address</label>
+                </p>
+                @*<p>
+                        <span><i class="fa fa-wifi"></i>Mã bưu chính: </span>
+                        <label class="font-bold">@Model.PostalCode</label>
+                    </p>*@
+                @*<p>
+                        <span><i class="fa fa-yelp"></i>Tỉnh/Thành phố: </span>
+                        <label class="font-bold">@Model.NameCity</label>
+                    </p>
+                    <p>
+                        <span><i class="fa fa-crop"></i>Quận/Huyện: </span>
+                        <label class="font-bold">@Model.NameState</label>
+                    </p>*@
+                @*<p>
+                        <span><i class="fa fa-building-o"></i>Công ty: </span>
+                        <label class="font-bold">@Model.Company</label>
+                    </p>
+                    <p>
+                        <span><i class="fa fa-fax"></i>Fax: </span>
+                        <label class="font-bold">@Model.Fax</label>
+                    </p>*@
+                @*<p>
+                        <span><i class="fa fa-file-text"></i>Ghi chú: </span>
+                        <label class="font-bold">@Model.Notes</label>
+                    </p>*@
+                @*<p>
+                    <br />
+                    <span><i class="fa fa-image"></i></span>
+                    <label class="font-bold"><a href="http://maps.google.com/?q=@Model.Address" target="_blank">Xem địa chỉ trên Google Maps</a></label>
+                </p>*@
+            </div>
+        }
+
+    </fieldset>
+    @if (Model.Status == OrderStatus.PENDING)
+    {
+        <ul class="fa-ul btn-order">
+            <li>
+                <span class="btn delete">
+                    <a href="javascript:void(0)" id="delete">
+                        <i class="fa fa-trash-o"></i>
+                        <span class="hidden-xs">Xóa đơn hàng</span>
+                    </a>
+                </span>
+            </li>
+            @*<li>
+                <span class="btn update">
+                    <a href="javascript:void(0)" id="update">
+                        <i class="fa fa-shopping-cart"></i>
+                        <span class="hidden-xs">Cập nhật số lượng</span>
+                    </a>
+                </span>
+            </li>*@
+        </ul>
+    }
+
+    <table class="table tb-order">
+        <thead class="header">
+            <tr class="header">
+                <th class="check">
+                    <label class="checkbox single noborder">@Html.CheckBox("chkSelectAll", false, new { id = "check-all" })<i></i></label>
+                </th>
+                <th class="order">STT</th>
+                <th class="title">Sản phẩm</th>
+                <th class="attr">Số lượng</th>
+                <th class="amount text-right">Đơn giá</th>
+                <th class="amount text-right">Tạm tính</th>
+            </tr>
+        </thead>
+        <tbody class="items">
+            @foreach (var item in Model.OrderLines)
+            {
+                <tr class="item">
+                    <td class="check">
+                        <label class="checkbox fix">@Html.CheckBox("chkSelect", false, new { value = item.Id, @class = "check-export" })<i></i></label>
+                    </td>
+                    <td class="order">@i</td>
+                    <td class="title">@item.ProductName</td>
+                    <td class="attr">
+                        @item.Qty
+                        @*@Html.TextBox("Qty", item.Qty, new { rel = item.Id, @class = "text-right", @size = "3", @type = "number", @min = "1" })*@
+                    </td>
+                    <td class="amount text-right">@Html.Amount(item.UnitPrice)</td>
+                    <td class="amount text-right">@Html.Amount(item.Amount)</td>
+                </tr>
+                total += item.Amount;
+                i++;
+            }
+        </tbody>
+        <tfoot>
+            @if (Model.AmountShipping > 0)
+            {
+                <tr>
+                    <td class="total text-right" colspan="5">@Html.Locale("cart_total"):</td>
+                    <td class="text-right">@Html.Amount(total)</td>
+                </tr>
+                <tr>
+                    <td class="total text-right" colspan="5">Phí ship:</td>
+                    <td class="text-right">
+                        @*@if (total >= SiteConfig.SiteInfo.AmountShippingToFree)
+                            {
+                                <span>Miễn phí</span>
+                            }
+                            else
+                            {*@
+                        <span>@Html.Amount(Model.AmountShipping)</span>
+                        @*}*@
+                    </td>
+                </tr>
+            }
+            @*<tr>
+                <td class="total text-right" colspan="5">@Html.Locale("cart_qty"):</td>
+                <td class="text-right">@Model.TotalQty</td>
+            </tr>*@
+            <tr>
+                <td class="total text-right" colspan="5">@Html.Locale("cart_total_amount"):</td>
+                <td class="text-right price-total" data-label="@Html.Locale("cart_total_amount")">@Html.Amount(Model.TotalAmount + Model.AmountShipping)</td>
+            </tr>
+            @*@if ((Model.TotalAmount + Model.AmountShipping) > 500000)
+            {
+                <tr>
+                    <td class="total text-right" colspan="5">Thanh toán trước @Model.Ttt%:</td>
+                    <td class="text-right">@Html.Amount((Model.TotalAmount + Model.AmountShipping) * Model.Ttt / 100)</td>
+                </tr>
+                <tr>
+                    <td class="total text-right" colspan="5">Tiền còn lại:</td>
+                    <td class="text-right">@Html.Amount((Model.TotalAmount + Model.AmountShipping) - ((Model.TotalAmount + Model.AmountShipping) * Model.Ttt / 100))</td>
+                </tr>
+            }*@
+
+        </tfoot>
+    </table>
+    <div class="toolbar">
+        <span class="btn back">
+            @*<a href="@Url.Action("Index",null,null)">
+                    <i class="fa fa-mail-reply"></i><span>Trở về</span>
+                </a>*@
+            <a href="@ViewBag.ReturnUrl">
+                <i class="fa fa-mail-reply"></i> <span>Trở về</span>
+            </a>
+        </span>
+    </div>
+</div>
+@*<div class="modal fade" id="order-form" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        @{Html.RenderAction("Approve", "Order", new { id = Model.Id, returnUrl = ViewBag.ReturnUrl });}
+    </div>*@
+<script>
+    $(document).delegate('#order-status a[data-submit]', 'click', function () {
+        var _this = $(this);
+        $.ajax({
+            type: 'post',
+            url: _this.data("submit"),
+            dataType: 'json',
+            beforeSend: function () {
+                _this.button('loading');
+            },
+            complete: function () {
+                _this.button('reset');
+            },
+            success: function (json) {
+                if (json['redirect'])
+                    //alert(json['redirect']);
+                    location = json['redirect'];
+                else if (json['error']) {
+                    $('#sys-notification').animate({ "opacity": "1", "margin-top": "0" }, 25).prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error']['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            }
+        });
+        return false;
+    });
+    $(function () {
+        $("#check-all").checkAll(".item .check input[type='checkbox']");
+
+        $("#delete").sdelete({
+            url: '@Url.Action("DeleteOrderLine")',
+            selector: ".item .check input[type='checkbox']",
+        });
+
+        $("#update").update({
+            url: '@Url.Action("UpdateNumberOrderLine")',
+            selector: ".item input[name='Qty']",
+            param1: 'id',
+            param2: 'num'
+        });
+    });
+    //$(document).delegate('#button-approve', 'click', function () {
+    //    var _this = $(this);
+    //    $.ajax({
+    //        type: 'post',
+    //        url: _this.data("submit"),
+    //        dataType: 'json',
+    //        data: $("#order-form form").serialize(),
+    //        beforeSend: function () {
+    //            _this.button('loading');
+    //        },
+    //        complete: function () {
+    //            _this.button('reset');
+    //        },
+    //        success: function (json) {
+    //            $("#order-form #sys-notification").html("");
+    //            if (json['redirect'])
+    //                //alert(json['redirect']);
+    //                location = json['redirect'];
+    //            else if (json['error']) {
+    //                $('#order-form #sys-notification').animate({ "opacity": "1", "margin-top": "0" }, 25).prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error']['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+    //            }
+    //        },
+    //        error: function (xhr, ajaxOptions, thrownError) {
+    //            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+    //        }
+    //    });
+    //    return false;
+    //});
+</script>

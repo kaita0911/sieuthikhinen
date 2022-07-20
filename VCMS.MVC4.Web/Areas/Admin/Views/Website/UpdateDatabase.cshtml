@@ -1,0 +1,63 @@
+﻿@model  VCMS.MVC4.Data.Website
+@{
+    ViewBag.Title = "Update Database";
+
+    ViewBag.Breadcrumb = new BreadcrumbModel()
+    {
+        Items = new List<BreadcrumbItem>()
+        {
+            new BreadcrumbItem(){Url = Url.Action("Index","Home"), Text="Home", IsFirst=true},
+
+            new BreadcrumbItem(){Url = Url.Action("UpdateDatabase","Website"), Text=ViewBag.Title.ToString(), IsLast=true},
+
+        }
+    };
+}
+
+<div class="form">
+    @using (Ajax.BeginForm(null, null, new AjaxOptions { HttpMethod = "POST", OnBegin = "loading", OnSuccess = "saved" }, new { id = "update-form", enctype = "multipart/form-data" }))
+    {
+        @Html.ValidationSummary(true)
+        <fieldset>
+            <legend class="title">Update Database</legend>
+            <div class="editor-label">
+                @Html.Label("Query")
+            </div>
+            <div class="editor-field">
+                <textarea name="query" id="query" cols="20" rows="12"></textarea>
+            </div>
+            <div class="toolbar">
+                <span class="button">
+                    <button type="submit" class="btn save"><i class="fa fa-save"></i> Run</button>
+                </span>
+            </div>
+        </fieldset>
+    }
+    <div id="query-success"><span class=""></span></div>
+</div>
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryui")
+    @Scripts.Render("~/bundles/editor")
+    <script>
+        $("form#update-form").submit(function () {
+            $.ajax({
+                url: '@Url.Action("UpdateDatabase","Website")',
+                type: "POST", data: $('form#update-form').serialize(),
+                dataType: "json",
+                success: function (e) {
+                    if (e.Status == 0) {
+                        $("#query-success").html("Command(s) completed successfully.");
+                    }
+                    else if (e.Status == -1) {
+                        $("#query-success").html("<span class='text-error'>" + e.Message + "</span>");
+                    }
+                    else {
+                        $("#query-success").html(e.Message + "row(s) affected");
+                    }
+                }
+            }); return false
+        });
+
+    </script>
+}

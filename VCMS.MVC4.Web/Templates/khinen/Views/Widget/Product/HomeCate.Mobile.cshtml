@@ -1,0 +1,170 @@
+﻿@model Widget
+@{
+    var cate = Category.GetTree(Category.GetByType((int)Model.ArticleTypeId, SiteConfig.LanguageId)).Where(a => a.Level == 0).ToList();
+    var temp = Article.GetByCategories(cate.Select(c => c.Id).ToArray(), SiteConfig.LanguageId, Model.Attribute, Model.Number, ArticleSortOrder.ARTICLE_NAME, VCMS.MVC4.Data.SortDirection.ASCENDING, ArticleIncludeFlags.ARTICLE_TYPE | ArticleIncludeFlags.DISCOUNTS | ArticleIncludeFlags.PRICES | ArticleIncludeFlags.PROPERTIES).ToList();
+    var i = 1;
+   // var type = ArticleType.GetById((int)Model.ArticleTypeId, SiteConfig.LanguageId);
+    <div class="box-product-tab">
+        @foreach (var sitem in cate)
+        {
+            if (temp.Count > 0)
+            {
+                var lst = temp.Where(a => a.CurrentCategory.Id == sitem.Id).ToList();
+        <div class="citem">
+            @*<div class="bgcate" style="background: @sitem.Font">
+                <h2>
+                    <a href="@Url.Action("Detail", "Category", new {id=sitem.Id,code=sitem.ArticleType.UrlFriendly,title = sitem.UrlFriendly })">
+                        @sitem.CategoryName
+                    </a>
+                </h2>
+                <ul class="c-header hidden-xs ">
+                    @foreach (var sub in sitem.Children.Where(sub => !sub.IsNew))
+                    {
+                        <li>
+                            <a href="@Url.Action("Detail", "Category", new { id = sub.Id, code = sub.ArticleType.UrlFriendly, title = sub.UrlFriendly })" title="@sub.CategoryName">
+                                @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(sub.CategoryName, 5))
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>*@
+            <div class="list-menu-mb c-header hidden-lg" style="background: @sitem.Font">
+                <h2>
+                    <a href="@Url.Action("Detail", "Category", new {id=sitem.Id,code=sitem.ArticleType.UrlFriendly,title=Unichar.UnicodeStrings.UrlString(sitem.CategoryName).ToLower() })" title="@sitem.CategoryName">
+                        @sitem.CategoryName
+                    </a>
+                </h2>
+                @if (sitem.ChildrenCount > 0)
+                {
+                    <span class="ico-down down-@i"><i class="fa fa-caret-down"></i></span>
+                }
+
+                <ul class="lit-down list-@i">
+                    @foreach (var sub in sitem.Children.Where(sub => !sub.IsNew))
+                    {
+                        <li>
+                            <a href="@Url.Action("Detail", "Category", new { id = sub.Id, code = sub.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(sub.CategoryName).ToLower() })" title="@sub.CategoryName">
+                                @Html.Raw(VNS.Web.Helpers.HTMLHelper.ReadBlock(sub.CategoryName, 5))
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <script>
+                $(document).ready(function(){
+                  $(".down-@i").click(function(){
+                      $(".list-@i").slideToggle();
+                  });
+                });
+            </script>
+            <div class="clearfix"></div>
+            <div class="row">
+                <div class="left-dmsp">
+                    @foreach (var item in lst)
+                    {
+                        var code = item["CODE"];
+                        <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                            <div class="items">
+                                <figure class="effect-hera">
+                                    <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.ArticleTypeDetail[SiteConfig.LanguageId].UrlFriendly, title = item.UrlFriendly.ToLower() })" title="@item.ArticleName">
+                                        @Html.Image(item.ImageUrl, new ImageOptions { Width = 160, Height = 160, Watermark = SiteConfig.Watermark, Lazy = false, Mode = ImageMode.pad }, new { alt = code, @class = (Model.LazyOwl ? "owl" : "") })
+                                    </a>
+                                    @*<figcaption>
+                                        <p>
+
+                                            <a class="quickview" href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = item.UrlFriendly })" title="Xem chi tiết">
+                                                <i class="fa fa-search-plus"></i>
+                                            </a>
+
+                                            <a href="@Url.Action("AddToCart", "ShoppingCart", new { id = item.Id })" class="addcart cart " title="Cho vào giỏ hàng" rel="nofollow">
+                                                <i class="fa fa-shopping-cart"></i>
+                                            </a>
+                                        </p>
+                                    </figcaption>*@
+                                </figure>
+                                <div class="meta">
+                                    <h3>
+                                        <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.ArticleTypeDetail[SiteConfig.LanguageId].UrlFriendly, title = item.UrlFriendly.ToLower() })" title="@item.ArticleDetail[SiteConfig.LanguageId].ArticleName">@item.ArticleDetail[SiteConfig.LanguageId].ArticleName</a>
+                                    </h3>
+                                    <div class="code"><label>Mã số:</label>@code</div>
+                                    <div class='price-all'>
+                                        @if (item.DiscountPrice > 0)
+                                        {
+
+                                            <span class='price'>@Html.DiscountPrice(item.ItemPrice)</span>
+                                            <span class='price-old'>@Html.Price(item.ItemPrice)</span>
+                                        }
+                                        else
+                                        {
+                                            <span class='price'>@Html.Price(item.ItemPrice)</span>
+                                        }
+                                    </div>
+                                    <form action="/ShoppingCart/AddToCart" method="post" class="form-order">
+                                        @*@Html.Hidden("id", item.Id)*@
+                                        <input type="hidden" name="id" id="@item.Id" value="@item.Id">
+                                        <div class="quantitynum">
+                                            <input name="num" type="number" id="num_@item.Id" min="1" max="100" value="1" />
+                                        </div>
+                                        @*<p>Số lượng @Html.DropDownList("num", Enumerable.Range(1, 50).Select(j => new SelectListItem { Value = j.ToString(), Text = j.ToString() }), "1")</p>*@
+                                        <button type="submit" class="bt-carted cartedngoai">Mua ngay</button>
+                                    </form>
+
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                @if (sitem.ImageUrl != null)
+                {
+
+                    <p class="img-cate">
+                        <img src="@sitem.ImageUrl?width=270" class="width-full" alt="@sitem.CategoryName" />
+
+                        @*@Html.Image(sitem.ImageUrl, new ImageOptions { Width = 270, Height = 600, Watermark = SiteConfig.Watermark, Mode = ImageMode.pad, Lazy = false }, new { alt = sitem.CategoryName })*@
+                    </p>
+
+                }
+            </div>
+        </div>
+            }
+            i++;
+        }
+    </div>
+
+
+}
+@Html.Partial("_HelpFull")
+    <script>
+        jQuery('<div class="quantity-nav"><div class="quantity-button quantity-up">+</div><div class="quantity-button quantity-down">-</div></div>').insertAfter('.quantitynum input');
+        jQuery('.quantitynum').each(function () {
+            var spinner = jQuery(this),
+                input = spinner.find('input[type="number"]'),
+                btnUp = spinner.find('.quantity-up'),
+                btnDown = spinner.find('.quantity-down'),
+                min = input.attr('min'),
+                max = input.attr('max');
+
+            btnUp.click(function () {
+                var oldValue = parseFloat(input.val());
+                if (oldValue >= max) {
+                    var newVal = oldValue;
+                } else {
+                    var newVal = oldValue + 1;
+                }
+                spinner.find("input").val(newVal);
+                spinner.find("input").trigger("change");
+            });
+
+            btnDown.click(function () {
+                var oldValue = parseFloat(input.val());
+                if (oldValue <= min) {
+                    var newVal = oldValue;
+                } else {
+                    var newVal = oldValue - 1;
+                }
+                spinner.find("input").val(newVal);
+                spinner.find("input").trigger("change");
+            });
+
+        });
+    </script>

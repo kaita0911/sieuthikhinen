@@ -1,0 +1,154 @@
+﻿@*@{
+        string address = "";
+        var company = Article.GetByType(ArticleType.GetIdByCode("COMPANY"), SiteConfig.SiteId, SiteConfig.LanguageId, ArticleFlags.ACTIVE, 1, 1, ArticleSortOrder.SORT_ORDER, VCMS.MVC4.Data.SortDirection.DESCENDING, ArticleIncludeFlags.PROPERTIES).List.FirstOrDefault();
+        if (company != null)
+        {
+            address = company.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("ADDRESS", StringComparison.OrdinalIgnoreCase) && a.LanguageId == SiteConfig.LanguageId).Value;
+        }
+    }*@
+<header class="header hidden-sm hidden-xs" id="header">
+    <div class="container">
+        <div class="header-left">
+            <a href="@Url.Action("index","home")" class="logo">
+                @Html.Image(SiteConfig.Image("logo.png"), new ImageOptions { Width = 98, Height = 70, Lazy = false }, new { alt = SiteConfig.SiteInfo.Title })
+            </a>
+            @*<a href="@Url.Action("index","home")" class="title visible-lg visible-md">
+                @Html.Image(SiteConfig.Image("header_title.png"), new ImageOptions { Width = 525, Height = 46, Lazy = false }, new { alt = SiteConfig.SiteInfo.Title })
+            </a>*@
+        </div>
+        @*@Html.Partial("_MenuTop")*@
+        <div class="header-right pull-left">
+            <div class="search pull-left">
+                @Html.Partial("_Search")
+            </div>
+            @Html.Partial("_Language")
+            <div class="box-info-header">
+                @*<div class="email pull-right">
+                        <label>Email: </label>
+                        <i class="fa fa-envelope" aria-hidden="true"></i>
+                        <div class="bold">@Html.Phone(SiteConfig.SiteInfo.Hotline)</div>
+                        @Html.Email(SiteConfig.SiteInfo.Email)
+                    </div>
+                    <div class="top-support pull-right">
+                        <label>@Html.Locale("online_support")</label>
+                        @Html.Partial("_Support")
+                    </div>*@
+                <div class="hotline">
+                    @Html.Phone(SiteConfig.SiteInfo.Hotline)
+                    <label>
+                        <i>@Html.Locale("support_247")</i>.@Html.Locale("hotline")
+                    </label>
+                    @*<i class="fa fa-phone-square" aria-hidden="true"></i>
+                        <span style="padding-left: 10px;">/</span>*@
+                </div>
+                @*<div class="shop-cart pull-right">
+                        <a href="/ShoppingCart/IndexAjax">
+                            <i class="fa fa-shopping-cart"></i>
+                            <span id="number">@SiteConfig.ShoppingCart.Items.Sum(a => a.Quantity)</span>
+                            <span class="lbl">@Html.Locale("shopping_cart")</span>
+                            <span class="lbl2">Vận chuyển toàn quốc</span>
+                        </a>
+                    </div>*@
+                @*@Html.Partial("_AddLink")
+                    <div class="search">
+                        @Html.Partial("_Search")
+                    </div>*@
+                @*<div class="pull-right address">
+                        <span>@address</span>
+                    </div>*@
+            </div>
+        </div>
+    </div>
+    @*<div class="sub-header">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="title">
+                        @Html.Image(SiteConfig.Image("icon-shipping.png"), new ImageOptions { Width = 167, Height = 168, Lazy = false })  Free shipping
+                    </label>
+                    <ul class="ctn">
+                        @foreach (var item in shipping)
+                        {
+                            <li>
+                                <a href="@Url.Action("Detail", "Article" , new { id=item.Id, code=item.ArticleType.UrlFriendly, title=Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                    @item.ArticleName
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <label class="title">
+                        @Html.Image(SiteConfig.Image("icon-pay.png"), new ImageOptions { Width = 57, Height = 30, Lazy = false })  Thanh toán cod
+                    </label>
+                    <ul class="ctn">
+                        @foreach (var item in pay)
+                        {
+                            <li>
+                                <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                    @item.ArticleName
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <div class="col-md-5">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="title">
+                                @Html.Image(SiteConfig.Image("icon-support.png"), new ImageOptions { Width = 34, Height = 30, Lazy = false }) Hỗ trợ 24/7
+                            </label>
+                            <ul class="ctn">
+                                @foreach (var item in support)
+                                {
+                                    var phone = item.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("PHONE", StringComparison.OrdinalIgnoreCase));
+                                    <li>
+                                        <a href="tel:@phone.Value">@item.ArticleName : @phone.Value</a>
+
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="title">
+                                @Html.Image(SiteConfig.Image("icon-warranty.png"), new ImageOptions { Width = 32, Height = 30, Lazy = false })  Đổi trả & bảo hành
+                            </label>
+                            <ul class="ctn">
+                                @foreach (var item in warranty)
+                                {
+                                    <li>
+                                        <a href="@Url.Action("Detail", "Article", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.ArticleName) })" title="@item.ArticleName">
+                                            @item.ArticleName
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+
+    @*@if (company != null)
+        {
+            var address = company.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("ADDRESS", StringComparison.OrdinalIgnoreCase) && a.LanguageId == SiteConfig.LanguageId);
+            var phone = company.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("PHONE", StringComparison.OrdinalIgnoreCase));
+            var fax = company.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("FAX", StringComparison.OrdinalIgnoreCase));
+            var email = company.PropertyValues.FirstOrDefault(a => a.Property.Code.Equals("EMAIL", StringComparison.OrdinalIgnoreCase));
+            <div style="clear: both"></div>
+            <div class="contact-info">
+                <span>VPGD: @address.Value - Điện thoại: @phone.Value | Fax: @fax.Value - Email: @email.Value</span>
+            </div>
+        }*@
+
+    @*<div class="pull-right">
+            <div id="shop-cart" class="carts visible-lg visible-md">
+                <div class="icon-cart">
+                    <span class="lbl"><i class="fa fa-shopping-cart"></i></span>
+                    <span id="number"></span>
+                </div>
+                <div class="content" style="display:none">
+                </div>
+            </div>
+        </div>*@
+
+</header>

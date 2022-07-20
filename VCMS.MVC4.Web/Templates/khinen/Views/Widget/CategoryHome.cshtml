@@ -1,0 +1,63 @@
+﻿@model Widget
+@{
+    var category = Category.GetTree(Category.GetByType((int)Model.ArticleTypeId, SiteConfig.LanguageId)).Where(a => a.Level == 0).Take(Model.Number).ToList();
+}
+@if (category.Count > 0)
+{
+    <div class="box-sidebar box-category pagesp">
+        <h2 class="heading sidebar-heading">
+            @Model.Title
+        </h2>
+        <ul class="category-sidebar">
+            @foreach (var item in category)
+            {
+                <li>
+                    <a href="@Url.Action("Detail", "Category", new { id = item.Id, code = item.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(item.CategoryName).ToLower() })" title="@item.CategoryName">@item.CategoryName</a>
+                    @if (item.ChildrenCount > 0 && Model.ShowSubMenu)
+                    {
+                        <ul class="sub-menu">
+                            @foreach (var sub in item.Children)
+                            {
+                            <li class="level-1">
+                                <a href="@Url.Action("Detail", "Category", new { id = sub.Id, code = sub.ArticleType.UrlFriendly, title = Unichar.UnicodeStrings.UrlString(sub.CategoryName).ToLower() })" title="@sub.CategoryName">@sub.CategoryName</a>
+                                @if (sub.ChildrenCount > 0)
+                                {
+                                    <ul class="sub-level level-2">
+                                        @foreach (var ssub in sub.Children)
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("Detail", "Category", new { id = ssub.Id, code = ssub.ArticleType.UrlFriendly,title = Unichar.UnicodeStrings.UrlString(ssub.CategoryName).ToLower() })" title="@ssub.CategoryName">
+                                                    <span>@ssub.CategoryName</span>
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
+                                    <i class="fa fa-caret-right"></i>
+                                }
+                            </li>
+                            }
+                        </ul>
+                        <i class="fa fa-caret-right"></i>
+                    }
+                </li>
+            }
+        </ul>
+        @*@if (Model.ShowViewAll)
+            {
+                <a href="@Url.Action("Index", "ArticleType", new { code = category.FirstOrDefault().ArticleType.UrlFriendly })" class="view-all hidden-xs hidden-md">@Html.Locale("view_more")</a>
+            }*@
+
+    </div>
+}
+@*<script>
+    $(function () {
+        $(".box-category li:has(ul.sub-level)").hover(
+           function () {
+               $(this).children("ul.sub-level").show();
+           },
+             function () {
+                 $(this).children("ul.sub-level").hide();
+             }
+        );
+    });
+</script>*@

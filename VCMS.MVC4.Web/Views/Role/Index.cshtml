@@ -1,0 +1,18 @@
+﻿@{
+    ViewBag.Title = "Role list";
+}
+
+<h2>Role list</h2>
+
+<table><thead>
+<tr><th>Role name</th></tr>
+</thead>
+<tbody>
+@foreach (var item in Roles.GetAllRoles())
+{
+    <tr><td>@item</td></tr>
+}
+</tbody></table>
+<div>
+<a href='Role/Create'>Create New Role</a>
+</div>

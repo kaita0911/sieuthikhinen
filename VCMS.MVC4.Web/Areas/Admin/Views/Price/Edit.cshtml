@@ -1,0 +1,80 @@
+﻿@using VCMS.MVC4.Web
+@model VCMS.MVC4.Data.Price
+@{
+    DataContext db = new DataContext();
+    ViewBag.Title = "Sửa";
+    var currencies = db.Currencies.ToList();
+}
+<div class="form">
+
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.ValidationSummary(true)
+        <fieldset>
+            <legend>Sửa giá</legend>
+            @Html.HiddenFor(model => model.Id)
+            <div class="editor-label">
+                <label>Tên</label>
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(model => model.Title)
+                @Html.ValidationMessageFor(model => model.Title)
+            </div>
+            <div class="editor-label">
+                <label>Giá</label>
+            </div>
+            <div class="editor-field pri-and-curr w-300">
+                @Html.TextBox("Price", string.Format("{"+ Model.Currency.Formatting +"}", Model.Value), new { @class = "price" })
+                @Html.DropDownList("currencyId", new SelectList(currencies, "Id", "Code", Model.CurrencyId), new { @class = "currency" })
+                @Html.ValidationMessageFor(model => model.Value)
+            </div>
+            <div class="editor-label">
+                @Html.Label("ẩn giá này")
+            </div>
+            <div class="editor-field pri-and-curr">
+                @Html.CheckBox("chk-inactive", Model.Inactive, new { @class = "inactive" })
+            </div>
+            <div class="editor-label" style="display:none">
+                <label>Giá mặc định</label>
+                <div class="editor-field">
+                    @Html.CheckBox("chk-isdefault", Model.IsDefault)
+                </div>
+            </div>
+            <div class="toolbar">
+                <span class="button">
+                    <button type="submit" class="btn save"><i class="fa fa-save"></i> <span>Lưu</span></button>
+                </span>
+                <span class="btn back">
+                    <a href="@Url.Action("Index", "Price", new { id = Model.ArticleId })">
+                        <i class="fa fa-mail-reply"></i> <span>Trở về danh sách</span>
+                    </a>
+                </span>
+            </div>
+        </fieldset>
+    }
+
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+        @Scripts.Render("~/bundles/jqueryui")
+        @*<script>
+            $(function () {
+              
+                $(".price").keyup(function (e) {
+                    if (e.which >= 37 && e.which <= 40) {
+                        e.preventDefault()
+                    }
+                    var t = $(this);
+                    var n = t.val().replace(/,/gi, "").split("").reverse().join("");
+                    var r = RemoveRougeChar(n.replace(/(.{3})/g, "$1,").split("").reverse().join(""));
+                    t.val(r);
+                })
+            })
+
+            function RemoveRougeChar(e) {
+                if (e.substring(0, 1) == ",") {
+                    return e.substring(1, e.length)
+                } return e
+            }
+        </script>*@
+    }
+</div>
